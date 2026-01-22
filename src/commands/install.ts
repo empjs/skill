@@ -11,6 +11,7 @@ import {
 } from '../utils/paths.js'
 import {createSymlink} from '../utils/symlink.js'
 import {getRegistry} from '../utils/registry.js'
+import {parseGitUrl, isGitUrl} from '../utils/git.js'
 
 const execAsync = promisify(exec)
 
@@ -56,6 +57,70 @@ export async function install(
       }
     } else {
       skillName = extractSkillName(path.basename(skillPath))
+    }
+  } else if (isGitUrl(skillNameOrPath)) {
+    // Git URL install mode
+    const gitInfo = parseGitUrl(skillNameOrPath)
+    if (!gitInfo) {
+      logger.error(`Invalid git URL: ${skillNameOrPath}`)
+      process.exit(1)
+    }
+
+    skillName = gitInfo.path
+      ? extractSkillName(path.basename(gitInfo.path))
+      : extractSkillName(gitInfo.repo)
+    const tempDir = path.join('/tmp', `nova-skill-${Date.now()}`)
+    const cloneDir = path.join(tempDir, 'repo')
+
+    try {
+      logger.start('Cloning from Git...')
+      logger.info(`Repository: ${gitInfo.gitUrl}`)
+      if (gitInfo.branch) {
+        logger.info(`Branch: ${gitInfo.branch}`)
+      }
+      if (gitInfo.path) {
+        logger.info(`Path: ${gitInfo.path}`)
+      }
+      fs.mkdirSync(tempDir, {recursive: true})
+
+      // Clone the repository
+      const branchFlag = gitInfo.branch ? `-b ${gitInfo.branch}` : ''
+      const cloneCommand = branchFlag
+        ? `git clone ${branchFlag} ${gitInfo.gitUrl} ${cloneDir} --depth 1 --quiet`
+        : `git clone ${gitInfo.gitUrl} ${cloneDir} --depth 1 --quiet`
+      
+      await execAsync(cloneCommand)
+
+      logger.stopSpinner()
+
+      // Determine the skill path
+      if (gitInfo.path) {
+        // If path is specified, use that subdirectory
+        skillPath = path.join(cloneDir, gitInfo.path)
+        if (!fs.existsSync(skillPath)) {
+          logger.error(`Path not found in repository: ${gitInfo.path}`)
+          logger.info(`Repository cloned to: ${cloneDir}`)
+          process.exit(1)
+        }
+      } else {
+        // Use the root of the repository
+        skillPath = cloneDir
+      }
+
+      // Verify SKILL.md exists (optional check)
+      const skillMdPath = path.join(skillPath, 'SKILL.md')
+      if (!fs.existsSync(skillMdPath)) {
+        logger.warn(`Warning: SKILL.md not found in ${skillPath}`)
+        logger.info('The directory may not be a valid skill package')
+      }
+    } catch (error: any) {
+      logger.stopSpinner()
+      logger.error(`Failed to clone repository: ${error.message}`)
+      logger.info(`\nTried to clone: ${gitInfo.gitUrl}`)
+      if (gitInfo.branch) {
+        logger.info(`Branch: ${gitInfo.branch}`)
+      }
+      process.exit(1)
     }
   } else {
     // NPM install mode

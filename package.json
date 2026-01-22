@@ -1,6 +1,6 @@
 {
   "name": "@nova/skill",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Unified CLI tool for managing AI agent skills across Claude Code, Cursor, Windsurf, and more",
   "type": "module",
   "bin": {
@@ -15,6 +15,9 @@
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsup",
+    "test": "bun test tests",
+    "test:git": "bun test tests/git.test.ts",
+    "test:registry": "bun test tests/registry.test.ts",
     "nova-skill": "node dist/index.js"
   },
   "keywords": [

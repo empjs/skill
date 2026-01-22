@@ -1,5 +1,13 @@
 import './style.css'
 
+// Update version from package.json
+if (typeof __APP_VERSION__ !== 'undefined') {
+  const versionBadge = document.getElementById('version-badge')
+  if (versionBadge) {
+    versionBadge.textContent = `v${__APP_VERSION__}`
+  }
+}
+
 // Copy command function
 window.copyCommand = function(button, text) {
   if (navigator.clipboard && navigator.clipboard.writeText) {

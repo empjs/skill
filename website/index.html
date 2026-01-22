@@ -22,12 +22,14 @@
         <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
             <div class="flex items-center gap-2 font-mono font-bold text-xl text-blue-400">
                 <span class="text-2xl">⚡</span> @nova/skill
-                <span class="text-xs bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded-full ml-2">v1.0.2</span>
+                <span class="text-xs bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded-full ml-2" id="version-badge">v1.0.3</span>
             </div>
             <div class="hidden md:flex items-center gap-8">
                 <a href="#features"
                     class="text-sm font-medium text-slate-400 hover:text-white transition-colors">功能特性</a>
                 <a href="#agents" class="text-sm font-medium text-slate-400 hover:text-white transition-colors">支持平台</a>
+                <a href="#commands" class="text-sm font-medium text-slate-400 hover:text-white transition-colors">指令介绍</a>
+                <a href="#official-skills" class="text-sm font-medium text-slate-400 hover:text-white transition-colors">官方技能</a>
                 <a href="#usage" class="text-sm font-medium text-slate-400 hover:text-white transition-colors">使用指南</a>
             </div>
             <div class="flex items-center gap-4">
@@ -45,9 +47,15 @@
     <!-- Hero -->
     <main class="relative z-10 pt-32 pb-20 px-6">
         <div class="max-w-4xl mx-auto text-center">
-            <div
-                class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-medium mb-8 animate-fade-in hover:bg-blue-500/20 transition-colors cursor-default">
-                <span>🚀 统一 AI Agent 技能管理</span>
+            <div class="flex flex-wrap items-center justify-center gap-3 mb-8 animate-fade-in">
+                <div
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-medium hover:bg-blue-500/20 transition-colors cursor-default">
+                    <span>🚀 统一 AI Agent 技能管理</span>
+                </div>
+                <div
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-medium hover:bg-green-500/20 transition-colors cursor-default">
+                    <span>✨ 支持 GitHub/GitLab URL 直接安装</span>
+                </div>
             </div>
             <h1
                 class="text-5xl md:text-7xl font-bold tracking-tight mb-8 bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent animate-slide-up leading-tight">
@@ -89,7 +97,7 @@
             <h2
                 class="text-3xl font-bold text-center mb-16 bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
                 为什么选择 @nova/skill？</h2>
-            <div class="grid md:grid-cols-3 gap-8">
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Feature 1 -->
                 <div
                     class="p-8 rounded-2xl bg-white/5 border border-white/10 hover:border-blue-500/50 transition-all duration-300 group hover:-translate-y-1">
@@ -102,8 +110,8 @@
                         </svg>
                     </div>
                     <h3 class="text-xl font-bold mb-3 text-slate-100">统一存储</h3>
-                    <p class="text-slate-400 leading-relaxed">所有技能集中存储在 <code
-                            class="bg-black/30 px-1.5 py-0.5 rounded text-sm font-mono text-blue-300">~/.nova-agent/skills/</code>。实现分布式
+                    <p class="text-slate-400 leading-relaxed text-sm">所有技能集中存储在 <code
+                            class="bg-black/30 px-1.5 py-0.5 rounded text-xs font-mono text-blue-300">~/.nova-agent/skills/</code>。实现分布式
                         AI 智能的统一管理。</p>
                 </div>
                 <!-- Feature 2 -->
@@ -117,7 +125,7 @@
                         </svg>
                     </div>
                     <h3 class="text-xl font-bold mb-3 text-slate-100">自动分发</h3>
-                    <p class="text-slate-400 leading-relaxed">自动检测并软链技能到所有已安装的 Agent：Claude Code、Cursor、Windsurf 等。</p>
+                    <p class="text-slate-400 leading-relaxed text-sm">自动检测并软链技能到所有已安装的 Agent：Claude Code、Cursor、Windsurf 等。</p>
                 </div>
                 <!-- Feature 3 -->
                 <div
@@ -130,9 +138,27 @@
                         </svg>
                     </div>
                     <h3 class="text-xl font-bold mb-3 text-slate-100">开发模式</h3>
-                    <p class="text-slate-400 leading-relaxed">使用 <code
-                            class="bg-black/30 px-1.5 py-0.5 rounded text-sm font-mono text-green-300">--link</code>
+                    <p class="text-slate-400 leading-relaxed text-sm">使用 <code
+                            class="bg-black/30 px-1.5 py-0.5 rounded text-xs font-mono text-green-300">--link</code>
                         进行本地开发。源码修改即时在所有 Agent 中生效。</p>
+                </div>
+                <!-- Feature 4: Git URL Install -->
+                <div
+                    class="p-8 rounded-2xl bg-gradient-to-br from-orange-500/10 to-red-500/10 border border-orange-500/30 hover:border-orange-500/60 transition-all duration-300 group hover:-translate-y-1 relative overflow-hidden">
+                    <!-- Badge -->
+                    <div class="absolute top-4 right-4">
+                        <span class="px-2 py-1 rounded-full bg-orange-500/20 text-orange-400 text-xs font-bold">NEW</span>
+                    </div>
+                    <div
+                        class="w-14 h-14 rounded-xl bg-orange-500/10 flex items-center justify-center mb-6 text-orange-400 group-hover:bg-orange-500/20 group-hover:scale-110 transition-all">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-slate-100">Git URL 安装</h3>
+                    <p class="text-slate-400 leading-relaxed text-sm">直接从 GitHub/GitLab URL 安装技能，无需发布到 NPM。支持分支和子目录路径。</p>
                 </div>
             </div>
         </div>
@@ -161,6 +187,215 @@
                 <div
                     class="group px-6 py-3 rounded-full bg-slate-800/50 border border-slate-700 text-slate-300 font-medium hover:border-blue-500/50 hover:bg-blue-500/10 hover:text-blue-400 transition-all cursor-default">
                     GitHub Copilot</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Commands Reference -->
+    <section id="commands" class="py-20 px-6 border-t border-white/5 relative overflow-hidden">
+        <div class="max-w-6xl mx-auto relative z-10">
+            <h2 class="text-3xl font-bold mb-12 text-center text-slate-200">指令介绍</h2>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Install Command -->
+                <div class="bg-black/30 rounded-xl border border-white/10 p-6 hover:border-blue-500/50 transition-all relative">
+                    <div class="absolute top-4 right-4">
+                        <span class="px-2 py-1 rounded-full bg-orange-500/20 text-orange-400 text-xs font-bold">NEW</span>
+                    </div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-100">install / add</h3>
+                    </div>
+                    <p class="text-slate-400 mb-4 text-sm">安装技能包，支持从 NPM、Git URL 或本地目录安装</p>
+                    <div class="space-y-3 font-mono text-xs">
+                        <div class="bg-gradient-to-r from-orange-500/10 to-red-500/10 p-3 rounded border border-orange-500/20">
+                            <div class="text-orange-400 mb-2 font-semibold">✨ 新功能：Git URL 安装</div>
+                            <div class="text-purple-400 mb-1">nova-skill install &lt;git-url&gt;</div>
+                            <div class="text-purple-400 mb-1">nova-skill add &lt;git-url&gt;</div>
+                            <div class="text-slate-400 text-xs mt-1 mb-2">支持 GitHub/GitLab URL，自动识别分支和路径</div>
+                            <div class="text-slate-500 text-xs">示例：</div>
+                            <div class="text-slate-300 ml-2">https://github.com/owner/repo/tree/main/path</div>
+                        </div>
+                        <div class="bg-slate-900/50 p-3 rounded border border-white/5">
+                            <div class="text-purple-400 mb-1">nova-skill install &lt;skill&gt;</div>
+                            <div class="text-purple-400 mb-1">nova-skill add &lt;skill&gt;</div>
+                            <div class="text-slate-500 mt-2">选项：</div>
+                            <div class="text-slate-400 ml-2">-a, --agent &lt;name&gt;  指定安装到的 agent</div>
+                            <div class="text-slate-400 ml-2">-l, --link              开发模式（本地链接）</div>
+                            <div class="text-slate-400 ml-2">-f, --force             强制重新安装</div>
+                            <div class="text-slate-400 ml-2">-r, --registry &lt;url&gt; 指定 NPM registry</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- List Command -->
+                <div class="bg-black/30 rounded-xl border border-white/10 p-6 hover:border-green-500/50 transition-all">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center text-green-400">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-100">list / ls</h3>
+                    </div>
+                    <p class="text-slate-400 mb-4 text-sm">列出所有已安装的技能</p>
+                    <div class="space-y-2 font-mono text-xs">
+                        <div class="bg-slate-900/50 p-3 rounded border border-white/5">
+                            <div class="text-purple-400">nova-skill list</div>
+                            <div class="text-purple-400 mt-2">nova-skill ls</div>
+                            <div class="text-slate-500 mt-2">显示已安装的技能及其版本和链接状态</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Remove Command -->
+                <div class="bg-black/30 rounded-xl border border-white/10 p-6 hover:border-red-500/50 transition-all">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center text-red-400">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-100">remove / rm / uninstall</h3>
+                    </div>
+                    <p class="text-slate-400 mb-4 text-sm">删除已安装的技能</p>
+                    <div class="space-y-2 font-mono text-xs">
+                        <div class="bg-slate-900/50 p-3 rounded border border-white/5">
+                            <div class="text-purple-400 mb-1">nova-skill remove &lt;skill&gt;</div>
+                            <div class="text-purple-400 mb-1">nova-skill rm &lt;skill&gt;</div>
+                            <div class="text-purple-400">nova-skill uninstall &lt;skill&gt;</div>
+                            <div class="text-slate-500 mt-2">选项：</div>
+                            <div class="text-slate-400 ml-2">-a, --agent &lt;name&gt;  仅删除指定 agent 的链接</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Agents Command -->
+                <div class="bg-black/30 rounded-xl border border-white/10 p-6 hover:border-purple-500/50 transition-all">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-100">agents</h3>
+                    </div>
+                    <p class="text-slate-400 mb-4 text-sm">列出所有支持的 AI Agent 及其目录</p>
+                    <div class="space-y-2 font-mono text-xs">
+                        <div class="bg-slate-900/50 p-3 rounded border border-white/5">
+                            <div class="text-purple-400 mb-1">nova-skill agents</div>
+                            <div class="text-purple-400">nova-skill list-agents</div>
+                            <div class="text-slate-500 mt-2">显示所有支持的 Agent 和它们的技能目录路径</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Official Skills -->
+    <section id="official-skills" class="py-20 px-6 bg-slate-900/50 border-t border-white/5 relative overflow-hidden">
+        <div class="max-w-6xl mx-auto relative z-10">
+            <h2 class="text-3xl font-bold mb-4 text-center text-slate-200">官方技能</h2>
+            <p class="text-center text-slate-400 mb-12">Nova Team 官方提供的技能包，助力你的开发工作</p>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- @nova/rn-skill -->
+                <div class="bg-gradient-to-br from-blue-500/10 to-indigo-500/10 rounded-xl border border-blue-500/20 p-6 hover:border-blue-500/50 transition-all group">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-100 mb-2 group-hover:text-blue-400 transition-colors">
+                                @nova/rn-skill
+                            </h3>
+                            <p class="text-slate-400 text-sm">React Native 开发技能包</p>
+                        </div>
+                        <div class="px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 text-xs font-medium">
+                            可用
+                        </div>
+                    </div>
+                    <p class="text-slate-300 mb-4 text-sm leading-relaxed">
+                        提供 React Native 开发的最佳实践、组件库使用指南、性能优化技巧等专业知识。
+                    </p>
+                    <div class="font-mono text-xs bg-black/30 p-3 rounded border border-white/5">
+                        <div class="text-purple-400">nova-skill install @nova/rn-skill</div>
+                    </div>
+                </div>
+
+                <!-- @nova/web-skill -->
+                <div class="bg-gradient-to-br from-green-500/10 to-emerald-500/10 rounded-xl border border-green-500/20 p-6 hover:border-green-500/50 transition-all group">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-100 mb-2 group-hover:text-green-400 transition-colors">
+                                @nova/web-skill
+                            </h3>
+                            <p class="text-slate-400 text-sm">Web 开发技能包</p>
+                        </div>
+                        <div class="px-3 py-1 rounded-full bg-green-500/20 text-green-400 text-xs font-medium">
+                            可用
+                        </div>
+                    </div>
+                    <p class="text-slate-300 mb-4 text-sm leading-relaxed">
+                        涵盖现代 Web 开发技术栈、框架使用、性能优化、SEO 等全方位知识。
+                    </p>
+                    <div class="font-mono text-xs bg-black/30 p-3 rounded border border-white/5">
+                        <div class="text-purple-400">nova-skill install @nova/web-skill</div>
+                    </div>
+                </div>
+
+                <!-- Vue2 to React -->
+                <div class="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 rounded-xl border border-yellow-500/20 p-6 hover:border-yellow-500/50 transition-all group opacity-75">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-100 mb-2 group-hover:text-yellow-400 transition-colors">
+                                Vue2 迁移 React
+                            </h3>
+                            <p class="text-slate-400 text-sm">Vue2 到 React 迁移指南</p>
+                        </div>
+                        <div class="px-3 py-1 rounded-full bg-yellow-500/20 text-yellow-400 text-xs font-medium">
+                            敬请期待
+                        </div>
+                    </div>
+                    <p class="text-slate-300 mb-4 text-sm leading-relaxed">
+                        提供从 Vue2 迁移到 React 的完整指南，包括组件转换、状态管理、路由迁移等。
+                    </p>
+                    <div class="font-mono text-xs bg-black/30 p-3 rounded border border-white/5 opacity-50">
+                        <div class="text-slate-500">即将推出</div>
+                    </div>
+                </div>
+
+                <!-- Vue3 to React -->
+                <div class="bg-gradient-to-br from-pink-500/10 to-rose-500/10 rounded-xl border border-pink-500/20 p-6 hover:border-pink-500/50 transition-all group opacity-75">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-100 mb-2 group-hover:text-pink-400 transition-colors">
+                                Vue3 迁移 React
+                            </h3>
+                            <p class="text-slate-400 text-sm">Vue3 到 React 迁移指南</p>
+                        </div>
+                        <div class="px-3 py-1 rounded-full bg-pink-500/20 text-pink-400 text-xs font-medium">
+                            敬请期待
+                        </div>
+                    </div>
+                    <p class="text-slate-300 mb-4 text-sm leading-relaxed">
+                        涵盖 Vue3 Composition API 到 React Hooks 的转换、响应式系统差异、生态迁移等。
+                    </p>
+                    <div class="font-mono text-xs bg-black/30 p-3 rounded border border-white/5 opacity-50">
+                        <div class="text-slate-500">即将推出</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-12 text-center">
+                <div class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-slate-800/50 border border-slate-700 text-slate-400">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span class="text-sm">更多官方技能正在开发中，敬请期待</span>
+                </div>
             </div>
         </div>
     </section>
@@ -194,15 +429,35 @@
                             安装技能
                         </h3>
                         <div class="text-slate-300 pl-8">
-                            <div class="flex gap-2 mb-2 text-slate-500 select-none"># 🏢 安装私域技能 (推荐内部使用)</div>
-                            <div class="mb-6 pl-4 border-l-2 border-blue-500/30">
-                                <span class="text-purple-400">nova-skill</span> install @nova/rn-skill
-                                --registry=http://npm.ppx520.com/
+                            <div class="flex gap-2 mb-2 text-slate-500 select-none"># 🚀 从 GitHub/GitLab URL 安装（新功能）</div>
+                            <div class="mb-4 pl-4 border-l-2 border-orange-500/30 bg-orange-500/5 rounded-r">
+                                <div class="mb-2">
+                                    <span class="text-purple-400">nova-skill</span> install https://github.com/anthropics/skills/tree/main/skills/skill-creator
+                                </div>
+                                <div class="mb-1 text-xs text-slate-400"># 或使用别名：</div>
+                                <div class="mb-2 text-xs text-slate-300">
+                                    <span class="text-purple-400">nova-skill</span> add https://github.com/anthropics/skills/tree/main/skills/skill-creator
+                                </div>
+                                <div class="text-xs text-slate-400 mb-2"># 支持 GitHub、GitLab、分支和子目录路径</div>
+                                <div class="text-xs text-slate-400">
+                                    <span class="text-orange-400">✨</span> 无需发布到 NPM，直接从仓库安装
+                                </div>
+                            </div>
+
+                            <div class="flex gap-2 mb-2 text-slate-500 select-none mt-4"># 🏢 安装私域技能 (推荐内部使用)</div>
+                            <div class="mb-4 pl-4 border-l-2 border-blue-500/30">
+                                <div class="mb-1">
+                                    <span class="text-purple-400">nova-skill</span> install @nova/rn-skill --registry=http://npm.ppx520.com/
+                                </div>
+                                <div class="text-xs text-slate-400"># 或：nova-skill add @nova/rn-skill --registry=http://npm.ppx520.com/</div>
                             </div>
 
                             <div class="flex gap-2 mb-2 text-slate-500 select-none"># 🌍 安装社区技能 (公网 NPM)</div>
                             <div class="mb-4 pl-4 border-l-2 border-green-500/30">
-                                <span class="text-purple-400">nova-skill</span> install react-agent-skill
+                                <div class="mb-1">
+                                    <span class="text-purple-400">nova-skill</span> install react-agent-skill
+                                </div>
+                                <div class="text-xs text-slate-400"># 或：nova-skill add react-agent-skill</div>
                             </div>
 
                             <div class="mt-4 text-xs text-slate-500">
@@ -233,8 +488,10 @@
                             <div class="flex gap-2 mb-2 text-slate-500 select-none"># 进入技能包目录</div>
                             <div class="mb-2 pl-4 border-l-2 border-green-500/30">cd packages/nova-rn-skill</div>
                             <div class="flex gap-2 mb-2 text-slate-500 select-none"># 创建软链</div>
-                            <div class="pl-4 border-l-2 border-green-500/30"><span
-                                    class="text-purple-400">nova-skill</span> install . --link</div>
+                            <div class="pl-4 border-l-2 border-green-500/30">
+                                <div class="mb-1"><span class="text-purple-400">nova-skill</span> install . --link</div>
+                                <div class="text-xs text-slate-400"># 或：nova-skill add . --link</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -256,12 +513,45 @@
                             查看已安装技能
                         </h3>
                         <div class="text-slate-300 pl-8">
-                            <div class="mb-4 pl-4 border-l-2 border-orange-500/30"><span
-                                    class="text-purple-400">nova-skill</span> list</div>
+                            <div class="mb-4 pl-4 border-l-2 border-orange-500/30">
+                                <div class="mb-1"><span class="text-purple-400">nova-skill</span> list</div>
+                                <div class="text-xs text-slate-400"># 或：nova-skill ls</div>
+                            </div>
                             <div class="pl-4 text-slate-500">
                                 # 输出示例：<br>
                                 # 📦 nova-rn (v1.0.0)<br>
                                 # → 已链接至：Claude Code, Cursor, Windsurf
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="bg-black/30 rounded-2xl border border-white/10 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-white/5 bg-white/5 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-3 h-3 rounded-full bg-red-400"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-400"></div>
+                        </div>
+                        <span class="text-xs font-mono text-slate-500">Terminal</span>
+                    </div>
+                    <div class="p-6 font-mono text-sm">
+                        <h3 class="text-red-400 mb-4 font-bold flex items-center gap-2">
+                            <span
+                                class="w-6 h-6 rounded bg-red-500/20 text-red-400 flex items-center justify-center text-xs">4</span>
+                            删除技能
+                        </h3>
+                        <div class="text-slate-300 pl-8">
+                            <div class="flex gap-2 mb-2 text-slate-500 select-none"># 删除技能（三种方式等价）</div>
+                            <div class="mb-2 pl-4 border-l-2 border-red-500/30">
+                                <div class="mb-1"><span class="text-purple-400">nova-skill</span> remove &lt;skill&gt;</div>
+                                <div class="mb-1"><span class="text-purple-400">nova-skill</span> rm &lt;skill&gt;</div>
+                                <div class="mb-1"><span class="text-purple-400">nova-skill</span> uninstall &lt;skill&gt;</div>
+                            </div>
+                            <div class="flex gap-2 mb-2 text-slate-500 select-none mt-4"># 仅删除特定 agent 的链接</div>
+                            <div class="pl-4 border-l-2 border-red-500/30">
+                                <span class="text-purple-400">nova-skill</span> remove &lt;skill&gt; --agent cursor
                             </div>
                         </div>
                     </div>

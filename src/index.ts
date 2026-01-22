@@ -1,21 +1,32 @@
 #!/usr/bin/env node
 import {Command} from 'commander'
+import {readFileSync} from 'fs'
+import {fileURLToPath} from 'url'
+import {dirname, join} from 'path'
 import {install} from './commands/install.js'
 import {list} from './commands/list.js'
 import {remove} from './commands/remove.js'
 import {agents} from './commands/agents.js'
+
+// Read version from package.json
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+const packageJsonPath = join(__dirname, '..', 'package.json')
+const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'))
+const version = packageJson.version
 
 const program = new Command()
 
 program
   .name('nova-skill')
   .description('Unified CLI tool for managing AI agent skills')
-  .version('1.0.0')
+  .version(version)
 
-// Install command
+// Install command (with add alias)
 program
   .command('install <skill>')
-  .description('Install a skill from NPM or local directory')
+  .alias('add')
+  .description('Install a skill from NPM, Git URL, or local directory')
   .option('-a, --agent <name>', 'Install for specific agent (claude, cursor, windsurf, or all)')
   .option('-l, --link', 'Dev mode: symlink from local directory')
   .option('-f, --force', 'Force reinstall if already exists')
@@ -43,10 +54,11 @@ program
     }
   })
 
-// Remove command
+// Remove command (with rm and uninstall aliases)
 program
   .command('remove <skill>')
   .alias('rm')
+  .alias('uninstall')
   .description('Remove an installed skill')
   .option('-a, --agent <name>', 'Remove symlink for specific agent only (keeps skill in shared directory)')
   .action(async (skill, options) => {
