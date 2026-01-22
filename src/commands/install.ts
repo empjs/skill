@@ -2,6 +2,7 @@ import {exec} from 'node:child_process'
 import {promisify} from 'node:util'
 import fs from 'node:fs'
 import path from 'node:path'
+import os from 'node:os'
 import {logger} from '../utils/logger.js'
 import {
   ensureSharedDir,
@@ -16,11 +17,12 @@ import {parseGitUrl, isGitUrl} from '../utils/git.js'
 const execAsync = promisify(exec)
 
 /**
- * Execute command with timeout
+ * Execute command with timeout and custom environment
  */
 async function execWithTimeout(
   command: string,
   timeout: number = 120000, // 2 minutes default
+  env?: NodeJS.ProcessEnv,
 ): Promise<{stdout: string; stderr: string}> {
   let timeoutId: NodeJS.Timeout | null = null
   
@@ -31,8 +33,9 @@ async function execWithTimeout(
   })
 
   try {
+    const execOptions = env ? {env} : {}
     const result = await Promise.race([
-      execAsync(command),
+      execAsync(command, execOptions),
       timeoutPromise,
     ])
     
@@ -203,14 +206,34 @@ export async function install(
       // Update spinner with more details
       logger.updateSpinner(`Downloading ${skillNameOrPath} from ${registry}...`)
 
-      const installCommand = `npm install ${skillNameOrPath} --prefix ${tempDir} --registry=${registry} --no-save --silent`
+      // Set npm environment variables to avoid permission issues
+      // Use user's home directory for npm cache and config
+      const homeDir = process.env.HOME || process.env.USERPROFILE || os.homedir()
+      const npmCacheDir = path.join(homeDir, '.npm')
+      const npmConfigPrefix = path.join(homeDir, '.npm-global')
+      
+      // Ensure npm cache directory exists
+      fs.mkdirSync(npmCacheDir, {recursive: true})
+      
+      // Build install command with options to avoid global directory access
+      const installCommand = `npm install ${skillNameOrPath} --prefix ${tempDir} --registry=${registry} --no-save --silent --no-bin-links --prefer-offline`
+      
+      // Set environment variables to force npm to use user directories
+      const env = {
+        ...process.env,
+        npm_config_cache: npmCacheDir,
+        npm_config_prefix: npmConfigPrefix,
+        npm_config_global: 'false',
+      }
       
       try {
-        await execWithTimeout(installCommand, timeout)
+        await execWithTimeout(installCommand, timeout, env)
         spinner.succeed(`Package ${skillNameOrPath} downloaded successfully`)
       } catch (error: any) {
         spinner.fail('Download failed')
-        if (error.message.includes('timeout')) {
+        const errorMessage = error.message || error.stderr || ''
+        
+        if (errorMessage.includes('timeout')) {
           logger.error(`Download timeout after ${timeout / 1000} seconds`)
           logger.info('')
           logger.info('Possible reasons:')
@@ -223,15 +246,52 @@ export async function install(
           logger.info(`  - Try again: nova-skill add ${skillNameOrPath}`)
           logger.info(`  - Use a different registry: nova-skill add ${skillNameOrPath} --registry=https://registry.npmjs.org/`)
           logger.info(`  - Increase timeout: nova-skill add ${skillNameOrPath} --timeout=300000`)
+        } else if (errorMessage.includes('EACCES') || errorMessage.includes('permission denied') || errorMessage.includes('Permission denied')) {
+          logger.error('Permission denied error detected')
+          logger.info('')
+          logger.info('This error occurs when npm tries to access system directories.')
+          logger.info('')
+          logger.info('🔧 Quick Fix (Recommended):')
+          logger.info('')
+          logger.info('1. Configure npm to use user directory:')
+          logger.info(`   mkdir -p ${npmConfigPrefix}`)
+          logger.info(`   npm config set prefix '${npmConfigPrefix}'`)
+          logger.info('')
+          logger.info('2. Add to your ~/.zshrc (or ~/.bash_profile):')
+          logger.info(`   export PATH="${npmConfigPrefix}/bin:$PATH"`)
+          logger.info('')
+          logger.info('3. Reload shell configuration:')
+          logger.info('   source ~/.zshrc')
+          logger.info('')
+          logger.info('📚 Alternative Solutions:')
+          logger.info('')
+          logger.info('Option A: Use NVM (Node Version Manager)')
+          logger.info('   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash')
+          logger.info('   nvm install --lts')
+          logger.info('')
+          logger.info('Option B: Fix system directory permissions (requires sudo)')
+          logger.info('   sudo chown -R $(whoami) /usr/local/lib/node_modules')
+          logger.info('')
+          logger.info('Option C: Use sudo (not recommended for security reasons)')
+          logger.info(`   sudo npm install -g @nova/skill --registry=${registry}`)
+          logger.info('')
+          logger.info('After fixing, try again:')
+          logger.info(`   nova-skill add ${skillNameOrPath}`)
+        } else if (errorMessage.includes('ENOTFOUND') || errorMessage.includes('ECONNREFUSED')) {
+          logger.error(`Network connection error: ${errorMessage}`)
+          logger.info('')
+          logger.info('Please check:')
+          logger.info('  - Your internet connection')
+          logger.info(`  - Registry accessibility: ${registry}`)
+          logger.info(`  - Try a different registry: nova-skill add ${skillNameOrPath} --registry=https://registry.npmjs.org/`)
         } else {
-          logger.error(`Failed to download: ${error.message}`)
-          if (error.message.includes('ENOTFOUND') || error.message.includes('ECONNREFUSED')) {
-            logger.info('')
-            logger.info('Network connection error. Please check:')
-            logger.info('  - Your internet connection')
-            logger.info(`  - Registry accessibility: ${registry}`)
-            logger.info(`  - Try a different registry: nova-skill add ${skillNameOrPath} --registry=https://registry.npmjs.org/`)
-          }
+          logger.error(`Failed to download: ${errorMessage}`)
+          logger.info('')
+          logger.info('If this is a permission error, see the solutions above.')
+          logger.info('For other errors, please check:')
+          logger.info('  - Package name is correct')
+          logger.info('  - Registry is accessible')
+          logger.info(`  - Try: nova-skill add ${skillNameOrPath} --registry=https://registry.npmjs.org/`)
         }
         process.exit(1)
       }

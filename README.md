@@ -173,6 +173,48 @@ pnpm publish --registry=http://npm.ppx520.com/
 
 ## Troubleshooting
 
+### Permission Denied Error (EACCES)
+
+If you encounter `EACCES: permission denied` when installing skills, this is because npm is trying to access system directories. Here are solutions:
+
+#### Solution 1: Configure npm to use user directory (Recommended)
+
+```bash
+# 1. Create npm global directory
+mkdir -p ~/.npm-global
+
+# 2. Configure npm
+npm config set prefix '~/.npm-global'
+
+# 3. Add to PATH (add to ~/.zshrc or ~/.bash_profile)
+export PATH=~/.npm-global/bin:$PATH
+
+# 4. Reload shell
+source ~/.zshrc  # or source ~/.bash_profile
+```
+
+#### Solution 2: Use NVM (Node Version Manager)
+
+```bash
+# Install NVM
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+
+# Reload shell
+source ~/.zshrc
+
+# Install Node.js (automatically handles npm paths)
+nvm install --lts
+nvm use --lts
+```
+
+#### Solution 3: Fix system directory permissions (Requires sudo)
+
+```bash
+sudo chown -R $(whoami) /usr/local/lib/node_modules
+```
+
+**Note:** System updates may reset these permissions.
+
 ### No agents detected
 
 If you see "No AI agents detected", ensure you have at least one of the supported agents installed:
