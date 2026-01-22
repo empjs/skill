@@ -1,0 +1,193 @@
+# @nova/skill
+
+Unified CLI tool for managing AI agent skills across Claude Code, Cursor, Windsurf, and more.
+
+## Features
+
+- ✅ **Unified Storage**: All skills stored in `~/.nova-agent/skills/`
+- ✅ **Multi-Agent Support**: Auto-detect and link to Claude Code, Cursor, Windsurf, Cline, Gemini, Copilot
+- ✅ **Symlink Distribution**: Skills symlinked to each AI agent's directory
+- ✅ **Dev Mode**: Local development with instant updates
+- ✅ **NPM Integration**: Install from company private NPM registry
+
+## Installation
+
+```bash
+# Install CLI globally
+pnpm add -g @nova/skill --registry=http://npm.ppx520.com/
+```
+
+## Usage
+
+### Install a Skill
+
+```bash
+# Install from NPM (auto-detect all agents)
+nova-skill install @nova/rn-skill
+
+# Install for specific agent
+nova-skill install @nova/rn-skill --agent claude
+nova-skill install @nova/rn-skill --agent cursor
+
+# Force reinstall
+nova-skill install @nova/rn-skill --force
+```
+
+### Dev Mode (Local Development)
+
+```bash
+# Link from local directory (for skill developers)
+cd packages/nova-rn-skill
+nova-skill install . --link
+
+# Changes to source files will reflect immediately!
+```
+
+### List Installed Skills
+
+```bash
+# Show all installed skills
+nova-skill list
+
+# Output example:
+# 📦 nova-rn (v1.0.0)
+#    → Linked to: Claude Code, Cursor, Windsurf
+```
+
+## Supported AI Agents
+
+The CLI automatically detects and links to:
+
+- **Claude Code** - `~/.claude/skills/`
+- **Cursor** - `~/.cursor/skills/`
+- **Windsurf** - `~/.windsurf/skills/`
+- **Cline** - `~/.cline/skills/`
+- **Gemini Code** - `~/.gemini/skills/`
+- **GitHub Copilot** - `~/.copilot/skills/`
+
+## Directory Structure
+
+```
+~/.nova-agent/
+├── skills/                  # Unified storage
+│   └── nova-rn/            # Skill content
+│       ├── SKILL.md
+│       └── references/
+├── config.json
+└── cache/
+
+# Symlinks to AI agents
+~/.claude/skills/nova-rn -> ~/.nova-agent/skills/nova-rn
+~/.cursor/skills/nova-rn -> ~/.nova-agent/skills/nova-rn
+~/.windsurf/skills/nova-rn -> ~/.nova-agent/skills/nova-rn
+```
+
+## Options
+
+### Install Options
+
+- `-a, --agent <name>` - Install for specific agent (claude, cursor, windsurf, all)
+- `-l, --link` - Dev mode: symlink from local directory
+- `-f, --force` - Force reinstall if already exists
+
+## Examples
+
+### Team Member (First Time)
+
+```bash
+# 1. Install CLI
+pnpm add -g @nova/skill --registry=http://npm.ppx520.com/
+
+# 2. Install skill
+nova-skill install @nova/rn-skill
+
+# ✅ Auto-detects and links to all installed AI agents
+```
+
+### Skill Developer
+
+```bash
+# 1. Navigate to skill package
+cd packages/nova-rn-skill
+
+# 2. Link for development
+nova-skill install . --link
+
+# 3. Edit files - changes reflect immediately!
+vim SKILL.md
+
+# 4. Verify
+nova-skill list
+```
+
+### Install for Specific Agent Only
+
+```bash
+# Only install to Cursor
+nova-skill install @nova/rn-skill --agent cursor
+```
+
+## Development
+
+```bash
+# Clone repo
+git clone git@gitlab.your-company.com:nova/nova-react-native.git
+cd nova-react-native/packages/nova-skill
+
+# Install dependencies
+pnpm install
+
+# Build
+pnpm build
+
+# Test locally
+node bin/nova-skill.mjs list
+```
+
+## Publishing
+
+```bash
+# Build
+pnpm build
+
+# Publish to private NPM
+pnpm publish --registry=http://npm.ppx520.com/
+```
+
+## Troubleshooting
+
+### No agents detected
+
+If you see "No AI agents detected", ensure you have at least one of the supported agents installed:
+
+```bash
+# Check if directories exist
+ls ~/.claude/skills   # Claude Code
+ls ~/.cursor/skills   # Cursor
+ls ~/.windsurf/skills # Windsurf
+```
+
+### Permission denied
+
+If you get permission errors when creating symlinks:
+
+```bash
+# On macOS, grant Full Disk Access to Terminal
+# System Preferences → Security & Privacy → Privacy → Full Disk Access
+```
+
+### Skill not updating
+
+If using dev mode (`--link`) and changes aren't reflecting:
+
+```bash
+# Verify symlink
+ls -la ~/.nova-agent/skills/
+ls -la ~/.claude/skills/
+
+# Should show symlink arrows (->)
+```
+
+## License
+
+Internal use only - Nova Team
