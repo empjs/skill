@@ -94,6 +94,10 @@ body {
   display: inline-block;
 }
 
+h2.gradient-text {
+  height: 60px;
+}
+
 .gradient-text span.inline-block {
   height: 110px;
 }
