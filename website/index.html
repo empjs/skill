@@ -80,6 +80,9 @@
                     <button onclick="switchInstallMethod('yarn')" id="tab-yarn" class="px-4 py-2 rounded-md text-sm font-medium transition-all install-tab">
                         yarn
                     </button>
+                    <button onclick="switchInstallMethod('bun')" id="tab-bun" class="px-4 py-2 rounded-md text-sm font-medium transition-all install-tab">
+                        bun
+                    </button>
                 </div>
                 
                 <!-- Install Command Display -->
@@ -461,6 +464,13 @@
                             <div class="mb-4 pl-4 border-l-2 border-yellow-500/30">
                                 <div class="mb-1">
                                     <span class="text-purple-400">yarn</span> global add @nova/skill --registry=http://npm.ppx520.com/
+                                </div>
+                            </div>
+                            
+                            <div class="flex gap-2 mb-2 text-slate-500 select-none mt-4"># 使用 bun</div>
+                            <div class="mb-4 pl-4 border-l-2 border-pink-500/30">
+                                <div class="mb-1">
+                                    <span class="text-purple-400">bun</span> install -g @nova/skill --registry=http://npm.ppx520.com/
                                 </div>
                             </div>
                             

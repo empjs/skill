@@ -23,6 +23,9 @@ npm install -g @nova/skill --registry=http://npm.ppx520.com/
 
 # Using yarn
 yarn global add @nova/skill --registry=http://npm.ppx520.com/
+
+# Using bun
+bun install -g @nova/skill --registry=http://npm.ppx520.com/
 ```
 
 ## Usage
@@ -109,6 +112,8 @@ pnpm add -g @nova/skill --registry=http://npm.ppx520.com/
 npm install -g @nova/skill --registry=http://npm.ppx520.com/
 # or
 yarn global add @nova/skill --registry=http://npm.ppx520.com/
+# or
+bun install -g @nova/skill --registry=http://npm.ppx520.com/
 
 # 2. Install skill
 nova-skill install @nova/rn-skill

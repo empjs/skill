@@ -12,7 +12,8 @@ if (typeof __APP_VERSION__ !== 'undefined') {
 const installCommands = {
   pnpm: 'pnpm add -g @nova/skill --registry=http://npm.ppx520.com/',
   npm: 'npm install -g @nova/skill --registry=http://npm.ppx520.com/',
-  yarn: 'yarn global add @nova/skill --registry=http://npm.ppx520.com/'
+  yarn: 'yarn global add @nova/skill --registry=http://npm.ppx520.com/',
+  bun: 'bun install -g @nova/skill --registry=http://npm.ppx520.com/'
 }
 
 // Switch install method
