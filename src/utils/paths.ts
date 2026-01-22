@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import {SHARED_SKILLS_DIR, AGENTS, type AgentConfig} from '../config/agents.js'
+import {SHARED_SKILLS_DIR, AGENTS, type AgentConfig, getAgentSkillsDirs} from '../config/agents.js'
 
 /**
  * Get skill path in shared directory
@@ -10,14 +10,26 @@ export function getSharedSkillPath(skillName: string): string {
 }
 
 /**
- * Get skill path in specific AI agent directory
+ * Get skill paths in specific AI agent directories (all directories)
  */
-export function getAgentSkillPath(agentName: string, skillName: string): string {
+export function getAgentSkillPaths(agentName: string, skillName: string, cwd?: string): string[] {
   const agent = AGENTS.find((a) => a.name === agentName)
   if (!agent) {
     throw new Error(`Unknown agent: ${agentName}`)
   }
-  return path.join(agent.skillsDir, skillName)
+  const skillsDirs = getAgentSkillsDirs(agent, cwd)
+  return skillsDirs.map((dir) => path.join(dir, skillName))
+}
+
+/**
+ * Get skill path in specific AI agent directory (first directory, backward compatibility)
+ */
+export function getAgentSkillPath(agentName: string, skillName: string, cwd?: string): string {
+  const paths = getAgentSkillPaths(agentName, skillName, cwd)
+  if (paths.length === 0) {
+    throw new Error(`No skills directories configured for agent: ${agentName}`)
+  }
+  return paths[0]
 }
 
 /**
@@ -32,10 +44,14 @@ export function ensureSharedDir(): void {
 /**
  * Detect installed AI agents
  */
-export function detectInstalledAgents(): AgentConfig[] {
+export function detectInstalledAgents(cwd?: string): AgentConfig[] {
   return AGENTS.filter((agent) => {
     try {
-      return fs.existsSync(agent.skillsDir) || fs.existsSync(path.dirname(agent.skillsDir))
+      const skillsDirs = getAgentSkillsDirs(agent, cwd)
+      // Check if any directory exists or its parent exists
+      return skillsDirs.some((dir) => {
+        return fs.existsSync(dir) || fs.existsSync(path.dirname(dir))
+      })
     } catch {
       return false
     }

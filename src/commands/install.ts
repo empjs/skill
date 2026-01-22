@@ -10,6 +10,7 @@ import {
   getSharedSkillPath,
 } from '../utils/paths.js'
 import {createSymlink} from '../utils/symlink.js'
+import {getRegistry} from '../utils/registry.js'
 
 const execAsync = promisify(exec)
 
@@ -62,11 +63,8 @@ export async function install(
     const tempDir = path.join('/tmp', `nova-skill-${Date.now()}`)
 
     try {
-      // Determine registry (priority: CLI option > env var > default)
-      const registry =
-        options.registry ||
-        process.env.NOVA_SKILL_REGISTRY ||
-        'http://npm.ppx520.com/'
+      // Determine registry (priority: CLI option > project .npmrc > global npm config > default)
+      const registry = options.registry || (await getRegistry())
 
       logger.start('Downloading from NPM...')
       logger.info(`Registry: ${registry}`)
@@ -119,7 +117,8 @@ export async function install(
   logger.info(`📍 Location: ${targetPath}`)
 
   // Detect installed AI agents
-  const installedAgents = detectInstalledAgents()
+  const cwd = process.cwd()
+  const installedAgents = detectInstalledAgents(cwd)
 
   if (installedAgents.length === 0) {
     logger.warn('No AI agents detected')
@@ -149,7 +148,7 @@ export async function install(
   logger.info('\nCreating symlinks...')
   let successCount = 0
   for (const agent of targetAgents) {
-    if (createSymlink(skillName, agent)) {
+    if (createSymlink(skillName, agent, cwd)) {
       successCount++
     }
   }

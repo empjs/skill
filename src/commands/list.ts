@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import chalk from 'chalk'
 import {logger} from '../utils/logger.js'
-import {SHARED_SKILLS_DIR, AGENTS} from '../config/agents.js'
+import {SHARED_SKILLS_DIR, AGENTS, getAgentSkillsDirs} from '../config/agents.js'
 import {isSymlink, readSymlink} from '../utils/symlink.js'
 
 /**
@@ -54,14 +54,20 @@ export function list(): void {
       console.log(chalk.green('📦') + ` ${chalk.bold(skill)} ${chalk.gray(`(v${version})`)}${devTag}`)
 
       // Check which agents are linked
+      const cwd = process.cwd()
       const linkedAgents: string[] = []
       for (const agent of AGENTS) {
-        const agentSkillPath = path.join(agent.skillsDir, skill)
-        if (fs.existsSync(agentSkillPath) && isSymlink(agentSkillPath)) {
-          const target = readSymlink(agentSkillPath)
-          if (target === skillPath) {
-            linkedAgents.push(agent.displayName)
+        const skillsDirs = getAgentSkillsDirs(agent, cwd)
+        const hasSymlink = skillsDirs.some((dir) => {
+          const agentSkillPath = path.join(dir, skill)
+          if (fs.existsSync(agentSkillPath) && isSymlink(agentSkillPath)) {
+            const target = readSymlink(agentSkillPath)
+            return target === skillPath
           }
+          return false
+        })
+        if (hasSymlink) {
+          linkedAgents.push(agent.displayName)
         }
       }
 
