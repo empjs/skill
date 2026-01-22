@@ -16,7 +16,6 @@
     "postcss": "^8.5.6",
     "tailwindcss": "3.4.17",
     "vite": "npm:rolldown-vite@7.2.5",
-    "@bigo/web-test-publish": "1.0.1-beta.4",
     "wrangler": "^3.0.0"
   },
   "overrides": {
