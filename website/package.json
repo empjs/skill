@@ -1,18 +1,20 @@
 {
-  "name": "website",
+  "name": "nova-skill",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "upload": "web-test-publish -d ./dist"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.23",
     "postcss": "^8.5.6",
     "tailwindcss": "3.4.17",
-    "vite": "npm:rolldown-vite@7.2.5"
+    "vite": "npm:rolldown-vite@7.2.5",
+    "@bigo/web-test-publish": "1.0.1-beta.4"
   },
   "overrides": {
     "vite": "npm:rolldown-vite@7.2.5"
