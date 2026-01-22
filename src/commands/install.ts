@@ -15,11 +15,48 @@ import {parseGitUrl, isGitUrl} from '../utils/git.js'
 
 const execAsync = promisify(exec)
 
+/**
+ * Execute command with timeout
+ */
+async function execWithTimeout(
+  command: string,
+  timeout: number = 120000, // 2 minutes default
+): Promise<{stdout: string; stderr: string}> {
+  let timeoutId: NodeJS.Timeout | null = null
+  
+  const timeoutPromise = new Promise<{stdout: string; stderr: string}>((_, reject) => {
+    timeoutId = setTimeout(() => {
+      reject(new Error(`Command timeout after ${timeout / 1000}s`))
+    }, timeout)
+  })
+
+  try {
+    const result = await Promise.race([
+      execAsync(command),
+      timeoutPromise,
+    ])
+    
+    // Clear timeout if command completed successfully
+    if (timeoutId) {
+      clearTimeout(timeoutId)
+    }
+    
+    return result
+  } catch (error: any) {
+    // Clear timeout on error
+    if (timeoutId) {
+      clearTimeout(timeoutId)
+    }
+    throw error
+  }
+}
+
 export interface InstallOptions {
   agent?: string // specific agent or 'all'
   link?: boolean // dev mode (symlink from local directory)
   force?: boolean // force reinstall
   registry?: string // npm registry URL
+  timeout?: number // timeout in milliseconds (default: 180000 for npm, 120000 for git)
 }
 
 /**
@@ -37,32 +74,14 @@ export async function install(
   let skillPath: string
   let skillName: string
 
-  if (options.link || fs.existsSync(skillNameOrPath)) {
-    // Dev mode: link from local directory
-    skillPath = path.resolve(skillNameOrPath)
-
-    if (!fs.existsSync(skillPath)) {
-      logger.error(`Path not found: ${skillPath}`)
-      process.exit(1)
-    }
-
-    // Get skill name from package.json or directory name
-    const pkgPath = path.join(skillPath, 'package.json')
-    if (fs.existsSync(pkgPath)) {
-      try {
-        const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'))
-        skillName = extractSkillName(pkg.name)
-      } catch {
-        skillName = extractSkillName(path.basename(skillPath))
-      }
-    } else {
-      skillName = extractSkillName(path.basename(skillPath))
-    }
-  } else if (isGitUrl(skillNameOrPath)) {
+  // Check Git URL first (before checking local path)
+  // This prevents URLs from being mistaken as local paths
+  if (isGitUrl(skillNameOrPath)) {
     // Git URL install mode
     const gitInfo = parseGitUrl(skillNameOrPath)
     if (!gitInfo) {
       logger.error(`Invalid git URL: ${skillNameOrPath}`)
+      logger.info('Please ensure the URL is a valid GitHub or GitLab repository URL')
       process.exit(1)
     }
 
@@ -73,14 +92,16 @@ export async function install(
     const cloneDir = path.join(tempDir, 'repo')
 
     try {
-      logger.start('Cloning from Git...')
-      logger.info(`Repository: ${gitInfo.gitUrl}`)
+      const timeout = options.timeout || 120000 // Default 2 minutes for Git
+      const spinner = logger.start(`Cloning ${gitInfo.gitUrl}...`)
+      logger.infoWithoutStop(`Repository: ${gitInfo.gitUrl}`)
       if (gitInfo.branch) {
-        logger.info(`Branch: ${gitInfo.branch}`)
+        logger.infoWithoutStop(`Branch: ${gitInfo.branch}`)
       }
       if (gitInfo.path) {
-        logger.info(`Path: ${gitInfo.path}`)
+        logger.infoWithoutStop(`Path: ${gitInfo.path}`)
       }
+      logger.infoWithoutStop(`Timeout: ${timeout / 1000}s`)
       fs.mkdirSync(tempDir, {recursive: true})
 
       // Clone the repository
@@ -89,9 +110,23 @@ export async function install(
         ? `git clone ${branchFlag} ${gitInfo.gitUrl} ${cloneDir} --depth 1 --quiet`
         : `git clone ${gitInfo.gitUrl} ${cloneDir} --depth 1 --quiet`
       
-      await execAsync(cloneCommand)
-
-      logger.stopSpinner()
+      try {
+        await execWithTimeout(cloneCommand, timeout)
+        spinner.succeed(`Repository cloned successfully`)
+      } catch (error: any) {
+        spinner.fail('Clone failed')
+        if (error.message.includes('timeout')) {
+          logger.error(`Clone timeout after ${timeout / 1000} seconds`)
+          logger.info('')
+          logger.info('Possible reasons:')
+          logger.info('  - Slow network connection')
+          logger.info('  - Large repository size')
+          logger.info('  - Git server issues')
+          logger.info('')
+          logger.info(`Try again or increase timeout: nova-skill add ${skillNameOrPath} --timeout=300000`)
+        }
+        throw error
+      }
 
       // Determine the skill path
       if (gitInfo.path) {
@@ -114,13 +149,41 @@ export async function install(
         logger.info('The directory may not be a valid skill package')
       }
     } catch (error: any) {
-      logger.stopSpinner()
       logger.error(`Failed to clone repository: ${error.message}`)
+      if (error.message.includes('timeout')) {
+        logger.error(`Clone timeout after 2 minutes`)
+        logger.info('This might be due to:')
+        logger.info('  - Slow network connection')
+        logger.info('  - Large repository size')
+        logger.info('  - Git server issues')
+        logger.info(`\nTry again or check your network connection`)
+      }
       logger.info(`\nTried to clone: ${gitInfo.gitUrl}`)
       if (gitInfo.branch) {
         logger.info(`Branch: ${gitInfo.branch}`)
       }
       process.exit(1)
+    }
+  } else if (options.link || fs.existsSync(skillNameOrPath)) {
+    // Dev mode: link from local directory
+    skillPath = path.resolve(skillNameOrPath)
+
+    if (!fs.existsSync(skillPath)) {
+      logger.error(`Path not found: ${skillPath}`)
+      process.exit(1)
+    }
+
+    // Get skill name from package.json or directory name
+    const pkgPath = path.join(skillPath, 'package.json')
+    if (fs.existsSync(pkgPath)) {
+      try {
+        const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'))
+        skillName = extractSkillName(pkg.name)
+      } catch {
+        skillName = extractSkillName(path.basename(skillPath))
+      }
+    } else {
+      skillName = extractSkillName(path.basename(skillPath))
     }
   } else {
     // NPM install mode
@@ -130,16 +193,49 @@ export async function install(
     try {
       // Determine registry (priority: CLI option > project .npmrc > global npm config > default)
       const registry = options.registry || (await getRegistry())
+      const timeout = options.timeout || 180000 // Default 3 minutes for NPM
 
-      logger.start('Downloading from NPM...')
-      logger.info(`Registry: ${registry}`)
+      const spinner = logger.start(`Installing ${skillNameOrPath}...`)
+      logger.infoWithoutStop(`Registry: ${registry}`)
+      logger.infoWithoutStop(`Timeout: ${timeout / 1000}s`)
       fs.mkdirSync(tempDir, {recursive: true})
 
-      await execAsync(
-        `npm install ${skillNameOrPath} --prefix ${tempDir} --registry=${registry} --no-save --silent`,
-      )
+      // Update spinner with more details
+      logger.updateSpinner(`Downloading ${skillNameOrPath} from ${registry}...`)
 
-      logger.stopSpinner()
+      const installCommand = `npm install ${skillNameOrPath} --prefix ${tempDir} --registry=${registry} --no-save --silent`
+      
+      try {
+        await execWithTimeout(installCommand, timeout)
+        spinner.succeed(`Package ${skillNameOrPath} downloaded successfully`)
+      } catch (error: any) {
+        spinner.fail('Download failed')
+        if (error.message.includes('timeout')) {
+          logger.error(`Download timeout after ${timeout / 1000} seconds`)
+          logger.info('')
+          logger.info('Possible reasons:')
+          logger.info('  - Slow network connection')
+          logger.info('  - Registry server issues or unresponsive')
+          logger.info('  - Large package size')
+          logger.info('  - Network firewall blocking the connection')
+          logger.info('')
+          logger.info('Suggestions:')
+          logger.info(`  - Try again: nova-skill add ${skillNameOrPath}`)
+          logger.info(`  - Use a different registry: nova-skill add ${skillNameOrPath} --registry=https://registry.npmjs.org/`)
+          logger.info(`  - Increase timeout: nova-skill add ${skillNameOrPath} --timeout=300000`)
+        } else {
+          logger.error(`Failed to download: ${error.message}`)
+          if (error.message.includes('ENOTFOUND') || error.message.includes('ECONNREFUSED')) {
+            logger.info('')
+            logger.info('Network connection error. Please check:')
+            logger.info('  - Your internet connection')
+            logger.info(`  - Registry accessibility: ${registry}`)
+            logger.info(`  - Try a different registry: nova-skill add ${skillNameOrPath} --registry=https://registry.npmjs.org/`)
+          }
+        }
+        process.exit(1)
+      }
+      
       skillPath = path.join(tempDir, 'node_modules', skillNameOrPath)
 
       if (!fs.existsSync(skillPath)) {
@@ -147,7 +243,6 @@ export async function install(
         process.exit(1)
       }
     } catch (error: any) {
-      logger.stopSpinner()
       logger.error(`Failed to download: ${error.message}`)
       process.exit(1)
     }

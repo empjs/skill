@@ -13,8 +13,16 @@ Unified CLI tool for managing AI agent skills across Claude Code, Cursor, Windsu
 ## Installation
 
 ```bash
-# Install CLI globally
+# Install CLI globally (choose your package manager)
+
+# Using pnpm (recommended)
 pnpm add -g @nova/skill --registry=http://npm.ppx520.com/
+
+# Using npm
+npm install -g @nova/skill --registry=http://npm.ppx520.com/
+
+# Using yarn
+yarn global add @nova/skill --registry=http://npm.ppx520.com/
 ```
 
 ## Usage
@@ -95,8 +103,12 @@ The CLI automatically detects and links to:
 ### Team Member (First Time)
 
 ```bash
-# 1. Install CLI
+# 1. Install CLI (choose your package manager)
 pnpm add -g @nova/skill --registry=http://npm.ppx520.com/
+# or
+npm install -g @nova/skill --registry=http://npm.ppx520.com/
+# or
+yarn global add @nova/skill --registry=http://npm.ppx520.com/
 
 # 2. Install skill
 nova-skill install @nova/rn-skill

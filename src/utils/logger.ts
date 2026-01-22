@@ -36,6 +36,30 @@ class Logger {
       this.spinner = null
     }
   }
+
+  /**
+   * Update spinner text without stopping it
+   */
+  updateSpinner(message: string): void {
+    if (this.spinner) {
+      this.spinner.text = message
+    }
+  }
+
+  /**
+   * Log info without stopping spinner (for background info)
+   */
+  infoWithoutStop(message: string): void {
+    if (this.spinner) {
+      // Temporarily stop to show info, then restart
+      const currentText = this.spinner.text
+      this.spinner.stop()
+      console.log(chalk.blue('ℹ'), message)
+      this.spinner.start(currentText)
+    } else {
+      console.log(chalk.blue('ℹ'), message)
+    }
+  }
 }
 
 export const logger = new Logger()

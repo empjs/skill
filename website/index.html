@@ -67,17 +67,31 @@
                 编写一次，分发到所有 Agent。
             </p>
 
-            <div class="flex flex-col md:flex-row items-center justify-center gap-4 animate-slide-up"
+            <div class="flex flex-col items-center justify-center gap-4 animate-slide-up"
                 style="animation-delay: 200ms;">
+                <!-- Package Manager Tabs -->
+                <div class="flex items-center gap-2 mb-2 bg-slate-800/50 rounded-lg p-1 border border-white/10">
+                    <button onclick="switchInstallMethod('pnpm')" id="tab-pnpm" class="px-4 py-2 rounded-md text-sm font-medium transition-all install-tab active">
+                        pnpm
+                    </button>
+                    <button onclick="switchInstallMethod('npm')" id="tab-npm" class="px-4 py-2 rounded-md text-sm font-medium transition-all install-tab">
+                        npm
+                    </button>
+                    <button onclick="switchInstallMethod('yarn')" id="tab-yarn" class="px-4 py-2 rounded-md text-sm font-medium transition-all install-tab">
+                        yarn
+                    </button>
+                </div>
+                
+                <!-- Install Command Display -->
                 <div class="group relative w-full md:w-auto">
                     <div
                         class="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200">
                     </div>
                     <div class="relative flex items-center justify-between bg-slate-900 rounded-lg leading-none p-1">
-                        <span class="pl-4 pr-8 py-3 font-mono text-slate-300 text-sm md:text-base">$ pnpm add -g
+                        <span id="install-command" class="pl-4 pr-8 py-3 font-mono text-slate-300 text-sm md:text-base">$ pnpm add -g
                             @nova/skill --registry=http://npm.ppx520.com/</span>
                         <button class="p-3 text-slate-500 hover:text-white transition-colors rounded hover:bg-white/10 copy-btn"
-                            onclick="copyCommand(this, 'pnpm add -g @nova/skill --registry=http://npm.ppx520.com/')"
+                            onclick="copyInstallCommand()"
                             title="复制命令">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -412,6 +426,51 @@
 
             <div class="space-y-8">
 
+                <!-- Step 0: Install CLI -->
+                <div class="bg-black/30 rounded-2xl border border-white/10 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-white/5 bg-white/5 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-3 h-3 rounded-full bg-red-400"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-400"></div>
+                        </div>
+                        <span class="text-xs font-mono text-slate-500">Terminal</span>
+                    </div>
+                    <div class="p-6 font-mono text-sm">
+                        <h3 class="text-blue-400 mb-4 font-bold flex items-center gap-2">
+                            <span
+                                class="w-6 h-6 rounded bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs">0</span>
+                            安装 CLI 工具
+                        </h3>
+                        <div class="text-slate-300 pl-8">
+                            <div class="flex gap-2 mb-2 text-slate-500 select-none"># 使用 pnpm（推荐）</div>
+                            <div class="mb-4 pl-4 border-l-2 border-blue-500/30">
+                                <div class="mb-1">
+                                    <span class="text-purple-400">pnpm</span> add -g @nova/skill --registry=http://npm.ppx520.com/
+                                </div>
+                            </div>
+                            
+                            <div class="flex gap-2 mb-2 text-slate-500 select-none mt-4"># 使用 npm</div>
+                            <div class="mb-4 pl-4 border-l-2 border-green-500/30">
+                                <div class="mb-1">
+                                    <span class="text-purple-400">npm</span> install -g @nova/skill --registry=http://npm.ppx520.com/
+                                </div>
+                            </div>
+                            
+                            <div class="flex gap-2 mb-2 text-slate-500 select-none mt-4"># 使用 yarn</div>
+                            <div class="mb-4 pl-4 border-l-2 border-yellow-500/30">
+                                <div class="mb-1">
+                                    <span class="text-purple-400">yarn</span> global add @nova/skill --registry=http://npm.ppx520.com/
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4 text-xs text-slate-500">
+                                * 安装完成后，使用 <span class="text-purple-400">nova-skill</span> 命令管理技能
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Step 1 -->
                 <div class="bg-black/30 rounded-2xl border border-white/10 overflow-hidden">
                     <div class="px-6 py-4 border-b border-white/5 bg-white/5 flex items-center justify-between">
@@ -507,9 +566,9 @@
                         <span class="text-xs font-mono text-slate-500">Terminal</span>
                     </div>
                     <div class="p-6 font-mono text-sm">
-                        <h3 class="text-orange-400 mb-4 font-bold flex items-center gap-2">
+                        <h3 class="text-purple-400 mb-4 font-bold flex items-center gap-2">
                             <span
-                                class="w-6 h-6 rounded bg-orange-500/20 text-orange-400 flex items-center justify-center text-xs">3</span>
+                                class="w-6 h-6 rounded bg-purple-500/20 text-purple-400 flex items-center justify-center text-xs">3</span>
                             查看已安装技能
                         </h3>
                         <div class="text-slate-300 pl-8">

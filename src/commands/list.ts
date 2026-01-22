@@ -35,23 +35,70 @@ export function list(): void {
         continue
       }
 
-      // Read version from package.json
+      // Read version from package.json or SKILL.md
       let version = 'unknown'
+      
+      // Try package.json first
       const pkgPath = path.join(skillPath, 'package.json')
       if (fs.existsSync(pkgPath)) {
         try {
-          const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'))
-          version = pkg.version || 'unknown'
-        } catch {
-          // Ignore parse errors
+          const pkgContent = fs.readFileSync(pkgPath, 'utf-8')
+          const pkg = JSON.parse(pkgContent)
+          if (pkg.version && typeof pkg.version === 'string') {
+            version = pkg.version
+          }
+        } catch (error) {
+          // JSON parse error, try SKILL.md
+        }
+      }
+      
+      // If no version found, try reading from SKILL.md frontmatter
+      if (version === 'unknown') {
+        const skillMdPath = path.join(skillPath, 'SKILL.md')
+        if (fs.existsSync(skillMdPath)) {
+          try {
+            const skillMdContent = fs.readFileSync(skillMdPath, 'utf-8')
+            // Look for version in YAML frontmatter
+            const frontmatterMatch = skillMdContent.match(/^---\s*\n([\s\S]*?)\n---/)
+            if (frontmatterMatch) {
+              const frontmatter = frontmatterMatch[1]
+              const versionMatch = frontmatter.match(/^version:\s*(.+)$/m)
+              if (versionMatch) {
+                version = versionMatch[1].trim().replace(/^["']|["']$/g, '')
+              }
+            }
+          } catch (error) {
+            // Ignore errors
+          }
+        }
+      }
+      
+      // If still unknown and it's a symlink, try reading from the target
+      if (version === 'unknown' && isSymlink(skillPath)) {
+        try {
+          const targetPath = readSymlink(skillPath)
+          if (targetPath) {
+            const targetPkgPath = path.join(targetPath, 'package.json')
+            if (fs.existsSync(targetPkgPath)) {
+              const pkg = JSON.parse(fs.readFileSync(targetPkgPath, 'utf-8'))
+              if (pkg.version && typeof pkg.version === 'string') {
+                version = pkg.version
+              }
+            }
+          }
+        } catch (error) {
+          // Ignore errors
         }
       }
 
       // Check if dev mode (symlink in shared dir)
       const isDev = isSymlink(skillPath)
       const devTag = isDev ? chalk.yellow(' (dev)') : ''
+      
+      // Format version display
+      const versionDisplay = version !== 'unknown' ? chalk.gray(`(v${version})`) : ''
 
-      console.log(chalk.green('📦') + ` ${chalk.bold(skill)} ${chalk.gray(`(v${version})`)}${devTag}`)
+      console.log(chalk.green('📦') + ` ${chalk.bold(skill)}${versionDisplay ? ' ' + versionDisplay : ''}${devTag}`)
 
       // Check which agents are linked
       const cwd = process.cwd()

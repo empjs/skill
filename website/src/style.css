@@ -42,3 +42,18 @@ body {
 ::-webkit-scrollbar-thumb:hover {
     background: #475569;
 }
+
+/* Install method tabs */
+.install-tab {
+    color: rgb(148, 163, 184);
+    transition: all 0.2s;
+}
+
+.install-tab:hover {
+    color: white;
+}
+
+.install-tab.active {
+    background-color: rgba(59, 130, 246, 0.2);
+    color: rgb(96, 165, 250);
+}

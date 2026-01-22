@@ -31,6 +31,7 @@ program
   .option('-l, --link', 'Dev mode: symlink from local directory')
   .option('-f, --force', 'Force reinstall if already exists')
   .option('-r, --registry <url>', 'NPM registry URL (overrides .npmrc and global config)')
+  .option('-t, --timeout <ms>', 'Timeout in milliseconds (default: 180000 for npm, 120000 for git)', (value) => parseInt(value, 10))
   .action(async (skill, options) => {
     try {
       await install(skill, options)
