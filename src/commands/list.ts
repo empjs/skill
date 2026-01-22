@@ -11,7 +11,7 @@ import {isSymlink, readSymlink} from '../utils/symlink.js'
 export function list(): void {
   if (!fs.existsSync(SHARED_SKILLS_DIR)) {
     logger.info('No skills installed')
-    logger.info(`\nTo install a skill, run: ${chalk.cyan('nova-skill install @nova/rn-skill')}`)
+    logger.info(`\nTo install a skill, run: ${chalk.cyan('eskill install <skill-name>')}`)
     return
   }
 
@@ -19,7 +19,7 @@ export function list(): void {
 
   if (skills.length === 0) {
     logger.info('No skills installed')
-    logger.info(`\nTo install a skill, run: ${chalk.cyan('nova-skill install @nova/rn-skill')}`)
+    logger.info(`\nTo install a skill, run: ${chalk.cyan('eskill install <skill-name>')}`)
     return
   }
 

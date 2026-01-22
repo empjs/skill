@@ -16,25 +16,6 @@ describe("Environment & Registry Checks", () => {
     }
   });
 
-  it("Private Registry (npm.ppx520.com) should be reachable", async () => {
-    try {
-      // Using a short timeout because if it hangs, it's likely unreachable
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 2000);
-      
-      const response = await fetch("http://npm.ppx520.com/", { 
-        method: "HEAD",
-        signal: controller.signal
-      });
-      
-      clearTimeout(timeoutId);
-      expect(response.status).toBe(200);
-      console.log("✅ Private Registry is accessible");
-    } catch (e) {
-      console.warn("⚠️ Private Registry unreachable (VPN required?)");
-      console.warn("   Functionality for @nova/rn-skill might be limited without VPN.");
-    }
-  });
 
   it("NPM should be installed", async () => {
     try {

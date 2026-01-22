@@ -134,14 +134,14 @@ export const AGENTS: AgentConfig[] = [
 /**
  * Shared skills directory for all AI agents
  */
-export const SHARED_SKILLS_DIR = path.join(HOME, '.nova-agent', 'skills')
+export const SHARED_SKILLS_DIR = path.join(HOME, '.emp-agent', 'skills')
 
 /**
- * Nova agent config file
+ * EMP agent config file
  */
-export const CONFIG_FILE = path.join(HOME, '.nova-agent', 'config.json')
+export const CONFIG_FILE = path.join(HOME, '.emp-agent', 'config.json')
 
 /**
  * Cache directory
  */
-export const CACHE_DIR = path.join(HOME, '.nova-agent', 'cache')
+export const CACHE_DIR = path.join(HOME, '.emp-agent', 'cache')

@@ -12,9 +12,18 @@ export default {
         background: '#0F172A',
         surface: '#1E293B',
         text: '#F1F5F9',
+        // CLI colors matching chalk/vscode theme
+        'cli-green': '#4EC9B0',
+        'cli-blue': '#569CD6',
+        'cli-yellow': '#DCDCAA',
+        'cli-red': '#F48771',
+        'cli-gray': '#858585',
+        'cli-white': '#E5E5E5',
+        'cli-cyan': '#4EC9B0',
+        'cli-purple': '#C586C0',
       },
       fontFamily: {
-        sans: ['"IBM Plex Sans"', 'sans-serif'],
+        sans: ['"JetBrains Mono"', 'monospace'],
         mono: ['"JetBrains Mono"', 'monospace'],
       },
       animation: {

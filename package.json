@@ -1,10 +1,10 @@
 {
-  "name": "@nova/skill",
+  "name": "@empjs/skill",
   "version": "1.0.5",
   "description": "Unified CLI tool for managing AI agent skills across Claude Code, Cursor, Windsurf, and more",
   "type": "module",
   "bin": {
-    "nova-skill": "./bin/nova-skill.mjs"
+    "eskill": "./bin/eskill.mjs"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -18,7 +18,7 @@
     "test": "bun test tests",
     "test:git": "bun test tests/git.test.ts",
     "test:registry": "bun test tests/registry.test.ts",
-    "nova-skill": "node dist/index.js"
+    "eskill": "node dist/index.js"
   },
   "keywords": [
     "claude-code",
@@ -28,11 +28,10 @@
     "ai-agent",
     "skill",
     "cli",
-    "nova"
+    "emp"
   ],
   "publishConfig": {
-    "registry": "http://npm.ppx520.com/",
-    "access": "restricted"
+    "access": "public"
   },
   "dependencies": {
     "commander": "^12.0.0",
@@ -46,9 +45,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@gitlab.your-company.com:nova/nova-react-native.git",
-    "directory": "packages/nova-skill"
+    "url": "git@github.com:emp/skill.git"
   },
-  "author": "Nova Team",
-  "license": "UNLICENSED"
+  "author": "EMP Team",
+  "license": "MIT"
 }

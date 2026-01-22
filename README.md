@@ -1,14 +1,14 @@
-# @nova/skill
+# @empjs/skill
 
 Unified CLI tool for managing AI agent skills across Claude Code, Cursor, Windsurf, and more.
 
 ## Features
 
-- ✅ **Unified Storage**: All skills stored in `~/.nova-agent/skills/`
+- ✅ **Unified Storage**: All skills stored in `~/.emp-agent/skills/`
 - ✅ **Multi-Agent Support**: Auto-detect and link to Claude Code, Cursor, Windsurf, Cline, Gemini, Copilot
 - ✅ **Symlink Distribution**: Skills symlinked to each AI agent's directory
 - ✅ **Dev Mode**: Local development with instant updates
-- ✅ **NPM Integration**: Install from company private NPM registry
+- ✅ **NPM Integration**: Install from public NPM registry or Git URL
 
 ## Installation
 
@@ -16,16 +16,16 @@ Unified CLI tool for managing AI agent skills across Claude Code, Cursor, Windsu
 # Install CLI globally (choose your package manager)
 
 # Using pnpm (recommended)
-pnpm add -g @nova/skill --registry=http://npm.ppx520.com/
+pnpm add -g @empjs/skill
 
 # Using npm
-npm install -g @nova/skill --registry=http://npm.ppx520.com/
+npm install -g @empjs/skill
 
 # Using yarn
-yarn global add @nova/skill --registry=http://npm.ppx520.com/
+yarn global add @empjs/skill
 
 # Using bun
-bun install -g @nova/skill --registry=http://npm.ppx520.com/
+bun install -g @empjs/skill
 ```
 
 ## Usage
@@ -34,22 +34,25 @@ bun install -g @nova/skill --registry=http://npm.ppx520.com/
 
 ```bash
 # Install from NPM (auto-detect all agents)
-nova-skill install @nova/rn-skill
+eskill install <skill-name>
+
+# Install from Git URL
+eskill install https://github.com/owner/repo/tree/main/path
 
 # Install for specific agent
-nova-skill install @nova/rn-skill --agent claude
-nova-skill install @nova/rn-skill --agent cursor
+eskill install <skill-name> --agent claude
+eskill install <skill-name> --agent cursor
 
 # Force reinstall
-nova-skill install @nova/rn-skill --force
+eskill install <skill-name> --force
 ```
 
 ### Dev Mode (Local Development)
 
 ```bash
 # Link from local directory (for skill developers)
-cd packages/nova-rn-skill
-nova-skill install . --link
+cd path/to/your-skill
+eskill install . --link
 
 # Changes to source files will reflect immediately!
 ```
@@ -58,10 +61,10 @@ nova-skill install . --link
 
 ```bash
 # Show all installed skills
-nova-skill list
+eskill list
 
 # Output example:
-# 📦 nova-rn (v1.0.0)
+# 📦 skill-name (v1.0.0)
 #    → Linked to: Claude Code, Cursor, Windsurf
 ```
 
@@ -79,18 +82,18 @@ The CLI automatically detects and links to:
 ## Directory Structure
 
 ```
-~/.nova-agent/
+~/.emp-agent/
 ├── skills/                  # Unified storage
-│   └── nova-rn/            # Skill content
+│   └── skill-name/         # Skill content
 │       ├── SKILL.md
 │       └── references/
 ├── config.json
 └── cache/
 
 # Symlinks to AI agents
-~/.claude/skills/nova-rn -> ~/.nova-agent/skills/nova-rn
-~/.cursor/skills/nova-rn -> ~/.nova-agent/skills/nova-rn
-~/.windsurf/skills/nova-rn -> ~/.nova-agent/skills/nova-rn
+~/.claude/skills/skill-name -> ~/.emp-agent/skills/skill-name
+~/.cursor/skills/skill-name -> ~/.emp-agent/skills/skill-name
+~/.windsurf/skills/skill-name -> ~/.emp-agent/skills/skill-name
 ```
 
 ## Options
@@ -107,16 +110,16 @@ The CLI automatically detects and links to:
 
 ```bash
 # 1. Install CLI (choose your package manager)
-pnpm add -g @nova/skill --registry=http://npm.ppx520.com/
+pnpm add -g @empjs/skill
 # or
-npm install -g @nova/skill --registry=http://npm.ppx520.com/
+npm install -g @empjs/skill
 # or
-yarn global add @nova/skill --registry=http://npm.ppx520.com/
+yarn global add @empjs/skill
 # or
-bun install -g @nova/skill --registry=http://npm.ppx520.com/
+bun install -g @empjs/skill
 
 # 2. Install skill
-nova-skill install @nova/rn-skill
+eskill install <skill-name>
 
 # ✅ Auto-detects and links to all installed AI agents
 ```
@@ -125,31 +128,31 @@ nova-skill install @nova/rn-skill
 
 ```bash
 # 1. Navigate to skill package
-cd packages/nova-rn-skill
+cd path/to/your-skill
 
 # 2. Link for development
-nova-skill install . --link
+eskill install . --link
 
 # 3. Edit files - changes reflect immediately!
 vim SKILL.md
 
 # 4. Verify
-nova-skill list
+eskill list
 ```
 
 ### Install for Specific Agent Only
 
 ```bash
 # Only install to Cursor
-nova-skill install @nova/rn-skill --agent cursor
+eskill install <skill-name> --agent cursor
 ```
 
 ## Development
 
 ```bash
 # Clone repo
-git clone git@gitlab.your-company.com:nova/nova-react-native.git
-cd nova-react-native/packages/nova-skill
+git clone <repository-url>
+cd emp-skill
 
 # Install dependencies
 pnpm install
@@ -158,7 +161,7 @@ pnpm install
 pnpm build
 
 # Test locally
-node bin/nova-skill.mjs list
+node bin/eskill.mjs list
 ```
 
 ## Publishing
@@ -167,8 +170,8 @@ node bin/nova-skill.mjs list
 # Build
 pnpm build
 
-# Publish to private NPM
-pnpm publish --registry=http://npm.ppx520.com/
+# Publish to NPM
+pnpm publish
 ```
 
 ## Troubleshooting
@@ -241,7 +244,7 @@ If using dev mode (`--link`) and changes aren't reflecting:
 
 ```bash
 # Verify symlink
-ls -la ~/.nova-agent/skills/
+ls -la ~/.emp-agent/skills/
 ls -la ~/.claude/skills/
 
 # Should show symlink arrows (->)
@@ -249,4 +252,4 @@ ls -la ~/.claude/skills/
 
 ## License
 
-Internal use only - Nova Team
+MIT License - EMP Team

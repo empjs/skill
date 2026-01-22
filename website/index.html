@@ -1,40 +1,50 @@
 <!DOCTYPE html>
-<html lang="zh-CN" class="dark scroll-smooth">
+<html lang="en" class="dark scroll-smooth">
 
 <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@nova/skill - 统一 AI Agent 技能管理</title>
+    <title>@empjs/skill - Unified AI Agent Skills Management</title>
 </head>
 
-<body class="bg-slate-900 text-slate-100 font-sans antialiased selection:bg-blue-500 selection:text-white">
+<body class="antialiased selection:bg-blue-500/20 selection:text-blue-300">
     <!-- Background Decor -->
     <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
         <div class="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl opacity-50 animate-pulse"
             style="animation-duration: 4s;"></div>
-        <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl opacity-50 animate-pulse"
+        <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl opacity-50 animate-pulse"
             style="animation-duration: 6s;"></div>
     </div>
 
     <!-- Navigation -->
-    <nav class="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-slate-900/80 backdrop-blur-md">
+    <nav class="fixed top-0 left-0 right-0 z-50 border-b border-slate-800/50 bg-slate-900/80 backdrop-blur-md">
         <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-2 font-mono font-bold text-xl text-blue-400">
-                <span class="text-2xl">⚡</span> @nova/skill
-                <span class="text-xs bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded-full ml-2" id="version-badge">v1.0.3</span>
+            <div class="flex items-center gap-3">
+                <div class="font-mono font-bold text-xl text-blue-400">
+                    <span class="text-blue-500">$</span> eskill
+                </div>
+                <span class="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded-full"
+                    id="version-badge">v1.0.3</span>
             </div>
-            <div class="hidden md:flex items-center gap-8">
-                <a href="#features"
-                    class="text-sm font-medium text-slate-400 hover:text-white transition-colors">功能特性</a>
-                <a href="#agents" class="text-sm font-medium text-slate-400 hover:text-white transition-colors">支持平台</a>
-                <a href="#commands" class="text-sm font-medium text-slate-400 hover:text-white transition-colors">指令介绍</a>
-                <a href="#official-skills" class="text-sm font-medium text-slate-400 hover:text-white transition-colors">官方技能</a>
-                <a href="#usage" class="text-sm font-medium text-slate-400 hover:text-white transition-colors">使用指南</a>
+            <div class="hidden md:flex items-center gap-6">
+                <a href="#features" data-i18n="nav.features"
+                    class="text-sm font-medium text-slate-400 hover:text-white transition-colors"></a>
+                <a href="#agents" data-i18n="nav.agents"
+                    class="text-sm font-medium text-slate-400 hover:text-white transition-colors"></a>
+                <a href="#commands" data-i18n="nav.commands"
+                    class="text-sm font-medium text-slate-400 hover:text-white transition-colors"></a>
+                <a href="#usage" data-i18n="nav.usage"
+                    class="text-sm font-medium text-slate-400 hover:text-white transition-colors"></a>
             </div>
             <div class="flex items-center gap-4">
-                <a href="https://git.sysop.bigo.sg/fed-activity/nova-flow/nova-skill" target="_blank" rel="noopener noreferrer" class="text-white hover:text-blue-400 transition-colors opacity-80 hover:opacity-100" title="查看仓库">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <div class="lang-switcher">
+                    <button class="lang-btn active" data-lang="en" onclick="window.i18n.setLanguage('en')">EN</button>
+                    <button class="lang-btn" data-lang="zh" onclick="window.i18n.setLanguage('zh')">中文</button>
+                </div>
+                <a href="https://github.com/empjs/skill" target="_blank" rel="noopener noreferrer"
+                    class="text-slate-400 hover:text-white transition-colors" title="GitHub">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path fill-rule="evenodd"
                             d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
                             clip-rule="evenodd" />
@@ -44,600 +54,651 @@
         </div>
     </nav>
 
+    <!-- Supported Agents Bar -->
+    <div class="fixed top-16 left-0 right-0 z-40 border-b border-slate-800/50 bg-slate-900/60 backdrop-blur-sm py-2">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-wrap items-center justify-center gap-4 text-xs text-slate-400">
+                <span class="text-slate-500">Supported:</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">Claude Code</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">Cursor</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">Windsurf</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">Cline</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">Gemini Code</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">GitHub Copilot</span>
+            </div>
+        </div>
+    </div>
+
     <!-- Hero -->
     <main class="relative z-10 pt-32 pb-20 px-6">
-        <div class="max-w-4xl mx-auto text-center">
-            <div class="flex flex-wrap items-center justify-center gap-3 mb-8 animate-fade-in">
-                <div
-                    class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-medium hover:bg-blue-500/20 transition-colors cursor-default">
-                    <span>🚀 统一 AI Agent 技能管理</span>
-                </div>
-                <div
-                    class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-medium hover:bg-green-500/20 transition-colors cursor-default">
-                    <span>✨ 支持 GitHub/GitLab URL 直接安装</span>
-                </div>
-            </div>
+        <div class="max-w-7xl mx-auto text-center px-4">
             <h1
-                class="text-5xl md:text-7xl font-bold tracking-tight mb-8 bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent animate-slide-up leading-tight">
-                一次开发，<br />全平台通用
+                class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6 gradient-text leading-none">
+                <span data-i18n="hero.title" class="inline-block"></span>
             </h1>
-            <p class="text-xl text-slate-400 mb-12 max-w-2xl mx-auto leading-relaxed animate-slide-up"
-                style="animation-delay: 100ms;">
-                通过统一的 CLI 管理 Claude Code、Cursor、Windsurf 等平台的技能。<br />
-                编写一次，分发到所有 Agent。
+            <p class="text-2xl md:text-3xl font-semibold text-slate-300 mb-4" data-i18n="hero.subtitle"></p>
+            <p class="text-lg text-slate-400 mb-12 max-w-3xl mx-auto leading-relaxed" data-i18n="hero.description">
             </p>
 
-            <div class="flex flex-col items-center justify-center gap-4 animate-slide-up"
-                style="animation-delay: 200ms;">
-                <!-- Package Manager Tabs -->
-                <div class="flex items-center gap-2 mb-2 bg-slate-800/50 rounded-lg p-1 border border-white/10">
-                    <button onclick="switchInstallMethod('pnpm')" id="tab-pnpm" class="px-4 py-2 rounded-md text-sm font-medium transition-all install-tab active">
-                        pnpm
-                    </button>
-                    <button onclick="switchInstallMethod('npm')" id="tab-npm" class="px-4 py-2 rounded-md text-sm font-medium transition-all install-tab">
-                        npm
-                    </button>
-                    <button onclick="switchInstallMethod('yarn')" id="tab-yarn" class="px-4 py-2 rounded-md text-sm font-medium transition-all install-tab">
-                        yarn
-                    </button>
-                    <button onclick="switchInstallMethod('bun')" id="tab-bun" class="px-4 py-2 rounded-md text-sm font-medium transition-all install-tab">
-                        bun
+            <!-- Install Command Input -->
+            <div class="max-w-2xl mx-auto mb-8">
+                <div
+                    class="bg-slate-900/80 backdrop-blur-sm border border-slate-700/50 rounded-xl p-4 flex items-center gap-3">
+                    <span class="text-green-400 font-mono">$</span>
+                    <div class="flex-1 flex items-center gap-2">
+                        <span id="install-command-display" class="font-mono text-slate-200 text-lg flex-1">pnpm add -g
+                            @empjs/skill</span>
+                        <div class="flex items-center gap-2">
+                            <button onclick="switchInstallMethod('pnpm')" id="tab-pnpm"
+                                class="px-3 py-1 rounded-lg text-xs font-medium transition-all install-tab active bg-blue-500/20 text-blue-400 border border-blue-500/30">
+                                pnpm
+                            </button>
+                            <button onclick="switchInstallMethod('npm')" id="tab-npm"
+                                class="px-3 py-1 rounded-lg text-xs font-medium transition-all install-tab text-slate-400 hover:text-white">
+                                npm
+                            </button>
+                            <button onclick="switchInstallMethod('yarn')" id="tab-yarn"
+                                class="px-3 py-1 rounded-lg text-xs font-medium transition-all install-tab text-slate-400 hover:text-white">
+                                yarn
+                            </button>
+                            <button onclick="switchInstallMethod('bun')" id="tab-bun"
+                                class="px-3 py-1 rounded-lg text-xs font-medium transition-all install-tab text-slate-400 hover:text-white">
+                                bun
+                            </button>
+                        </div>
+                    </div>
+                    <button class="text-slate-400 hover:text-white transition-colors copy-btn p-2"
+                        onclick="copyInstallCommand()" data-i18n-title="copy.copy" title="Copy">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z">
+                            </path>
+                        </svg>
                     </button>
                 </div>
-                
-                <!-- Install Command Display -->
-                <div class="group relative w-full md:w-auto">
-                    <div
-                        class="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200">
-                    </div>
-                    <div class="relative flex items-center justify-between bg-slate-900 rounded-lg leading-none p-1">
-                        <span id="install-command" class="pl-4 pr-8 py-3 font-mono text-slate-300 text-sm md:text-base">$ pnpm add -g
-                            @nova/skill --registry=http://npm.ppx520.com/</span>
-                        <button class="p-3 text-slate-500 hover:text-white transition-colors rounded hover:bg-white/10 copy-btn"
-                            onclick="copyInstallCommand()"
-                            title="复制命令">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z">
-                                </path>
-                            </svg>
-                        </button>
-                    </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center justify-center gap-4 mb-16 flex-wrap">
+                <a href="#git-install"
+                    class="group relative px-8 py-4 bg-gradient-to-r from-orange-500/20 via-red-500/20 to-orange-500/20 backdrop-blur-sm border-2 border-orange-500/50 rounded-xl text-white font-bold text-base hover:border-orange-400/70 transition-all duration-300 hover:scale-105 shadow-xl shadow-orange-500/20 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                        </path>
+                    </svg>
+                    <span data-i18n="hero.gitInstall">✨ Git URL Install</span>
+                </a>
+                <a href="#usage"
+                    class="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors">
+                    <span data-i18n="hero.howItWorks"></span>
+                </a>
+                <a href="#commands"
+                    class="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium transition-colors border border-slate-700">
+                    <span data-i18n="hero.viewCommands"></span>
+                </a>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-blue-400 mb-2">6+</div>
+                    <div class="text-sm text-slate-400" data-i18n="hero.stats.agents"></div>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-purple-400 mb-2">∞</div>
+                    <div class="text-sm text-slate-400" data-i18n="hero.stats.skills"></div>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-green-400 mb-2">1</div>
+                    <div class="text-sm text-slate-400" data-i18n="hero.stats.cli"></div>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-orange-400 mb-2">100%</div>
+                    <div class="text-sm text-slate-400" data-i18n="hero.stats.openSource"></div>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- Features -->
-    <section id="features" class="py-20 px-6 border-t border-white/5 bg-slate-900/50">
+    <!-- Everything You Need -->
+    <section id="features" class="py-20 px-6 border-t border-slate-800/50">
         <div class="max-w-7xl mx-auto">
-            <h2
-                class="text-3xl font-bold text-center mb-16 bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
-                为什么选择 @nova/skill？</h2>
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <h2 class="text-4xl md:text-5xl font-bold text-center mb-4">
+                <span data-i18n="features.mainTitle"></span>
+            </h2>
+            <p class="text-center text-slate-400 mb-16 max-w-2xl mx-auto" data-i18n="features.mainDesc"></p>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- Feature 1 -->
-                <div
-                    class="p-8 rounded-2xl bg-white/5 border border-white/10 hover:border-blue-500/50 transition-all duration-300 group hover:-translate-y-1">
-                    <div
-                        class="w-14 h-14 rounded-xl bg-blue-500/10 flex items-center justify-center mb-6 text-blue-400 group-hover:bg-blue-500/20 group-hover:scale-110 transition-all">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
-                            </path>
-                        </svg>
+                <div class="modern-card p-6">
+                    <h3 class="text-xl font-bold mb-3 text-slate-100" data-i18n="features.unified.title"></h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-4" data-i18n="features.unified.desc"></p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-blue-500/10 text-blue-400 rounded-full text-xs">Centralized</span>
+                        <span
+                            class="px-3 py-1 bg-purple-500/10 text-purple-400 rounded-full text-xs">~/.emp-agent/skills/</span>
                     </div>
-                    <h3 class="text-xl font-bold mb-3 text-slate-100">统一存储</h3>
-                    <p class="text-slate-400 leading-relaxed text-sm">所有技能集中存储在 <code
-                            class="bg-black/30 px-1.5 py-0.5 rounded text-xs font-mono text-blue-300">~/.nova-agent/skills/</code>。实现分布式
-                        AI 智能的统一管理。</p>
                 </div>
+
                 <!-- Feature 2 -->
-                <div
-                    class="p-8 rounded-2xl bg-white/5 border border-white/10 hover:border-purple-500/50 transition-all duration-300 group hover:-translate-y-1">
-                    <div
-                        class="w-14 h-14 rounded-xl bg-purple-500/10 flex items-center justify-center mb-6 text-purple-400 group-hover:bg-purple-500/20 group-hover:scale-110 transition-all">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                        </svg>
+                <div class="modern-card p-6">
+                    <h3 class="text-xl font-bold mb-3 text-slate-100" data-i18n="features.auto.title"></h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-4" data-i18n="features.auto.desc"></p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-green-500/10 text-green-400 rounded-full text-xs">Auto-detect</span>
+                        <span class="px-3 py-1 bg-blue-500/10 text-blue-400 rounded-full text-xs">Symlink</span>
                     </div>
-                    <h3 class="text-xl font-bold mb-3 text-slate-100">自动分发</h3>
-                    <p class="text-slate-400 leading-relaxed text-sm">自动检测并软链技能到所有已安装的 Agent：Claude Code、Cursor、Windsurf 等。</p>
                 </div>
+
                 <!-- Feature 3 -->
-                <div
-                    class="p-8 rounded-2xl bg-white/5 border border-white/10 hover:border-green-500/50 transition-all duration-300 group hover:-translate-y-1">
-                    <div
-                        class="w-14 h-14 rounded-xl bg-green-500/10 flex items-center justify-center mb-6 text-green-400 group-hover:bg-green-500/20 group-hover:scale-110 transition-all">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
-                        </svg>
+                <div class="modern-card p-6">
+                    <h3 class="text-xl font-bold mb-3 text-slate-100" data-i18n="features.dev.title"></h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-4" data-i18n="features.dev.desc"></p>
+                    <div class="flex flex-wrap gap-2">
+                        <span
+                            class="px-3 py-1 bg-yellow-500/10 text-yellow-400 rounded-full text-xs font-mono">--link</span>
+                        <span class="px-3 py-1 bg-green-500/10 text-green-400 rounded-full text-xs">Hot Reload</span>
                     </div>
-                    <h3 class="text-xl font-bold mb-3 text-slate-100">开发模式</h3>
-                    <p class="text-slate-400 leading-relaxed text-sm">使用 <code
-                            class="bg-black/30 px-1.5 py-0.5 rounded text-xs font-mono text-green-300">--link</code>
-                        进行本地开发。源码修改即时在所有 Agent 中生效。</p>
                 </div>
+
                 <!-- Feature 4: Git URL Install -->
-                <div
-                    class="p-8 rounded-2xl bg-gradient-to-br from-orange-500/10 to-red-500/10 border border-orange-500/30 hover:border-orange-500/60 transition-all duration-300 group hover:-translate-y-1 relative overflow-hidden">
-                    <!-- Badge -->
+                <div class="modern-card p-6 border-orange-500/30 relative">
                     <div class="absolute top-4 right-4">
-                        <span class="px-2 py-1 rounded-full bg-orange-500/20 text-orange-400 text-xs font-bold">NEW</span>
+                        <span
+                            class="px-2 py-1 rounded-full bg-orange-500/20 text-orange-400 text-xs font-bold">NEW</span>
                     </div>
-                    <div
-                        class="w-14 h-14 rounded-xl bg-orange-500/10 flex items-center justify-center mb-6 text-orange-400 group-hover:bg-orange-500/20 group-hover:scale-110 transition-all">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
-                            </path>
-                        </svg>
+                    <h3 class="text-xl font-bold mb-3 text-slate-100" data-i18n="features.git.title"></h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-4" data-i18n="features.git.desc"></p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-orange-500/10 text-orange-400 rounded-full text-xs">GitHub</span>
+                        <span class="px-3 py-1 bg-orange-500/10 text-orange-400 rounded-full text-xs">GitLab</span>
+                        <span class="px-3 py-1 bg-purple-500/10 text-purple-400 rounded-full text-xs">No NPM</span>
                     </div>
-                    <h3 class="text-xl font-bold mb-3 text-slate-100">Git URL 安装</h3>
-                    <p class="text-slate-400 leading-relaxed text-sm">直接从 GitHub/GitLab URL 安装技能，无需发布到 NPM。支持分支和子目录路径。</p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="modern-card p-6">
+                    <h3 class="text-xl font-bold mb-3 text-slate-100" data-i18n="features.unified.title"></h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-4" data-i18n="features.unified.desc"></p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-blue-500/10 text-blue-400 rounded-full text-xs">NPM</span>
+                        <span class="px-3 py-1 bg-green-500/10 text-green-400 rounded-full text-xs">Git URL</span>
+                        <span class="px-3 py-1 bg-purple-500/10 text-purple-400 rounded-full text-xs">Local</span>
+                    </div>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="modern-card p-6">
+                    <h3 class="text-xl font-bold mb-3 text-slate-100" data-i18n="features.auto.title"></h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-4" data-i18n="features.auto.desc"></p>
+                    <div class="flex flex-wrap gap-2">
+                        <span
+                            class="px-3 py-1 bg-green-500/10 text-green-400 rounded-full text-xs">Cross-platform</span>
+                        <span class="px-3 py-1 bg-blue-500/10 text-blue-400 rounded-full text-xs">One CLI</span>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Supported Agents -->
-    <section id="agents" class="py-20 px-6">
-        <div class="max-w-5xl mx-auto text-center">
-            <h2 class="text-3xl font-bold mb-12 text-slate-200">支持的 Agents</h2>
-            <div class="flex flex-wrap justify-center gap-4">
-                <div
-                    class="group px-6 py-3 rounded-full bg-slate-800/50 border border-slate-700 text-slate-300 font-medium hover:border-blue-500/50 hover:bg-blue-500/10 hover:text-blue-400 transition-all cursor-default">
-                    Claude Code</div>
-                <div
-                    class="group px-6 py-3 rounded-full bg-slate-800/50 border border-slate-700 text-slate-300 font-medium hover:border-blue-500/50 hover:bg-blue-500/10 hover:text-blue-400 transition-all cursor-default">
-                    Cursor</div>
-                <div
-                    class="group px-6 py-3 rounded-full bg-slate-800/50 border border-slate-700 text-slate-300 font-medium hover:border-blue-500/50 hover:bg-blue-500/10 hover:text-blue-400 transition-all cursor-default">
-                    Windsurf</div>
-                <div
-                    class="group px-6 py-3 rounded-full bg-slate-800/50 border border-slate-700 text-slate-300 font-medium hover:border-blue-500/50 hover:bg-blue-500/10 hover:text-blue-400 transition-all cursor-default">
-                    Cline</div>
-                <div
-                    class="group px-6 py-3 rounded-full bg-slate-800/50 border border-slate-700 text-slate-300 font-medium hover:border-blue-500/50 hover:bg-blue-500/10 hover:text-blue-400 transition-all cursor-default">
-                    Gemini Code</div>
-                <div
-                    class="group px-6 py-3 rounded-full bg-slate-800/50 border border-slate-700 text-slate-300 font-medium hover:border-blue-500/50 hover:bg-blue-500/10 hover:text-blue-400 transition-all cursor-default">
-                    GitHub Copilot</div>
+    <section id="agents" class="py-20 px-6 border-t border-slate-800/50">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-4xl md:text-5xl font-bold text-center mb-4">
+                <span data-i18n="agents.title"></span>
+            </h2>
+            <p class="text-center text-slate-400 mb-16 max-w-2xl mx-auto" data-i18n="agents.desc"></p>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="modern-card p-6">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-100">Claude Code</h3>
+                    </div>
+                    <p class="text-slate-400 text-sm">~/.claude-code/skills/</p>
+                </div>
+
+                <div class="modern-card p-6">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div
+                            class="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center text-green-400">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-100">Cursor</h3>
+                    </div>
+                    <p class="text-slate-400 text-sm">~/.cursor/skills/</p>
+                </div>
+
+                <div class="modern-card p-6">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div
+                            class="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-100">Windsurf</h3>
+                    </div>
+                    <p class="text-slate-400 text-sm">~/.windsurf/skills/</p>
+                </div>
+
+                <div class="modern-card p-6">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div
+                            class="w-10 h-10 rounded-lg bg-yellow-500/10 flex items-center justify-center text-yellow-400">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-100">Cline</h3>
+                    </div>
+                    <p class="text-slate-400 text-sm">~/.cline/skills/</p>
+                </div>
+
+                <div class="modern-card p-6">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center text-red-400">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-100">Gemini Code</h3>
+                    </div>
+                    <p class="text-slate-400 text-sm">~/.gemini-code/skills/</p>
+                </div>
+
+                <div class="modern-card p-6">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div
+                            class="w-10 h-10 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-100">GitHub Copilot</h3>
+                    </div>
+                    <p class="text-slate-400 text-sm">~/.github-copilot/skills/</p>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Commands Reference -->
-    <section id="commands" class="py-20 px-6 border-t border-white/5 relative overflow-hidden">
-        <div class="max-w-6xl mx-auto relative z-10">
-            <h2 class="text-3xl font-bold mb-12 text-center text-slate-200">指令介绍</h2>
-            
-            <div class="grid md:grid-cols-2 gap-6">
-                <!-- Install Command -->
-                <div class="bg-black/30 rounded-xl border border-white/10 p-6 hover:border-blue-500/50 transition-all relative">
-                    <div class="absolute top-4 right-4">
-                        <span class="px-2 py-1 rounded-full bg-orange-500/20 text-orange-400 text-xs font-bold">NEW</span>
+    <section id="commands" class="py-20 px-6 border-t border-slate-800/50">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl md:text-5xl font-bold mb-12 text-center text-slate-200" data-i18n="commands.title"></h2>
+
+            <!-- Git URL Install - Featured Card -->
+            <div id="git-install" class="mb-12 scroll-mt-20">
+                <div
+                    class="featured-git-card relative overflow-hidden rounded-2xl border-2 border-orange-500/30 bg-gradient-to-br from-orange-500/10 via-red-500/10 to-orange-500/10 p-8 backdrop-blur-sm shadow-2xl shadow-orange-500/20">
+                    <!-- Animated background gradient -->
+                    <div
+                        class="absolute inset-0 bg-gradient-to-r from-orange-500/5 via-transparent to-red-500/5 animate-pulse">
                     </div>
+
+                    <div class="relative z-10">
+                        <!-- Badge -->
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="flex items-center gap-3">
+                                <span
+                                    class="px-4 py-2 rounded-full bg-orange-500/30 text-orange-300 text-sm font-bold border border-orange-500/50">
+                                    ✨ NEW
+                                </span>
+                                <span
+                                    class="px-4 py-2 rounded-full bg-gradient-to-r from-orange-500/20 to-red-500/20 text-orange-300 text-sm font-semibold border border-orange-500/30">
+                                    Core Feature
+                                </span>
+                            </div>
+                            <div
+                                class="w-16 h-16 rounded-xl bg-gradient-to-br from-orange-500/20 to-red-500/20 flex items-center justify-center border border-orange-500/30">
+                                <svg class="w-8 h-8 text-orange-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                    </path>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Title -->
+                        <h3 class="text-3xl font-bold mb-3 text-white" data-i18n="commands.gitInstall.title">
+                            Install from Git URL
+                        </h3>
+                        <p class="text-lg text-slate-300 mb-6 max-w-2xl" data-i18n="commands.gitInstall.desc">
+                            Install skills directly from GitHub/GitLab URLs. No NPM publishing required. Supports
+                            branches and subdirectories.
+                        </p>
+
+                        <!-- Commands -->
+                        <div class="space-y-4 mb-6">
+                            <div class="bg-black/40 backdrop-blur-sm rounded-xl p-5 border border-orange-500/30">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-2 h-2 rounded-full bg-green-400"></div>
+                                    <span class="text-orange-300 font-semibold text-sm"
+                                        data-i18n="commands.gitInstall.gitTitle">✨ Git URL Installation</span>
+                                </div>
+                                <div class="font-mono text-sm space-y-2 ml-5">
+                                    <div class="text-purple-300">$ eskill install https://github.com/anthropics/skills/tree/main/skills/skill-creator</div>
+                                    <div class="text-purple-300">$ eskill add https://github.com/anthropics/skills/tree/main/skills/skill-creator</div>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-900/60 backdrop-blur-sm rounded-xl p-5 border border-slate-700/50">
+                                <div class="text-slate-300 text-sm font-medium mb-3"
+                                    data-i18n="commands.gitInstall.exampleTitle">使用示例 / Usage Example:</div>
+                                <div class="bg-black/40 rounded-lg p-4 mb-3">
+                                    <div class="text-slate-400 text-xs mb-1"
+                                        data-i18n="commands.gitInstall.exampleDesc">复制完整的 GitHub/GitLab URL，包含分支和路径：
+                                    </div>
+                                    <div class="font-mono text-xs text-purple-300 break-all mt-2">
+                                        https://github.com/anthropics/skills/tree/main/skills/skill-creator
+                                    </div>
+                                    <div class="text-slate-400 text-xs mt-3 mb-2">执行命令示例：</div>
+                                    <div class="font-mono text-xs text-green-300 space-y-1">
+                                        <div>$ eskill install https://github.com/anthropics/skills/tree/main/skills/skill-creator</div>
+                                        <div>$ eskill add https://github.com/anthropics/skills/tree/main/skills/skill-creator</div>
+                                        <div>$ eskill install https://github.com/anthropics/skills/tree/main/skills/skill-creator --agent cursor</div>
+                                        <div>$ eskill add https://github.com/anthropics/skills/tree/main/skills/skill-creator --link</div>
+                                    </div>
+                                </div>
+                                <div class="text-slate-400 text-xs mb-2"
+                                    data-i18n="commands.gitInstall.supportedFeatures">支持的功能 / Supported Features:</div>
+                                <div class="flex flex-wrap gap-2">
+                                    <span
+                                        class="px-3 py-1.5 rounded-lg bg-blue-500/20 text-blue-300 text-xs border border-blue-500/30 flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                                            <path
+                                                d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                                        </svg>
+                                        GitHub
+                                    </span>
+                                    <span
+                                        class="px-3 py-1.5 rounded-lg bg-purple-500/20 text-purple-300 text-xs border border-purple-500/30 flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                                            <path
+                                                d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                                        </svg>
+                                        GitLab
+                                    </span>
+                                    <span
+                                        class="px-3 py-1.5 rounded-lg bg-green-500/20 text-green-300 text-xs border border-green-500/30 flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        <span data-i18n="commands.gitInstall.feature1">支持分支</span>
+                                    </span>
+                                    <span
+                                        class="px-3 py-1.5 rounded-lg bg-yellow-500/20 text-yellow-300 text-xs border border-yellow-500/30 flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z">
+                                            </path>
+                                        </svg>
+                                        <span data-i18n="commands.gitInstall.feature2">支持子目录</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Benefits -->
+                        <div class="grid md:grid-cols-3 gap-4">
+                            <div class="flex items-center gap-2 text-slate-300">
+                                <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <span class="text-sm" data-i18n="commands.gitInstall.benefit1">No NPM Publishing</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-slate-300">
+                                <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <span class="text-sm" data-i18n="commands.gitInstall.benefit2">Direct from Repo</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-slate-300">
+                                <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <span class="text-sm" data-i18n="commands.gitInstall.benefit3">Auto Branch
+                                    Detection</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Install Command (NPM) -->
+                <div class="modern-card p-6">
                     <div class="flex items-center gap-3 mb-4">
                         <div class="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                             </svg>
                         </div>
-                        <h3 class="text-xl font-bold text-slate-100">install / add</h3>
+                        <h3 class="text-xl font-bold text-slate-100" data-i18n="commands.install.title"></h3>
                     </div>
-                    <p class="text-slate-400 mb-4 text-sm">安装技能包，支持从 NPM、Git URL 或本地目录安装</p>
-                    <div class="space-y-3 font-mono text-xs">
-                        <div class="bg-gradient-to-r from-orange-500/10 to-red-500/10 p-3 rounded border border-orange-500/20">
-                            <div class="text-orange-400 mb-2 font-semibold">✨ 新功能：Git URL 安装</div>
-                            <div class="text-purple-400 mb-1">nova-skill install &lt;git-url&gt;</div>
-                            <div class="text-purple-400 mb-1">nova-skill add &lt;git-url&gt;</div>
-                            <div class="text-slate-400 text-xs mt-1 mb-2">支持 GitHub/GitLab URL，自动识别分支和路径</div>
-                            <div class="text-slate-500 text-xs">示例：</div>
-                            <div class="text-slate-300 ml-2">https://github.com/owner/repo/tree/main/path</div>
-                        </div>
-                        <div class="bg-slate-900/50 p-3 rounded border border-white/5">
-                            <div class="text-purple-400 mb-1">nova-skill install &lt;skill&gt;</div>
-                            <div class="text-purple-400 mb-1">nova-skill add &lt;skill&gt;</div>
-                            <div class="text-slate-500 mt-2">选项：</div>
-                            <div class="text-slate-400 ml-2">-a, --agent &lt;name&gt;  指定安装到的 agent</div>
-                            <div class="text-slate-400 ml-2">-l, --link              开发模式（本地链接）</div>
-                            <div class="text-slate-400 ml-2">-f, --force             强制重新安装</div>
-                            <div class="text-slate-400 ml-2">-r, --registry &lt;url&gt; 指定 NPM registry</div>
-                        </div>
+                    <p class="text-slate-400 mb-4 text-sm" data-i18n="commands.install.desc"></p>
+                    <div class="bg-slate-900/50 p-3 rounded border border-slate-700/50 font-mono text-xs">
+                        <div class="text-purple-400 mb-1">$ eskill install &lt;skill&gt;</div>
+                        <div class="text-purple-400 mb-1">$ eskill add &lt;skill&gt;</div>
+                        <div class="text-slate-500 mt-2 text-xs">Options:</div>
+                        <div class="text-slate-400 ml-2 text-xs">-a, --agent &lt;name&gt;</div>
+                        <div class="text-slate-400 ml-2 text-xs">-l, --link</div>
+                        <div class="text-slate-400 ml-2 text-xs">-f, --force</div>
                     </div>
                 </div>
 
                 <!-- List Command -->
-                <div class="bg-black/30 rounded-xl border border-white/10 p-6 hover:border-green-500/50 transition-all">
+                <div class="modern-card p-6">
                     <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center text-green-400">
+                        <div
+                            class="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center text-green-400">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 6h16M4 12h16M4 18h16"></path>
                             </svg>
                         </div>
-                        <h3 class="text-xl font-bold text-slate-100">list / ls</h3>
+                        <h3 class="text-xl font-bold text-slate-100" data-i18n="commands.list.title"></h3>
                     </div>
-                    <p class="text-slate-400 mb-4 text-sm">列出所有已安装的技能</p>
-                    <div class="space-y-2 font-mono text-xs">
-                        <div class="bg-slate-900/50 p-3 rounded border border-white/5">
-                            <div class="text-purple-400">nova-skill list</div>
-                            <div class="text-purple-400 mt-2">nova-skill ls</div>
-                            <div class="text-slate-500 mt-2">显示已安装的技能及其版本和链接状态</div>
-                        </div>
+                    <p class="text-slate-400 mb-4 text-sm" data-i18n="commands.list.desc"></p>
+                    <div class="bg-slate-900/50 p-3 rounded border border-slate-700/50 font-mono text-xs">
+                        <div class="text-purple-400">$ eskill list</div>
+                        <div class="text-purple-400 mt-2">$ eskill ls</div>
                     </div>
                 </div>
 
                 <!-- Remove Command -->
-                <div class="bg-black/30 rounded-xl border border-white/10 p-6 hover:border-red-500/50 transition-all">
+                <div class="modern-card p-6">
                     <div class="flex items-center gap-3 mb-4">
                         <div class="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center text-red-400">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                </path>
                             </svg>
                         </div>
-                        <h3 class="text-xl font-bold text-slate-100">remove / rm / uninstall</h3>
+                        <h3 class="text-xl font-bold text-slate-100" data-i18n="commands.remove.title"></h3>
                     </div>
-                    <p class="text-slate-400 mb-4 text-sm">删除已安装的技能</p>
-                    <div class="space-y-2 font-mono text-xs">
-                        <div class="bg-slate-900/50 p-3 rounded border border-white/5">
-                            <div class="text-purple-400 mb-1">nova-skill remove &lt;skill&gt;</div>
-                            <div class="text-purple-400 mb-1">nova-skill rm &lt;skill&gt;</div>
-                            <div class="text-purple-400">nova-skill uninstall &lt;skill&gt;</div>
-                            <div class="text-slate-500 mt-2">选项：</div>
-                            <div class="text-slate-400 ml-2">-a, --agent &lt;name&gt;  仅删除指定 agent 的链接</div>
-                        </div>
+                    <p class="text-slate-400 mb-4 text-sm" data-i18n="commands.remove.desc"></p>
+                    <div class="bg-slate-900/50 p-3 rounded border border-slate-700/50 font-mono text-xs">
+                        <div class="text-purple-400 mb-1">$ eskill remove &lt;skill&gt;</div>
+                        <div class="text-purple-400 mb-1">$ eskill rm &lt;skill&gt;</div>
+                        <div class="text-purple-400">$ eskill uninstall &lt;skill&gt;</div>
                     </div>
                 </div>
 
                 <!-- Agents Command -->
-                <div class="bg-black/30 rounded-xl border border-white/10 p-6 hover:border-purple-500/50 transition-all">
+                <div class="modern-card p-6">
                     <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400">
+                        <div
+                            class="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                         </div>
-                        <h3 class="text-xl font-bold text-slate-100">agents</h3>
+                        <h3 class="text-xl font-bold text-slate-100" data-i18n="commands.agents.title"></h3>
                     </div>
-                    <p class="text-slate-400 mb-4 text-sm">列出所有支持的 AI Agent 及其目录</p>
-                    <div class="space-y-2 font-mono text-xs">
-                        <div class="bg-slate-900/50 p-3 rounded border border-white/5">
-                            <div class="text-purple-400 mb-1">nova-skill agents</div>
-                            <div class="text-purple-400">nova-skill list-agents</div>
-                            <div class="text-slate-500 mt-2">显示所有支持的 Agent 和它们的技能目录路径</div>
-                        </div>
+                    <p class="text-slate-400 mb-4 text-sm" data-i18n="commands.agents.desc"></p>
+                    <div class="bg-slate-900/50 p-3 rounded border border-slate-700/50 font-mono text-xs">
+                        <div class="text-purple-400 mb-1">$ eskill agents</div>
+                        <div class="text-purple-400">$ eskill list-agents</div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Official Skills -->
-    <section id="official-skills" class="py-20 px-6 bg-slate-900/50 border-t border-white/5 relative overflow-hidden">
-        <div class="max-w-6xl mx-auto relative z-10">
-            <h2 class="text-3xl font-bold mb-4 text-center text-slate-200">官方技能</h2>
-            <p class="text-center text-slate-400 mb-12">Nova Team 官方提供的技能包，助力你的开发工作</p>
-            
-            <div class="grid md:grid-cols-2 gap-6">
-                <!-- @nova/rn-skill -->
-                <div class="bg-gradient-to-br from-blue-500/10 to-indigo-500/10 rounded-xl border border-blue-500/20 p-6 hover:border-blue-500/50 transition-all group">
-                    <div class="flex items-start justify-between mb-4">
-                        <div>
-                            <h3 class="text-xl font-bold text-slate-100 mb-2 group-hover:text-blue-400 transition-colors">
-                                @nova/rn-skill
-                            </h3>
-                            <p class="text-slate-400 text-sm">React Native 开发技能包</p>
-                        </div>
-                        <div class="px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 text-xs font-medium">
-                            可用
-                        </div>
-                    </div>
-                    <p class="text-slate-300 mb-4 text-sm leading-relaxed">
-                        提供 React Native 开发的最佳实践、组件库使用指南、性能优化技巧等专业知识。
-                    </p>
-                    <div class="font-mono text-xs bg-black/30 p-3 rounded border border-white/5">
-                        <div class="text-purple-400">nova-skill install @nova/rn-skill</div>
-                    </div>
-                </div>
+    <!-- How It Works -->
+    <section id="usage" class="py-20 px-6 bg-slate-900/30 border-t border-slate-800/50">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4 text-center">
+                <span data-i18n="usage.mainTitle"></span>
+            </h2>
+            <p class="text-center text-slate-400 mb-16 max-w-2xl mx-auto" data-i18n="usage.mainDesc"></p>
 
-                <!-- @nova/web-skill -->
-                <div class="bg-gradient-to-br from-green-500/10 to-emerald-500/10 rounded-xl border border-green-500/20 p-6 hover:border-green-500/50 transition-all group">
-                    <div class="flex items-start justify-between mb-4">
-                        <div>
-                            <h3 class="text-xl font-bold text-slate-100 mb-2 group-hover:text-green-400 transition-colors">
-                                @nova/web-skill
-                            </h3>
-                            <p class="text-slate-400 text-sm">Web 开发技能包</p>
-                        </div>
-                        <div class="px-3 py-1 rounded-full bg-green-500/20 text-green-400 text-xs font-medium">
-                            可用
-                        </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Step 0 -->
+                <div class="modern-card p-6">
+                    <div
+                        class="w-10 h-10 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold mb-4">
+                        0
                     </div>
-                    <p class="text-slate-300 mb-4 text-sm leading-relaxed">
-                        涵盖现代 Web 开发技术栈、框架使用、性能优化、SEO 等全方位知识。
-                    </p>
-                    <div class="font-mono text-xs bg-black/30 p-3 rounded border border-white/5">
-                        <div class="text-purple-400">nova-skill install @nova/web-skill</div>
-                    </div>
-                </div>
-
-                <!-- Vue2 to React -->
-                <div class="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 rounded-xl border border-yellow-500/20 p-6 hover:border-yellow-500/50 transition-all group opacity-75">
-                    <div class="flex items-start justify-between mb-4">
-                        <div>
-                            <h3 class="text-xl font-bold text-slate-100 mb-2 group-hover:text-yellow-400 transition-colors">
-                                Vue2 迁移 React
-                            </h3>
-                            <p class="text-slate-400 text-sm">Vue2 到 React 迁移指南</p>
-                        </div>
-                        <div class="px-3 py-1 rounded-full bg-yellow-500/20 text-yellow-400 text-xs font-medium">
-                            敬请期待
-                        </div>
-                    </div>
-                    <p class="text-slate-300 mb-4 text-sm leading-relaxed">
-                        提供从 Vue2 迁移到 React 的完整指南，包括组件转换、状态管理、路由迁移等。
-                    </p>
-                    <div class="font-mono text-xs bg-black/30 p-3 rounded border border-white/5 opacity-50">
-                        <div class="text-slate-500">即将推出</div>
-                    </div>
-                </div>
-
-                <!-- Vue3 to React -->
-                <div class="bg-gradient-to-br from-pink-500/10 to-rose-500/10 rounded-xl border border-pink-500/20 p-6 hover:border-pink-500/50 transition-all group opacity-75">
-                    <div class="flex items-start justify-between mb-4">
-                        <div>
-                            <h3 class="text-xl font-bold text-slate-100 mb-2 group-hover:text-pink-400 transition-colors">
-                                Vue3 迁移 React
-                            </h3>
-                            <p class="text-slate-400 text-sm">Vue3 到 React 迁移指南</p>
-                        </div>
-                        <div class="px-3 py-1 rounded-full bg-pink-500/20 text-pink-400 text-xs font-medium">
-                            敬请期待
-                        </div>
-                    </div>
-                    <p class="text-slate-300 mb-4 text-sm leading-relaxed">
-                        涵盖 Vue3 Composition API 到 React Hooks 的转换、响应式系统差异、生态迁移等。
-                    </p>
-                    <div class="font-mono text-xs bg-black/30 p-3 rounded border border-white/5 opacity-50">
-                        <div class="text-slate-500">即将推出</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mt-12 text-center">
-                <div class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-slate-800/50 border border-slate-700 text-slate-400">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <span class="text-sm">更多官方技能正在开发中，敬请期待</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Usage Guide -->
-    <section id="usage" class="py-20 px-6 bg-slate-900/50 border-t border-white/5 relative overflow-hidden">
-        <!-- Decor -->
-        <div
-            class="absolute top-0 right-0 w-64 h-64 bg-purple-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none">
-        </div>
-
-        <div class="max-w-4xl mx-auto relative z-10">
-            <h2 class="text-3xl font-bold mb-12 text-center text-slate-200">使用指南</h2>
-
-            <div class="space-y-8">
-
-                <!-- Step 0: Install CLI -->
-                <div class="bg-black/30 rounded-2xl border border-white/10 overflow-hidden">
-                    <div class="px-6 py-4 border-b border-white/5 bg-white/5 flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <div class="w-3 h-3 rounded-full bg-red-400"></div>
-                            <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
-                            <div class="w-3 h-3 rounded-full bg-green-400"></div>
-                        </div>
-                        <span class="text-xs font-mono text-slate-500">Terminal</span>
-                    </div>
-                    <div class="p-6 font-mono text-sm">
-                        <h3 class="text-blue-400 mb-4 font-bold flex items-center gap-2">
-                            <span
-                                class="w-6 h-6 rounded bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs">0</span>
-                            安装 CLI 工具
-                        </h3>
-                        <div class="text-slate-300 pl-8">
-                            <div class="flex gap-2 mb-2 text-slate-500 select-none"># 使用 pnpm（推荐）</div>
-                            <div class="mb-4 pl-4 border-l-2 border-blue-500/30">
-                                <div class="mb-1">
-                                    <span class="text-purple-400">pnpm</span> add -g @nova/skill --registry=http://npm.ppx520.com/
-                                </div>
-                            </div>
-                            
-                            <div class="flex gap-2 mb-2 text-slate-500 select-none mt-4"># 使用 npm</div>
-                            <div class="mb-4 pl-4 border-l-2 border-green-500/30">
-                                <div class="mb-1">
-                                    <span class="text-purple-400">npm</span> install -g @nova/skill --registry=http://npm.ppx520.com/
-                                </div>
-                            </div>
-                            
-                            <div class="flex gap-2 mb-2 text-slate-500 select-none mt-4"># 使用 yarn</div>
-                            <div class="mb-4 pl-4 border-l-2 border-yellow-500/30">
-                                <div class="mb-1">
-                                    <span class="text-purple-400">yarn</span> global add @nova/skill --registry=http://npm.ppx520.com/
-                                </div>
-                            </div>
-                            
-                            <div class="flex gap-2 mb-2 text-slate-500 select-none mt-4"># 使用 bun</div>
-                            <div class="mb-4 pl-4 border-l-2 border-pink-500/30">
-                                <div class="mb-1">
-                                    <span class="text-purple-400">bun</span> install -g @nova/skill --registry=http://npm.ppx520.com/
-                                </div>
-                            </div>
-                            
-                            <div class="mt-4 text-xs text-slate-500">
-                                * 安装完成后，使用 <span class="text-purple-400">nova-skill</span> 命令管理技能
-                            </div>
-                        </div>
+                    <h3 class="text-lg font-bold mb-2 text-slate-100" data-i18n="usage.step0.title"></h3>
+                    <p class="text-slate-400 text-sm mb-4" data-i18n="usage.step0.desc"></p>
+                    <div class="bg-slate-900/50 p-3 rounded font-mono text-xs">
+                        <div class="text-purple-400">$ pnpm add -g @empjs/skill</div>
                     </div>
                 </div>
 
                 <!-- Step 1 -->
-                <div class="bg-black/30 rounded-2xl border border-white/10 overflow-hidden">
-                    <div class="px-6 py-4 border-b border-white/5 bg-white/5 flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <div class="w-3 h-3 rounded-full bg-red-400"></div>
-                            <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
-                            <div class="w-3 h-3 rounded-full bg-green-400"></div>
-                        </div>
-                        <span class="text-xs font-mono text-slate-500">Terminal</span>
+                <div class="modern-card p-6">
+                    <div
+                        class="w-10 h-10 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center font-bold mb-4">
+                        1
                     </div>
-                    <div class="p-6 font-mono text-sm">
-                        <h3 class="text-blue-400 mb-4 font-bold flex items-center gap-2">
-                            <span
-                                class="w-6 h-6 rounded bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs">1</span>
-                            安装技能
-                        </h3>
-                        <div class="text-slate-300 pl-8">
-                            <div class="flex gap-2 mb-2 text-slate-500 select-none"># 🚀 从 GitHub/GitLab URL 安装（新功能）</div>
-                            <div class="mb-4 pl-4 border-l-2 border-orange-500/30 bg-orange-500/5 rounded-r">
-                                <div class="mb-2">
-                                    <span class="text-purple-400">nova-skill</span> install https://github.com/anthropics/skills/tree/main/skills/skill-creator
-                                </div>
-                                <div class="mb-1 text-xs text-slate-400"># 或使用别名：</div>
-                                <div class="mb-2 text-xs text-slate-300">
-                                    <span class="text-purple-400">nova-skill</span> add https://github.com/anthropics/skills/tree/main/skills/skill-creator
-                                </div>
-                                <div class="text-xs text-slate-400 mb-2"># 支持 GitHub、GitLab、分支和子目录路径</div>
-                                <div class="text-xs text-slate-400">
-                                    <span class="text-orange-400">✨</span> 无需发布到 NPM，直接从仓库安装
-                                </div>
-                            </div>
-
-                            <div class="flex gap-2 mb-2 text-slate-500 select-none mt-4"># 🏢 安装私域技能 (推荐内部使用)</div>
-                            <div class="mb-4 pl-4 border-l-2 border-blue-500/30">
-                                <div class="mb-1">
-                                    <span class="text-purple-400">nova-skill</span> install @nova/rn-skill --registry=http://npm.ppx520.com/
-                                </div>
-                                <div class="text-xs text-slate-400"># 或：nova-skill add @nova/rn-skill --registry=http://npm.ppx520.com/</div>
-                            </div>
-
-                            <div class="flex gap-2 mb-2 text-slate-500 select-none"># 🌍 安装社区技能 (公网 NPM)</div>
-                            <div class="mb-4 pl-4 border-l-2 border-green-500/30">
-                                <div class="mb-1">
-                                    <span class="text-purple-400">nova-skill</span> install react-agent-skill
-                                </div>
-                                <div class="text-xs text-slate-400"># 或：nova-skill add react-agent-skill</div>
-                            </div>
-
-                            <div class="mt-4 text-xs text-slate-500">
-                                * 自动分发到 Claude Code, Cursor, Windsurf, Cline, Gemini, Copilot
-                            </div>
-                        </div>
+                    <h3 class="text-lg font-bold mb-2 text-slate-100" data-i18n="usage.step1.title"></h3>
+                    <p class="text-slate-400 text-sm mb-4" data-i18n="usage.step1.desc"></p>
+                    <div class="bg-slate-900/50 p-3 rounded font-mono text-xs">
+                        <div class="text-purple-400">$ eskill install &lt;skill&gt;</div>
                     </div>
                 </div>
 
                 <!-- Step 2 -->
-                <div class="bg-black/30 rounded-2xl border border-white/10 overflow-hidden">
-                    <div class="px-6 py-4 border-b border-white/5 bg-white/5 flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <div class="w-3 h-3 rounded-full bg-red-400"></div>
-                            <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
-                            <div class="w-3 h-3 rounded-full bg-green-400"></div>
-                        </div>
-                        <span class="text-xs font-mono text-slate-500">Terminal</span>
+                <div class="modern-card p-6">
+                    <div
+                        class="w-10 h-10 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold mb-4">
+                        2
                     </div>
-                    <div class="p-6 font-mono text-sm">
-                        <h3 class="text-green-400 mb-4 font-bold flex items-center gap-2">
-                            <span
-                                class="w-6 h-6 rounded bg-green-500/20 text-green-400 flex items-center justify-center text-xs">2</span>
-                            开发者模式
-                        </h3>
-                        <p class="text-slate-400 mb-4 pl-8">链接本地技能进行开发，修改即时生效。</p>
-                        <div class="text-slate-300 pl-8">
-                            <div class="flex gap-2 mb-2 text-slate-500 select-none"># 进入技能包目录</div>
-                            <div class="mb-2 pl-4 border-l-2 border-green-500/30">cd packages/nova-rn-skill</div>
-                            <div class="flex gap-2 mb-2 text-slate-500 select-none"># 创建软链</div>
-                            <div class="pl-4 border-l-2 border-green-500/30">
-                                <div class="mb-1"><span class="text-purple-400">nova-skill</span> install . --link</div>
-                                <div class="text-xs text-slate-400"># 或：nova-skill add . --link</div>
-                            </div>
-                        </div>
+                    <h3 class="text-lg font-bold mb-2 text-slate-100" data-i18n="usage.step2.title"></h3>
+                    <p class="text-slate-400 text-sm mb-4" data-i18n="usage.step2.desc"></p>
+                    <div class="bg-slate-900/50 p-3 rounded font-mono text-xs">
+                        <div class="text-purple-400">$ eskill install . --link</div>
                     </div>
                 </div>
 
                 <!-- Step 3 -->
-                <div class="bg-black/30 rounded-2xl border border-white/10 overflow-hidden">
-                    <div class="px-6 py-4 border-b border-white/5 bg-white/5 flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <div class="w-3 h-3 rounded-full bg-red-400"></div>
-                            <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
-                            <div class="w-3 h-3 rounded-full bg-green-400"></div>
-                        </div>
-                        <span class="text-xs font-mono text-slate-500">Terminal</span>
+                <div class="modern-card p-6">
+                    <div
+                        class="w-10 h-10 rounded-full bg-yellow-500/20 text-yellow-400 flex items-center justify-center font-bold mb-4">
+                        3
                     </div>
-                    <div class="p-6 font-mono text-sm">
-                        <h3 class="text-purple-400 mb-4 font-bold flex items-center gap-2">
-                            <span
-                                class="w-6 h-6 rounded bg-purple-500/20 text-purple-400 flex items-center justify-center text-xs">3</span>
-                            查看已安装技能
-                        </h3>
-                        <div class="text-slate-300 pl-8">
-                            <div class="mb-4 pl-4 border-l-2 border-orange-500/30">
-                                <div class="mb-1"><span class="text-purple-400">nova-skill</span> list</div>
-                                <div class="text-xs text-slate-400"># 或：nova-skill ls</div>
-                            </div>
-                            <div class="pl-4 text-slate-500">
-                                # 输出示例：<br>
-                                # 📦 nova-rn (v1.0.0)<br>
-                                # → 已链接至：Claude Code, Cursor, Windsurf
-                            </div>
-                        </div>
+                    <h3 class="text-lg font-bold mb-2 text-slate-100" data-i18n="usage.step3.title"></h3>
+                    <p class="text-slate-400 text-sm mb-4" data-i18n="usage.step3.desc"></p>
+                    <div class="bg-slate-900/50 p-3 rounded font-mono text-xs">
+                        <div class="text-purple-400">$ eskill list</div>
                     </div>
                 </div>
 
                 <!-- Step 4 -->
-                <div class="bg-black/30 rounded-2xl border border-white/10 overflow-hidden">
-                    <div class="px-6 py-4 border-b border-white/5 bg-white/5 flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <div class="w-3 h-3 rounded-full bg-red-400"></div>
-                            <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
-                            <div class="w-3 h-3 rounded-full bg-green-400"></div>
-                        </div>
-                        <span class="text-xs font-mono text-slate-500">Terminal</span>
+                <div class="modern-card p-6">
+                    <div
+                        class="w-10 h-10 rounded-full bg-red-500/20 text-red-400 flex items-center justify-center font-bold mb-4">
+                        4
                     </div>
-                    <div class="p-6 font-mono text-sm">
-                        <h3 class="text-red-400 mb-4 font-bold flex items-center gap-2">
-                            <span
-                                class="w-6 h-6 rounded bg-red-500/20 text-red-400 flex items-center justify-center text-xs">4</span>
-                            删除技能
-                        </h3>
-                        <div class="text-slate-300 pl-8">
-                            <div class="flex gap-2 mb-2 text-slate-500 select-none"># 删除技能（三种方式等价）</div>
-                            <div class="mb-2 pl-4 border-l-2 border-red-500/30">
-                                <div class="mb-1"><span class="text-purple-400">nova-skill</span> remove &lt;skill&gt;</div>
-                                <div class="mb-1"><span class="text-purple-400">nova-skill</span> rm &lt;skill&gt;</div>
-                                <div class="mb-1"><span class="text-purple-400">nova-skill</span> uninstall &lt;skill&gt;</div>
-                            </div>
-                            <div class="flex gap-2 mb-2 text-slate-500 select-none mt-4"># 仅删除特定 agent 的链接</div>
-                            <div class="pl-4 border-l-2 border-red-500/30">
-                                <span class="text-purple-400">nova-skill</span> remove &lt;skill&gt; --agent cursor
-                            </div>
-                        </div>
+                    <h3 class="text-lg font-bold mb-2 text-slate-100" data-i18n="usage.step4.title"></h3>
+                    <p class="text-slate-400 text-sm mb-4" data-i18n="usage.step4.desc"></p>
+                    <div class="bg-slate-900/50 p-3 rounded font-mono text-xs">
+                        <div class="text-purple-400">$ eskill remove &lt;skill&gt;</div>
                     </div>
                 </div>
 
+                <!-- Step 5 -->
+                <div class="modern-card p-6">
+                    <div
+                        class="w-10 h-10 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold mb-4">
+                        5
+                    </div>
+                    <h3 class="text-lg font-bold mb-2 text-slate-100" data-i18n="usage.step5.title"></h3>
+                    <p class="text-slate-400 text-sm mb-4" data-i18n="usage.step5.desc"></p>
+                    <div class="bg-slate-900/50 p-3 rounded font-mono text-xs">
+                        <div class="text-purple-400">$ eskill agents</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 px-6 border-t border-slate-800/50">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-4xl md:text-5xl font-bold mb-6 gradient-text" data-i18n="cta.title"></h2>
+            <p class="text-lg text-slate-400 mb-8" data-i18n="cta.desc"></p>
+            <div class="flex items-center justify-center gap-4 flex-wrap">
+                <a href="https://github.com/empjs/skill" target="_blank" rel="noopener noreferrer"
+                    class="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors">
+                    <span data-i18n="cta.getStarted"></span>
+                </a>
+                <a href="#usage"
+                    class="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium transition-colors border border-slate-700">
+                    <span data-i18n="cta.learnMore"></span>
+                </a>
+            </div>
+            <div class="flex items-center justify-center gap-6 mt-8 text-sm text-slate-400">
+                <div class="flex items-center gap-2">
+                    <span class="text-green-400">✓</span>
+                    <span data-i18n="cta.openSource"></span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-green-400">✓</span>
+                    <span data-i18n="cta.compatible"></span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-green-400">✓</span>
+                    <span data-i18n="cta.productionReady"></span>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="py-12 border-t border-white/5 text-center text-slate-600 text-sm">
-        <div class="flex justify-center items-center gap-2 mb-4 opacity-50">
-            <span class="text-2xl">⚡</span>
-        </div>
-        <p>&copy; 2026 Nova Team. 仅供内部使用。</p>
+    <footer class="py-12 border-t border-slate-800/50 text-center text-slate-600 text-sm">
+        <p data-i18n="footer.copyright"></p>
     </footer>
 
+    <script type="module" src="./src/i18n.js"></script>
     <script type="module" src="./src/main.js"></script>
 </body>
 

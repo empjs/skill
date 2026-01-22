@@ -1,0 +1,8 @@
+# Cloudflare Pages 配置
+# 使用命令: pnpm deploy 或 npx wrangler pages deploy dist
+
+name = "emp-skill-website"
+compatibility_date = "2024-01-01"
+
+# Pages 部署不需要 [site] 配置
+# 直接使用: wrangler pages deploy dist

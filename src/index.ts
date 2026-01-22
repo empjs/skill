@@ -18,7 +18,7 @@ const version = packageJson.version
 const program = new Command()
 
 program
-  .name('nova-skill')
+  .name('eskill')
   .description('Unified CLI tool for managing AI agent skills')
   .version(version)
 

@@ -91,7 +91,7 @@ export async function install(
     skillName = gitInfo.path
       ? extractSkillName(path.basename(gitInfo.path))
       : extractSkillName(gitInfo.repo)
-    const tempDir = path.join('/tmp', `nova-skill-${Date.now()}`)
+    const tempDir = path.join('/tmp', `eskill-${Date.now()}`)
     const cloneDir = path.join(tempDir, 'repo')
 
     try {
@@ -126,7 +126,7 @@ export async function install(
           logger.info('  - Large repository size')
           logger.info('  - Git server issues')
           logger.info('')
-          logger.info(`Try again or increase timeout: nova-skill add ${skillNameOrPath} --timeout=300000`)
+          logger.info(`Try again or increase timeout: eskill add ${skillNameOrPath} --timeout=300000`)
         }
         throw error
       }
@@ -191,7 +191,7 @@ export async function install(
   } else {
     // NPM install mode
     skillName = extractSkillName(skillNameOrPath)
-    const tempDir = path.join('/tmp', `nova-skill-${Date.now()}`)
+    const tempDir = path.join('/tmp', `eskill-${Date.now()}`)
 
     try {
       // Determine registry (priority: CLI option > project .npmrc > global npm config > default)
@@ -243,9 +243,9 @@ export async function install(
           logger.info('  - Network firewall blocking the connection')
           logger.info('')
           logger.info('Suggestions:')
-          logger.info(`  - Try again: nova-skill add ${skillNameOrPath}`)
-          logger.info(`  - Use a different registry: nova-skill add ${skillNameOrPath} --registry=https://registry.npmjs.org/`)
-          logger.info(`  - Increase timeout: nova-skill add ${skillNameOrPath} --timeout=300000`)
+          logger.info(`  - Try again: eskill add ${skillNameOrPath}`)
+          logger.info(`  - Use a different registry: eskill add ${skillNameOrPath} --registry=https://registry.npmjs.org/`)
+          logger.info(`  - Increase timeout: eskill add ${skillNameOrPath} --timeout=300000`)
         } else if (errorMessage.includes('EACCES') || errorMessage.includes('permission denied') || errorMessage.includes('Permission denied')) {
           logger.error('Permission denied error detected')
           logger.info('')
@@ -273,17 +273,17 @@ export async function install(
           logger.info('   sudo chown -R $(whoami) /usr/local/lib/node_modules')
           logger.info('')
           logger.info('Option C: Use sudo (not recommended for security reasons)')
-          logger.info(`   sudo npm install -g @nova/skill --registry=${registry}`)
+          logger.info(`   sudo npm install -g @empjs/skill --registry=${registry}`)
           logger.info('')
           logger.info('After fixing, try again:')
-          logger.info(`   nova-skill add ${skillNameOrPath}`)
+          logger.info(`   eskill add ${skillNameOrPath}`)
         } else if (errorMessage.includes('ENOTFOUND') || errorMessage.includes('ECONNREFUSED')) {
           logger.error(`Network connection error: ${errorMessage}`)
           logger.info('')
           logger.info('Please check:')
           logger.info('  - Your internet connection')
           logger.info(`  - Registry accessibility: ${registry}`)
-          logger.info(`  - Try a different registry: nova-skill add ${skillNameOrPath} --registry=https://registry.npmjs.org/`)
+          logger.info(`  - Try a different registry: eskill add ${skillNameOrPath} --registry=https://registry.npmjs.org/`)
         } else {
           logger.error(`Failed to download: ${errorMessage}`)
           logger.info('')
@@ -291,7 +291,7 @@ export async function install(
           logger.info('For other errors, please check:')
           logger.info('  - Package name is correct')
           logger.info('  - Registry is accessible')
-          logger.info(`  - Try: nova-skill add ${skillNameOrPath} --registry=https://registry.npmjs.org/`)
+          logger.info(`  - Try: eskill add ${skillNameOrPath} --registry=https://registry.npmjs.org/`)
         }
         process.exit(1)
       }

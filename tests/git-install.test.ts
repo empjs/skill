@@ -9,7 +9,7 @@ import { parseGitUrl, isGitUrl } from "../src/utils/git";
 const execAsync = promisify(exec);
 
 describe("Git URL Installation", () => {
-  const testTempDir = path.join(os.tmpdir(), `nova-skill-test-${Date.now()}`);
+  const testTempDir = path.join(os.tmpdir(), `emp-skill-test-${Date.now()}`);
   const testSkillDir = path.join(testTempDir, "test-skill");
 
   beforeAll(() => {
@@ -78,7 +78,7 @@ describe("Git URL Installation", () => {
 
     it("should not detect NPM packages as git URLs", () => {
       const packages = [
-        "@nova/rn-skill",
+        "@empjs/skill",
         "react-agent-skill",
         "some-package",
       ];
