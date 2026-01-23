@@ -5,7 +5,11 @@
   "main": "index.js",
   "scripts": {
     "lint": "biome check --write",
-    "dev": "pnpm --filter host-app --filter remote-app --parallel dev:ios"
+    "dev": "pnpm --filter host-app --filter remote-app --parallel dev:ios",
+    "dev:web": "pnpm --filter @empjs/web dev",
+    "build:web": "pnpm --filter @empjs/web build",
+    "preview:web": "pnpm --filter @empjs/web preview",
+    "deploy:web": "pnpm --filter @empjs/web deploy"
   },
   "keywords": [],
   "author": "",
