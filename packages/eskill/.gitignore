@@ -1,0 +1,22 @@
+# Local
+.DS_Store
+*.local
+*.log*
+
+# Dist
+node_modules
+dist/
+
+
+
+
+node_modules
+dist
+.DS_Store
+*.log*
+
+output
+
+@mf-types
+
+doc_build

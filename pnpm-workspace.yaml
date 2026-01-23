@@ -1,0 +1,14 @@
+packages:
+  - packages/**
+  - apps/**
+  - '!**/test/**'
+  - website/**
+
+ignoredBuiltDependencies:
+  - core-js
+  - esbuild
+  - less
+  - unrs-resolver
+
+onlyBuiltDependencies:
+  - '@shopify/react-native-skia'

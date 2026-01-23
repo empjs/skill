@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@empjs/skill - Unified AI Agent Skills Management</title>
+</head>
+
+<body class="antialiased selection:bg-blue-500/20 selection:text-blue-300 overflow-x-hidden">
+    <!-- Background Decor -->
+    <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl opacity-50 animate-pulse"
+            style="animation-duration: 4s;"></div>
+        <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl opacity-50 animate-pulse"
+            style="animation-duration: 6s;"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 border-b border-slate-800/50 bg-slate-900/80 backdrop-blur-md overflow-hidden">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2 sm:gap-3 min-w-0">
+                <div class="font-mono font-bold text-lg sm:text-xl text-blue-400 flex-shrink-0">
+                    <span class="text-blue-500">$</span> eskill
+                </div>
+                <span class="text-[10px] sm:text-xs bg-blue-500/20 text-blue-300 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full flex-shrink-0"
+                    id="version-badge">v1.0.3</span>
+            </div>
+            <div class="hidden md:flex items-center gap-6">
+                <a href="#features" data-i18n="nav.features"
+                    class="text-sm font-medium text-slate-400 hover:text-white transition-colors"></a>
+                <a href="#agents" data-i18n="nav.agents"
+                    class="text-sm font-medium text-slate-400 hover:text-white transition-colors"></a>
+                <a href="#commands" data-i18n="nav.commands"
+                    class="text-sm font-medium text-slate-400 hover:text-white transition-colors"></a>
+                <a href="#usage" data-i18n="nav.usage"
+                    class="text-sm font-medium text-slate-400 hover:text-white transition-colors"></a>
+            </div>
+            <div class="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+                <div class="lang-switcher">
+                    <button class="lang-btn active" data-lang="en" onclick="window.i18n.setLanguage('en')">EN</button>
+                    <button class="lang-btn" data-lang="zh" onclick="window.i18n.setLanguage('zh')">中文</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Supported Agents Bar -->
+    <div class="fixed top-14 sm:top-16 left-0 right-0 z-40 border-b border-slate-800/50 bg-slate-900/60 backdrop-blur-sm py-1.5 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-2 sm:px-4">
+            <!-- Mobile: Compact view with count -->
+            <div class="flex items-center justify-center gap-1.5 text-[10px] sm:hidden text-slate-400">
+                <span class="text-slate-500 font-medium">14+ Agents:</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">Claude</span>
+                <span class="text-slate-500">•</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">Cursor</span>
+                <span class="text-slate-500">•</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">Windsurf</span>
+                <span class="text-slate-500">•</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">+11</span>
+            </div>
+            <!-- Desktop: Full list -->
+            <div class="hidden sm:flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-xs text-slate-400">
+                <span class="text-slate-500 font-medium">Supported:</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">Claude Code</span>
+                <span class="text-slate-500">•</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">Cursor</span>
+                <span class="text-slate-500">•</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">Windsurf</span>
+                <span class="text-slate-500">•</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">Cline</span>
+                <span class="text-slate-500">•</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">Gemini Code</span>
+                <span class="text-slate-500">•</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">GitHub Copilot</span>
+                <span class="text-slate-500">•</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">OpenCode</span>
+                <span class="text-slate-500">•</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">Antigravity</span>
+                <span class="text-slate-500">•</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">Kiro</span>
+                <span class="text-slate-500">•</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">Codex CLI</span>
+                <span class="text-slate-500">•</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">Qoder</span>
+                <span class="text-slate-500">•</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">Roo Code</span>
+                <span class="text-slate-500">•</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">Trae</span>
+                <span class="text-slate-500">•</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">Continue</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero -->
+    <main class="relative z-10 pt-24 sm:pt-28 pb-12 sm:pb-20 px-4 sm:px-6">
+        <div class="max-w-7xl mx-auto text-center px-2 sm:px-4">
+            <h1
+                class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-4 sm:mb-6 gradient-text leading-tight sm:leading-none">
+                <span data-i18n="hero.title" class="inline-block"></span>
+            </h1>
+            <p class="text-xl sm:text-2xl md:text-3xl font-semibold text-slate-300 mb-3 sm:mb-4 px-2" data-i18n="hero.subtitle"></p>
+            <p class="text-base sm:text-lg text-slate-400 mb-8 sm:mb-12 max-w-3xl mx-auto leading-relaxed px-2" data-i18n="hero.description">
+            </p>
+
+            <!-- Install Command Input -->
+            <div class="max-w-2xl mx-auto mb-6 sm:mb-8 px-2">
+                <div
+                    class="bg-slate-900/80 backdrop-blur-sm border border-slate-700/50 rounded-xl p-3 sm:p-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
+                    <div class="flex items-center gap-2 flex-1 min-w-0">
+                        <span class="text-green-400 font-mono text-sm sm:text-base flex-shrink-0">$</span>
+                        <span id="install-command-display" class="font-mono text-slate-200 text-sm sm:text-lg flex-1 truncate">pnpm add -g
+                            @empjs/skill</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+                        <button onclick="switchInstallMethod('pnpm')" id="tab-pnpm"
+                            class="px-2 sm:px-3 py-1 rounded-lg text-[10px] sm:text-xs font-medium transition-all install-tab active bg-blue-500/20 text-blue-400 border border-blue-500/30">
+                            pnpm
+                        </button>
+                        <button onclick="switchInstallMethod('npm')" id="tab-npm"
+                            class="px-2 sm:px-3 py-1 rounded-lg text-[10px] sm:text-xs font-medium transition-all install-tab text-slate-400 hover:text-white">
+                            npm
+                        </button>
+                        <button onclick="switchInstallMethod('yarn')" id="tab-yarn"
+                            class="px-2 sm:px-3 py-1 rounded-lg text-[10px] sm:text-xs font-medium transition-all install-tab text-slate-400 hover:text-white">
+                            yarn
+                        </button>
+                        <button onclick="switchInstallMethod('bun')" id="tab-bun"
+                            class="px-2 sm:px-3 py-1 rounded-lg text-[10px] sm:text-xs font-medium transition-all install-tab text-slate-400 hover:text-white">
+                            bun
+                        </button>
+                        <button class="text-slate-400 hover:text-white transition-colors copy-btn p-1.5 sm:p-2 flex-shrink-0"
+                            onclick="copyInstallCommand()" data-i18n-title="copy.copy" title="Copy">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 mb-10 sm:mb-16 px-2">
+                <a href="#git-install"
+                    class="group relative px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-orange-500/20 via-red-500/20 to-orange-500/20 backdrop-blur-sm border-2 border-orange-500/50 rounded-xl text-white font-bold text-sm sm:text-base hover:border-orange-400/70 transition-all duration-300 hover:scale-105 shadow-xl shadow-orange-500/20 flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                        </path>
+                    </svg>
+                    <span data-i18n="hero.gitInstall">✨ Git URL Install</span>
+                </a>
+                <a href="#usage"
+                    class="px-5 sm:px-6 py-2.5 sm:py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium text-sm sm:text-base transition-colors text-center">
+                    <span data-i18n="hero.howItWorks"></span>
+                </a>
+                <a href="#commands"
+                    class="px-5 sm:px-6 py-2.5 sm:py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium text-sm sm:text-base transition-colors border border-slate-700 text-center">
+                    <span data-i18n="hero.viewCommands"></span>
+                </a>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 max-w-4xl mx-auto px-2">
+                <div class="text-center">
+                    <div class="text-3xl sm:text-4xl font-bold text-blue-400 mb-1 sm:mb-2">14+</div>
+                    <div class="text-xs sm:text-sm text-slate-400" data-i18n="hero.stats.agents"></div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl sm:text-4xl font-bold text-purple-400 mb-1 sm:mb-2">∞</div>
+                    <div class="text-xs sm:text-sm text-slate-400" data-i18n="hero.stats.skills"></div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl sm:text-4xl font-bold text-green-400 mb-1 sm:mb-2">1</div>
+                    <div class="text-xs sm:text-sm text-slate-400" data-i18n="hero.stats.cli"></div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl sm:text-4xl font-bold text-orange-400 mb-1 sm:mb-2">0</div>
+                    <div class="text-xs sm:text-sm text-slate-400" data-i18n="hero.stats.config"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Everything You Need -->
+    <section id="features" class="py-20 px-6 border-t border-slate-800/50">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-4xl md:text-5xl font-bold text-center mb-4">
+                <span data-i18n="features.mainTitle"></span>
+            </h2>
+            <p class="text-center text-slate-400 mb-16 max-w-2xl mx-auto" data-i18n="features.mainDesc"></p>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Feature 1 -->
+                <div class="modern-card p-6">
+                    <h3 class="text-xl font-bold mb-3 text-slate-100" data-i18n="features.unified.title"></h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-4" data-i18n="features.unified.desc"></p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-blue-500/10 text-blue-400 rounded-full text-xs">Centralized</span>
+                        <span
+                            class="px-3 py-1 bg-purple-500/10 text-purple-400 rounded-full text-xs">~/.emp-agent/skills/</span>
+                    </div>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="modern-card p-6">
+                    <h3 class="text-xl font-bold mb-3 text-slate-100" data-i18n="features.auto.title"></h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-4" data-i18n="features.auto.desc"></p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-green-500/10 text-green-400 rounded-full text-xs">Auto-detect</span>
+                        <span class="px-3 py-1 bg-blue-500/10 text-blue-400 rounded-full text-xs">Symlink</span>
+                    </div>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="modern-card p-6">
+                    <h3 class="text-xl font-bold mb-3 text-slate-100" data-i18n="features.dev.title"></h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-4" data-i18n="features.dev.desc"></p>
+                    <div class="flex flex-wrap gap-2">
+                        <span
+                            class="px-3 py-1 bg-yellow-500/10 text-yellow-400 rounded-full text-xs font-mono">--link</span>
+                        <span class="px-3 py-1 bg-green-500/10 text-green-400 rounded-full text-xs">Hot Reload</span>
+                    </div>
+                </div>
+
+                <!-- Feature 4: Git URL Install -->
+                <div class="modern-card p-6 border-orange-500/30 relative">
+                    <div class="absolute top-4 right-4">
+                        <span
+                            class="px-2 py-1 rounded-full bg-orange-500/20 text-orange-400 text-xs font-bold">NEW</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-slate-100" data-i18n="features.git.title"></h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-4" data-i18n="features.git.desc"></p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-orange-500/10 text-orange-400 rounded-full text-xs">GitHub</span>
+                        <span class="px-3 py-1 bg-orange-500/10 text-orange-400 rounded-full text-xs">GitLab</span>
+                        <span class="px-3 py-1 bg-purple-500/10 text-purple-400 rounded-full text-xs">No NPM</span>
+                    </div>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="modern-card p-6">
+                    <h3 class="text-xl font-bold mb-3 text-slate-100" data-i18n="features.unified.title"></h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-4" data-i18n="features.unified.desc"></p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-blue-500/10 text-blue-400 rounded-full text-xs">NPM</span>
+                        <span class="px-3 py-1 bg-green-500/10 text-green-400 rounded-full text-xs">Git URL</span>
+                        <span class="px-3 py-1 bg-purple-500/10 text-purple-400 rounded-full text-xs">Local</span>
+                    </div>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="modern-card p-6">
+                    <h3 class="text-xl font-bold mb-3 text-slate-100" data-i18n="features.auto.title"></h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-4" data-i18n="features.auto.desc"></p>
+                    <div class="flex flex-wrap gap-2">
+                        <span
+                            class="px-3 py-1 bg-green-500/10 text-green-400 rounded-full text-xs">Cross-platform</span>
+                        <span class="px-3 py-1 bg-blue-500/10 text-blue-400 rounded-full text-xs">One CLI</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Supported Agents -->
+    <section id="agents" class="py-20 px-6 border-t border-slate-800/50">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-4xl md:text-5xl font-bold text-center mb-4">
+                <span data-i18n="agents.title"></span>
+            </h2>
+            <p class="text-center text-slate-400 mb-16 max-w-2xl mx-auto" data-i18n="agents.desc"></p>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-3">
+                <div class="modern-card p-3 cursor-pointer">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-6 h-6 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400 flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 truncate">Claude Code</h3>
+                    </div>
+                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.claude/skills/</p>
+                </div>
+
+                <div class="modern-card p-3 cursor-pointer">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div
+                            class="w-6 h-6 rounded-lg bg-green-500/10 flex items-center justify-center text-green-400 flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 truncate">Cursor</h3>
+                    </div>
+                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.cursor/skills/</p>
+                </div>
+
+                <div class="modern-card p-3 cursor-pointer">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div
+                            class="w-6 h-6 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400 flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 truncate">Windsurf</h3>
+                    </div>
+                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.windsurf/skills/</p>
+                </div>
+
+                <div class="modern-card p-3 cursor-pointer">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div
+                            class="w-6 h-6 rounded-lg bg-yellow-500/10 flex items-center justify-center text-yellow-400 flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 truncate">Cline</h3>
+                    </div>
+                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.cline/skills/</p>
+                </div>
+
+                <div class="modern-card p-3 cursor-pointer">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-6 h-6 rounded-lg bg-red-500/10 flex items-center justify-center text-red-400 flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 truncate">Gemini Code</h3>
+                    </div>
+                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.gemini/skills/</p>
+                </div>
+
+                <div class="modern-card p-3 cursor-pointer">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div
+                            class="w-6 h-6 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400 flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 truncate">GitHub Copilot</h3>
+                    </div>
+                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.copilot/skills/</p>
+                </div>
+
+                <div class="modern-card p-3 cursor-pointer">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div
+                            class="w-6 h-6 rounded-lg bg-cyan-500/10 flex items-center justify-center text-cyan-400 flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 truncate">OpenCode</h3>
+                    </div>
+                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.opencode/skills/</p>
+                </div>
+
+                <div class="modern-card p-3 cursor-pointer">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div
+                            class="w-6 h-6 rounded-lg bg-pink-500/10 flex items-center justify-center text-pink-400 flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 truncate">Antigravity</h3>
+                    </div>
+                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.gemini/antigravity/skills/</p>
+                </div>
+
+                <div class="modern-card p-3 cursor-pointer">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div
+                            class="w-6 h-6 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400 flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 truncate">Kiro</h3>
+                    </div>
+                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.kiro/skills/</p>
+                </div>
+
+                <div class="modern-card p-3 cursor-pointer">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div
+                            class="w-6 h-6 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-400 flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 truncate">Codex CLI</h3>
+                    </div>
+                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.codex/skills/</p>
+                </div>
+
+                <div class="modern-card p-3 cursor-pointer">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div
+                            class="w-6 h-6 rounded-lg bg-teal-500/10 flex items-center justify-center text-teal-400 flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 truncate">Qoder</h3>
+                    </div>
+                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.qoder/skills/</p>
+                </div>
+
+                <div class="modern-card p-3 cursor-pointer">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div
+                            class="w-6 h-6 rounded-lg bg-violet-500/10 flex items-center justify-center text-violet-400 flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 truncate">Roo Code</h3>
+                    </div>
+                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.roo/skills/</p>
+                </div>
+
+                <div class="modern-card p-3 cursor-pointer">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div
+                            class="w-6 h-6 rounded-lg bg-rose-500/10 flex items-center justify-center text-rose-400 flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 truncate">Trae</h3>
+                    </div>
+                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.trae/skills/</p>
+                </div>
+
+                <div class="modern-card p-3 cursor-pointer">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div
+                            class="w-6 h-6 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-400 flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 truncate">Continue</h3>
+                    </div>
+                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.continue/skills/</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Commands Reference -->
+    <section id="commands" class="py-20 px-6 border-t border-slate-800/50">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl md:text-5xl font-bold mb-12 text-center text-slate-200" data-i18n="commands.title"></h2>
+
+            <!-- Git URL Install - Featured Card -->
+            <div id="git-install" class="mb-12 scroll-mt-20">
+                <div
+                    class="featured-git-card relative overflow-hidden rounded-2xl border-2 border-orange-500/30 bg-gradient-to-br from-orange-500/10 via-red-500/10 to-orange-500/10 p-8 backdrop-blur-sm shadow-2xl shadow-orange-500/20">
+                    <!-- Animated background gradient -->
+                    <div
+                        class="absolute inset-0 bg-gradient-to-r from-orange-500/5 via-transparent to-red-500/5 animate-pulse">
+                    </div>
+
+                    <div class="relative z-10">
+                        <!-- Badge -->
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="flex items-center gap-3">
+                                <span
+                                    class="px-4 py-2 rounded-full bg-orange-500/30 text-orange-300 text-sm font-bold border border-orange-500/50">
+                                    ✨ NEW
+                                </span>
+                                <span
+                                    class="px-4 py-2 rounded-full bg-gradient-to-r from-orange-500/20 to-red-500/20 text-orange-300 text-sm font-semibold border border-orange-500/30">
+                                    Core Feature
+                                </span>
+                            </div>
+                            <div
+                                class="w-16 h-16 rounded-xl bg-gradient-to-br from-orange-500/20 to-red-500/20 flex items-center justify-center border border-orange-500/30">
+                                <svg class="w-8 h-8 text-orange-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                    </path>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Title -->
+                        <h3 class="text-3xl font-bold mb-3 text-white" data-i18n="commands.gitInstall.title">
+                            Install from Git URL
+                        </h3>
+                        <p class="text-lg text-slate-300 mb-6 max-w-2xl" data-i18n="commands.gitInstall.desc">
+                            Install skills directly from GitHub/GitLab URLs. No NPM publishing required. Supports
+                            branches and subdirectories.
+                        </p>
+
+                        <!-- Commands -->
+                        <div class="space-y-4 mb-6">
+                            <div class="bg-black/40 backdrop-blur-sm rounded-xl p-5 border border-orange-500/30">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-2 h-2 rounded-full bg-green-400"></div>
+                                    <span class="text-orange-300 font-semibold text-sm"
+                                        data-i18n="commands.gitInstall.gitTitle">✨ Git URL Installation</span>
+                                </div>
+                                <div class="font-mono text-sm space-y-2 ml-5">
+                                    <div class="text-purple-300">$ eskill install https://github.com/anthropics/skills/tree/main/skills/skill-creator</div>
+                                    <div class="text-purple-300">$ eskill add https://github.com/anthropics/skills/tree/main/skills/skill-creator</div>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-900/60 backdrop-blur-sm rounded-xl p-5 border border-slate-700/50">
+                                <div class="text-slate-300 text-sm font-medium mb-3"
+                                    data-i18n="commands.gitInstall.exampleTitle">使用示例 / Usage Example:</div>
+                                <div class="bg-black/40 rounded-lg p-4 mb-3">
+                                    <div class="text-slate-400 text-xs mb-1"
+                                        data-i18n="commands.gitInstall.exampleDesc">复制完整的 GitHub/GitLab URL，包含分支和路径：
+                                    </div>
+                                    <div class="font-mono text-xs text-purple-300 break-all mt-2">
+                                        https://github.com/anthropics/skills/tree/main/skills/skill-creator
+                                    </div>
+                                    <div class="text-slate-400 text-xs mt-3 mb-2">执行命令示例：</div>
+                                    <div class="font-mono text-xs text-green-300 space-y-1">
+                                        <div>$ eskill install https://github.com/anthropics/skills/tree/main/skills/skill-creator</div>
+                                        <div>$ eskill add https://github.com/anthropics/skills/tree/main/skills/skill-creator</div>
+                                        <div>$ eskill install https://github.com/anthropics/skills/tree/main/skills/skill-creator --agent cursor</div>
+                                        <div>$ eskill add https://github.com/anthropics/skills/tree/main/skills/skill-creator --link</div>
+                                    </div>
+                                </div>
+                                <div class="text-slate-400 text-xs mb-2"
+                                    data-i18n="commands.gitInstall.supportedFeatures">支持的功能 / Supported Features:</div>
+                                <div class="flex flex-wrap gap-2">
+                                    <span
+                                        class="px-3 py-1.5 rounded-lg bg-blue-500/20 text-blue-300 text-xs border border-blue-500/30 flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                                            <path
+                                                d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                                        </svg>
+                                        GitHub
+                                    </span>
+                                    <span
+                                        class="px-3 py-1.5 rounded-lg bg-purple-500/20 text-purple-300 text-xs border border-purple-500/30 flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                                            <path
+                                                d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                                        </svg>
+                                        GitLab
+                                    </span>
+                                    <span
+                                        class="px-3 py-1.5 rounded-lg bg-green-500/20 text-green-300 text-xs border border-green-500/30 flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        <span data-i18n="commands.gitInstall.feature1">支持分支</span>
+                                    </span>
+                                    <span
+                                        class="px-3 py-1.5 rounded-lg bg-yellow-500/20 text-yellow-300 text-xs border border-yellow-500/30 flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z">
+                                            </path>
+                                        </svg>
+                                        <span data-i18n="commands.gitInstall.feature2">支持子目录</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Benefits -->
+                        <div class="grid md:grid-cols-3 gap-4">
+                            <div class="flex items-center gap-2 text-slate-300">
+                                <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <span class="text-sm" data-i18n="commands.gitInstall.benefit1">No NPM Publishing</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-slate-300">
+                                <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <span class="text-sm" data-i18n="commands.gitInstall.benefit2">Direct from Repo</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-slate-300">
+                                <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <span class="text-sm" data-i18n="commands.gitInstall.benefit3">Auto Branch
+                                    Detection</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Install Command (NPM) -->
+                <div class="modern-card p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-100" data-i18n="commands.install.title"></h3>
+                    </div>
+                    <p class="text-slate-400 mb-4 text-sm" data-i18n="commands.install.desc"></p>
+                    <div class="bg-slate-900/50 p-3 rounded border border-slate-700/50 font-mono text-xs">
+                        <div class="text-purple-400 mb-1">$ eskill install &lt;skill&gt;</div>
+                        <div class="text-purple-400 mb-1">$ eskill add &lt;skill&gt;</div>
+                        <div class="text-slate-500 mt-2 text-xs">Options:</div>
+                        <div class="text-slate-400 ml-2 text-xs">-a, --agent &lt;name&gt;</div>
+                        <div class="text-slate-400 ml-2 text-xs">-l, --link</div>
+                        <div class="text-slate-400 ml-2 text-xs">-f, --force</div>
+                    </div>
+                </div>
+
+                <!-- List Command -->
+                <div class="modern-card p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div
+                            class="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center text-green-400">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 6h16M4 12h16M4 18h16"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-100" data-i18n="commands.list.title"></h3>
+                    </div>
+                    <p class="text-slate-400 mb-4 text-sm" data-i18n="commands.list.desc"></p>
+                    <div class="bg-slate-900/50 p-3 rounded border border-slate-700/50 font-mono text-xs">
+                        <div class="text-purple-400">$ eskill list</div>
+                        <div class="text-purple-400 mt-2">$ eskill ls</div>
+                    </div>
+                </div>
+
+                <!-- Remove Command -->
+                <div class="modern-card p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center text-red-400">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                </path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-100" data-i18n="commands.remove.title"></h3>
+                    </div>
+                    <p class="text-slate-400 mb-4 text-sm" data-i18n="commands.remove.desc"></p>
+                    <div class="bg-slate-900/50 p-3 rounded border border-slate-700/50 font-mono text-xs">
+                        <div class="text-purple-400 mb-1">$ eskill remove &lt;skill&gt;</div>
+                        <div class="text-purple-400 mb-1">$ eskill rm &lt;skill&gt;</div>
+                        <div class="text-purple-400">$ eskill uninstall &lt;skill&gt;</div>
+                    </div>
+                </div>
+
+                <!-- Agents Command -->
+                <div class="modern-card p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div
+                            class="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-100" data-i18n="commands.agents.title"></h3>
+                    </div>
+                    <p class="text-slate-400 mb-4 text-sm" data-i18n="commands.agents.desc"></p>
+                    <div class="bg-slate-900/50 p-3 rounded border border-slate-700/50 font-mono text-xs">
+                        <div class="text-purple-400 mb-1">$ eskill agents</div>
+                        <div class="text-purple-400">$ eskill list-agents</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="usage" class="py-20 px-6 bg-slate-900/30 border-t border-slate-800/50">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4 text-center">
+                <span data-i18n="usage.mainTitle"></span>
+            </h2>
+            <p class="text-center text-slate-400 mb-16 max-w-2xl mx-auto" data-i18n="usage.mainDesc"></p>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Step 0 -->
+                <div class="modern-card p-6">
+                    <div
+                        class="w-10 h-10 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold mb-4">
+                        0
+                    </div>
+                    <h3 class="text-lg font-bold mb-2 text-slate-100" data-i18n="usage.step0.title"></h3>
+                    <p class="text-slate-400 text-sm mb-4" data-i18n="usage.step0.desc"></p>
+                    <div class="bg-slate-900/50 p-3 rounded font-mono text-xs">
+                        <div class="text-purple-400">$ pnpm add -g @empjs/skill</div>
+                    </div>
+                </div>
+
+                <!-- Step 1 -->
+                <div class="modern-card p-6">
+                    <div
+                        class="w-10 h-10 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center font-bold mb-4">
+                        1
+                    </div>
+                    <h3 class="text-lg font-bold mb-2 text-slate-100" data-i18n="usage.step1.title"></h3>
+                    <p class="text-slate-400 text-sm mb-4" data-i18n="usage.step1.desc"></p>
+                    <div class="bg-slate-900/50 p-3 rounded font-mono text-xs">
+                        <div class="text-purple-400">$ eskill install &lt;skill&gt;</div>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="modern-card p-6">
+                    <div
+                        class="w-10 h-10 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold mb-4">
+                        2
+                    </div>
+                    <h3 class="text-lg font-bold mb-2 text-slate-100" data-i18n="usage.step2.title"></h3>
+                    <p class="text-slate-400 text-sm mb-4" data-i18n="usage.step2.desc"></p>
+                    <div class="bg-slate-900/50 p-3 rounded font-mono text-xs">
+                        <div class="text-purple-400">$ eskill install . --link</div>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="modern-card p-6">
+                    <div
+                        class="w-10 h-10 rounded-full bg-yellow-500/20 text-yellow-400 flex items-center justify-center font-bold mb-4">
+                        3
+                    </div>
+                    <h3 class="text-lg font-bold mb-2 text-slate-100" data-i18n="usage.step3.title"></h3>
+                    <p class="text-slate-400 text-sm mb-4" data-i18n="usage.step3.desc"></p>
+                    <div class="bg-slate-900/50 p-3 rounded font-mono text-xs">
+                        <div class="text-purple-400">$ eskill list</div>
+                    </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="modern-card p-6">
+                    <div
+                        class="w-10 h-10 rounded-full bg-red-500/20 text-red-400 flex items-center justify-center font-bold mb-4">
+                        4
+                    </div>
+                    <h3 class="text-lg font-bold mb-2 text-slate-100" data-i18n="usage.step4.title"></h3>
+                    <p class="text-slate-400 text-sm mb-4" data-i18n="usage.step4.desc"></p>
+                    <div class="bg-slate-900/50 p-3 rounded font-mono text-xs">
+                        <div class="text-purple-400">$ eskill remove &lt;skill&gt;</div>
+                    </div>
+                </div>
+
+                <!-- Step 5 -->
+                <div class="modern-card p-6">
+                    <div
+                        class="w-10 h-10 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold mb-4">
+                        5
+                    </div>
+                    <h3 class="text-lg font-bold mb-2 text-slate-100" data-i18n="usage.step5.title"></h3>
+                    <p class="text-slate-400 text-sm mb-4" data-i18n="usage.step5.desc"></p>
+                    <div class="bg-slate-900/50 p-3 rounded font-mono text-xs">
+                        <div class="text-purple-400">$ eskill agents</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 px-6 border-t border-slate-800/50">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-4xl md:text-5xl font-bold mb-6 gradient-text" data-i18n="cta.title"></h2>
+            <p class="text-lg text-slate-400 mb-8" data-i18n="cta.desc"></p>
+            <div class="flex items-center justify-center gap-4 flex-wrap">
+                <a href="#usage"
+                    class="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors">
+                    <span data-i18n="cta.getStarted"></span>
+                </a>
+                <a href="#commands"
+                    class="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium transition-colors border border-slate-700">
+                    <span data-i18n="cta.learnMore"></span>
+                </a>
+            </div>
+            <div class="flex items-center justify-center gap-6 mt-8 text-sm text-slate-400">
+                <div class="flex items-center gap-2">
+                    <span class="text-green-400">✓</span>
+                    <span data-i18n="cta.compatible"></span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-green-400">✓</span>
+                    <span data-i18n="cta.productionReady"></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 border-t border-slate-800/50 text-center text-slate-600 text-sm">
+        <p data-i18n="footer.copyright"></p>
+    </footer>
+
+    <script type="module" src="./src/i18n.js"></script>
+    <script type="module" src="./src/main.js"></script>
+</body>
+
+</html>

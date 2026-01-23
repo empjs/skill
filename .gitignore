@@ -1,22 +1,15 @@
-# Local
-.DS_Store
-*.local
-*.log*
-
-# Dist
 node_modules
-dist/
-
-
-
-
-node_modules
+yarn-error.log
 dist
 .DS_Store
-*.log*
-
-output
-
+yarn.lock
+yarn-debug.lock
+.pnpm-debug.log
+projects/e-svga*
+.idea
+.emp-cache
 @mf-types
-
+.output
 doc_build
+
+.rslib
