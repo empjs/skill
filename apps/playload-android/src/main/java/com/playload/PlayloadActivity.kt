@@ -3,17 +3,24 @@ package com.playload
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.doAfterTextChanged
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.facebook.react.ReactInstanceManager
 import com.facebook.react.ReactRootView
+import com.facebook.react.common.annotations.UnstableReactNativeAPI
+import com.facebook.react.shell.MainReactPackage
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
-import com.google.android.material.progressindicator.ProgressBar
-import com.google.android.material.textfield.TextInputEditText
 import com.playload.bundle.BundleDownloader
+import com.playload.bundle.LoadMode
 import kotlinx.coroutines.launch
 
+@OptIn(UnstableReactNativeAPI::class)
 class PlayloadActivity : AppCompatActivity() {
     private lateinit var viewModel: PlayloadViewModel
     private lateinit var reactInstanceManager: ReactInstanceManager
@@ -46,10 +53,8 @@ class PlayloadActivity : AppCompatActivity() {
     }
 
     private fun setupViews() {
-        lifecycleScope.launch {
-            viewModel.appName.collect { name ->
-                findViewById<TextInputEditText>(R.id.etAppName).setText(name)
-            }
+        findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etAppName).doAfterTextChanged { text ->
+            viewModel.setAppName(text.toString())
         }
 
         val toggleMode = findViewById<MaterialButtonToggleGroup>(R.id.toggleMode)
@@ -59,38 +64,40 @@ class PlayloadActivity : AppCompatActivity() {
             if (isChecked) {
                 viewModel.setLoadMode(
                     when (checkedId) {
-                        R.id.btnDevMode -> com.playload.bundle.LoadMode.DEV
-                        R.id.btnReleaseMode -> com.playload.bundle.LoadMode.RELEASE
-                        else -> com.playload.bundle.LoadMode.DEV
+                        R.id.btnDevMode -> LoadMode.DEV
+                        R.id.btnReleaseMode -> LoadMode.RELEASE
+                        else -> LoadMode.DEV
                     }
                 )
             }
         }
 
         findViewById<MaterialButton>(R.id.btnLoad).setOnClickListener {
-            val appName = findViewById<TextInputEditText>(R.id.etAppName).text.toString()
-            val url = findViewById<TextInputEditText>(R.id.etBundleUrl).text.toString()
+            val appName = findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etAppName).text.toString()
+            val url = findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etBundleUrl).text.toString()
             viewModel.validateAndLoad(url, appName)
         }
 
         findViewById<MaterialButton>(R.id.btnReload).setOnClickListener {
-            val appName = findViewById<TextInputEditText>(R.id.etAppName).text.toString()
-            val url = findViewById<TextInputEditText>(R.id.etBundleUrl).text.toString()
+            val appName = findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etAppName).text.toString()
+            val url = findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etBundleUrl).text.toString()
             viewModel.validateAndLoad(url, appName)
         }
     }
 
     private fun observeState() {
         lifecycleScope.launch {
-            viewModel.uiState.collect { state ->
-                when (state) {
-                    is UiState.Idle -> updateUi(false, null, false)
-                    is UiState.Loading -> updateUi(true, null, false)
-                    is UiState.Loaded -> {
-                        reloadReactRoot()
-                        updateUi(false, null, true)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    when (state) {
+                        is UiState.Idle -> updateUi(false, null, false)
+                        is UiState.Loading -> updateUi(true, null, false)
+                        is UiState.Loaded -> {
+                            reloadReactRoot()
+                            updateUi(false, null, true)
+                        }
+                        is UiState.Error -> updateUi(false, state.message, true)
                     }
-                    is UiState.Error -> updateUi(false, state.message, true)
                 }
             }
         }
@@ -101,11 +108,11 @@ class PlayloadActivity : AppCompatActivity() {
         findViewById<MaterialButton>(R.id.btnLoad).visibility = if (loading) View.GONE else View.VISIBLE
         findViewById<MaterialButton>(R.id.btnReload).visibility = if (showReload) View.VISIBLE else View.GONE
 
-        val tvError = findViewById<android.widget.TextView>(R.id.tvError)
+        val tvError = findViewById<TextView>(R.id.tvError)
         tvError.visibility = if (error != null) View.VISIBLE else View.GONE
         tvError.text = error
 
-        findViewById<android.widget.TextView>(R.id.tvStatus).text = when {
+        findViewById<TextView>(R.id.tvStatus).text = when {
             loading -> "加载中..."
             error != null -> "加载失败"
             showReload -> "已加载"

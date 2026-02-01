@@ -8,6 +8,7 @@ import com.playload.bundle.LoadMode
 import com.playload.bundle.LoadResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class PlayloadViewModel(
@@ -55,11 +56,11 @@ class PlayloadViewModel(
     }
 
     fun validateAndLoad(url: String, appName: String): Boolean {
-        if (appName.isBlank()) {
+        if (appName.isEmpty()) {
             _uiState.value = UiState.Error("请输入 App Name")
             return false
         }
-        if (url.isBlank()) {
+        if (url.isEmpty()) {
             _uiState.value = UiState.Error("请输入 Bundle URL")
             return false
         }
