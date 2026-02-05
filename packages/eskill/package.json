@@ -1,6 +1,6 @@
 {
   "name": "@empjs/skill",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Unified CLI tool for managing AI agent skills across Claude Code, Cursor, Windsurf, and more",
   "type": "module",
   "bin": {
