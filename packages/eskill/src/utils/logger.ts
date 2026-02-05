@@ -24,6 +24,11 @@ class Logger {
     console.log(chalk.red('✗'), message)
   }
 
+  dim(message: string): void {
+    if (this.spinner) this.spinner.stop()
+    console.log(chalk.dim('  ' + message))
+  }
+
   start(message: string): Ora {
     if (this.spinner) this.spinner.stop()
     this.spinner = ora(message).start()

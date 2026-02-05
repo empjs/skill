@@ -58,8 +58,22 @@ export interface InstallOptions {
 /**
  * Install skill to shared directory and create symlinks
  */
+/**
+ * Shorten path by replacing home dir with ~
+ */
+function shortenPath(p: string): string {
+  const home = os.homedir()
+  return p.startsWith(home) ? p.replace(home, '~') : p
+}
+
 export async function install(skillNameOrPath: string, options: InstallOptions = {}): Promise<void> {
-  logger.info(`Installing skill: ${skillNameOrPath}`)
+  const isGit = isGitUrl(skillNameOrPath)
+  if (isGit) {
+    logger.info('Installing from Git URL')
+    logger.dim(skillNameOrPath)
+  } else {
+    logger.info(`Installing skill: ${skillNameOrPath}`)
+  }
 
   // Ensure shared directory exists
   ensureSharedDir()
@@ -68,10 +82,8 @@ export async function install(skillNameOrPath: string, options: InstallOptions =
   let skillName: string
 
   // Check Git URL first (before checking local path)
-  // This prevents URLs from being mistaken as local paths
-  const isGit = isGitUrl(skillNameOrPath)
   if (process.env.DEBUG_ESKILL) {
-    logger.infoWithoutStop(`[DEBUG] isGitUrl=${isGit}, parseGitUrl=${parseGitUrl(skillNameOrPath) ? 'ok' : 'null'}`)
+    logger.dim(`[DEBUG] isGitUrl=${isGit}, parseGitUrl=${parseGitUrl(skillNameOrPath) ? 'ok' : 'null'}`)
   }
   if (isGit) {
     // Git URL install mode
@@ -88,15 +100,11 @@ export async function install(skillNameOrPath: string, options: InstallOptions =
 
     try {
       const timeout = options.timeout || 120000 // Default 2 minutes for Git
-      const spinner = logger.start(`Cloning ${gitInfo.gitUrl}...`)
-      logger.infoWithoutStop(`Repository: ${gitInfo.gitUrl}`)
-      if (gitInfo.branch) {
-        logger.infoWithoutStop(`Branch: ${gitInfo.branch}`)
-      }
-      if (gitInfo.path) {
-        logger.infoWithoutStop(`Path: ${gitInfo.path}`)
-      }
-      logger.infoWithoutStop(`Timeout: ${timeout / 1000}s`)
+      const gitDetails: string[] = [`${gitInfo.gitUrl}`]
+      if (gitInfo.branch) gitDetails.push(`branch: ${gitInfo.branch}`)
+      if (gitInfo.path) gitDetails.push(`path: ${gitInfo.path}`)
+      logger.dim(gitDetails.join(' · '))
+      const spinner = logger.start(`Cloning...`)
       fs.mkdirSync(tempDir, {recursive: true})
 
       // Clone the repository
@@ -107,7 +115,7 @@ export async function install(skillNameOrPath: string, options: InstallOptions =
 
       try {
         await execWithTimeout(cloneCommand, timeout)
-        spinner.succeed(`Repository cloned successfully`)
+        spinner.succeed(`Cloned successfully`)
       } catch (error: any) {
         spinner.fail('Clone failed')
         if (error.message.includes('timeout')) {
@@ -317,8 +325,9 @@ export async function install(skillNameOrPath: string, options: InstallOptions =
       logger.warn('Removing existing installation...')
       fs.rmSync(targetPath, {recursive: true, force: true})
     } else {
-      logger.error(`Skill already exists: ${targetPath}`)
-      logger.info('Use --force to overwrite')
+      logger.error(`Skill already exists`)
+      logger.dim(`Location: ${shortenPath(targetPath)}`)
+      logger.dim(`Tip: Add --force to overwrite`)
       process.exit(1)
     }
   }
