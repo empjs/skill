@@ -27,14 +27,14 @@ export function parseGitUrl(url: string): GitUrlInfo | null {
     /^git@github\.com:([^/]+)\/([^/]+)(?:\.git)?$/,
   ]
 
-  // GitLab URL patterns
+  // GitLab URL patterns (including self-hosted instances like git.sysop.bigo.sg)
   const gitlabPatterns = [
-    // https://gitlab.com/owner/repo/-/tree/branch/path/to/dir
-    /^https?:\/\/gitlab\.com\/([^/]+)\/([^/]+)\/-\/tree\/([^/]+)(?:\/(.+))?$/,
+    // https://host/group/repo/-/tree/branch/path (self-hosted + gitlab.com)
+    /^https?:\/\/([^/]+)\/(.+)\/-\/tree\/([^/]+)(?:\/(.+))?$/,
     // https://gitlab.com/owner/repo
     /^https?:\/\/gitlab\.com\/([^/]+)\/([^/]+)(?:\/)?$/,
-    // git@gitlab.com:owner/repo.git
-    /^git@gitlab\.com:([^/]+)\/([^/]+)(?:\.git)?$/,
+    // git@gitlab.com:owner/repo.git or git@host:group/repo.git
+    /^git@([^:]+):(.+)(?:\.git)?$/,
   ]
 
   // Try GitHub patterns
@@ -81,24 +81,38 @@ export function parseGitUrl(url: string): GitUrlInfo | null {
     const pattern = gitlabPatterns[i]
     const match = url.match(pattern)
     if (match) {
-      const owner = match[1]
-      const repo = match[2].replace(/\.git$/, '')
+      let owner: string
+      let repo: string
       let branch: string | undefined
       let path: string | undefined
+      let gitUrl: string
 
       if (i === 0) {
-        // https://gitlab.com/owner/repo/-/tree/branch/path
+        // https://host/group/repo/-/tree/branch/path (self-hosted + gitlab.com)
+        const host = match[1]
+        const repoPath = match[2].replace(/\.git$/, '')
         branch = match[3]
         path = match[4]
+        const parts = repoPath.split('/')
+        repo = parts.pop() || repoPath
+        owner = parts.join('/') || repo
+        gitUrl = `https://${host}/${repoPath}.git`
       } else if (i === 1) {
         // https://gitlab.com/owner/repo
+        owner = match[1]
+        repo = match[2].replace(/\.git$/, '')
         branch = 'main'
+        gitUrl = `https://gitlab.com/${owner}/${repo}.git`
       } else {
-        // git@gitlab.com:owner/repo.git
+        // git@host:group/repo.git
+        const host = match[1]
+        const repoPath = match[2].replace(/\.git$/, '')
         branch = 'main'
+        const parts = repoPath.split('/')
+        repo = parts.pop() || repoPath
+        owner = parts.join('/') || repo
+        gitUrl = `https://${host}/${repoPath}.git`
       }
-
-      const gitUrl = `https://gitlab.com/${owner}/${repo}.git`
 
       return {
         type: 'gitlab',
@@ -107,7 +121,7 @@ export function parseGitUrl(url: string): GitUrlInfo | null {
         branch,
         path,
         gitUrl,
-        installUrl: gitUrl, // Will be used for git clone
+        installUrl: gitUrl,
       }
     }
   }
@@ -139,12 +153,13 @@ export function isUrl(str: string): boolean {
 }
 
 /**
- * Check if a string is a GitHub/GitLab URL
+ * Check if a string is a GitHub/GitLab URL (including self-hosted GitLab)
  */
 export function isGitUrl(str: string): boolean {
   return (
     str.includes('github.com') ||
     str.includes('gitlab.com') ||
+    str.includes('/-/tree/') || // GitLab web URL pattern (self-hosted)
     str.startsWith('git@') ||
     str.startsWith('git+') ||
     str.startsWith('git://')

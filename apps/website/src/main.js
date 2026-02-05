@@ -50,7 +50,7 @@ window.copyInstallCommand = function () {
   const activeTab = document.querySelector('.install-tab.active')
   const method = activeTab ? activeTab.id.replace('tab-', '') : 'pnpm'
   const command = installCommands[method] || installCommands.pnpm
-  const fullCommand = `$ ${command}`
+  const fullCommand = command
   const button = document.querySelector('.copy-btn')
 
   if (navigator.clipboard && navigator.clipboard.writeText) {
