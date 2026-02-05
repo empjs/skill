@@ -70,7 +70,7 @@ eskill list
 
 ## Supported AI Agents
 
-Aligned with [skills.sh](https://skills.sh/) ecosystem. The CLI automatically detects and links to:
+The CLI automatically detects and links to:
 
 - **AMP** - `~/.config/agents/skills/`
 - **Antigravity** - `~/.gemini/antigravity/skills/`

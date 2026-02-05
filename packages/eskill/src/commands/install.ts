@@ -344,7 +344,7 @@ export async function install(skillNameOrPath: string, options: InstallOptions =
     logger.warn('No AI agents detected')
     logger.info('Skill installed to shared directory, but not linked to any agent')
     logger.info('')
-    logger.info('Supported agents (aligned with https://skills.sh/):')
+    logger.info('Supported agents:')
     logger.info('  AMP, Antigravity, Claude Code, ClawdBot, Cline, Codex, Cursor, Droid,')
     logger.info('  Gemini, GitHub Copilot, Goose, Kilo, Kiro CLI, OpenCode, Roo, Trae, Windsurf')
     logger.info('')

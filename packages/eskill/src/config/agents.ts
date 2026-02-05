@@ -11,7 +11,7 @@ export interface AgentConfig {
 }
 
 const HOME = os.homedir()
-// XDG config: ~/.config on Linux/macOS, matches skills.sh ecosystem
+// XDG config: ~/.config on Linux/macOS
 const CONFIG_HOME = process.env.XDG_CONFIG_HOME || path.join(HOME, '.config')
 
 /**
@@ -32,10 +32,8 @@ export function getAgentSkillsDirs(agent: AgentConfig, cwd?: string): string[] {
 
 /**
  * Supported AI agents configuration
- * Aligned with https://skills.sh/ ecosystem
  */
 export const AGENTS: AgentConfig[] = [
-  // skills.sh core agents (18)
   {
     name: 'amp',
     displayName: 'AMP',

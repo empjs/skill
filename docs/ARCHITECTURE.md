@@ -29,7 +29,7 @@
 │  │             数据源层                                        │    │
 │  │  ├─ NPM Registry                                        │    │
 │  │  ├─ GitHub API                                          │    │
-│  │  └─ Skills.sh 爬虫                                      │    │
+│  │  └─ 技能目录爬虫                                           │    │
 │  └─────────────────────────────────────────────────────────┘    │
 │                                                                 │
 │  ┌─────────────────────────────────────────────────────────┐    │
@@ -322,7 +322,7 @@ export default {
 
 ```typescript
 class SkillsCrawler {
-  private baseUrl = 'https://skills.sh'
+  private baseUrl = 'https://example.com/skills'
 
   async crawlSkillsSh(): Promise<void> {
     // 1. 获取排行榜页面
@@ -368,7 +368,7 @@ class SkillsCrawler {
 # wrangler.toml
 [triggers]
 crons = [
-  # 每天凌晨 3 点爬取 skills.sh
+  # 每天凌晨 3 点爬取技能目录
   "0 3 * * *",
   # 每小时同步 NPM 下载量
   "0 * * * *",

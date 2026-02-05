@@ -11,7 +11,7 @@ const translations = {
       title: '@empjs/skill',
       subtitle: 'Unified AI Agent Skills Management',
       description:
-        'Write once, distribute to 18+ agents. skills.sh compatible. Manage skills for Claude, Cursor, Windsurf, Antigravity and more through one CLI.',
+        'Write once, distribute to 18+ agents. Manage skills for Claude, Cursor, Windsurf, Antigravity and more through one CLI.',
       unified: 'Unified AI Agent Skills Management',
       howItWorks: 'How it Works',
       viewCommands: 'View Commands',
@@ -47,7 +47,7 @@ const translations = {
     },
     agents: {
       title: '18+ AI Agents Supported',
-      desc: 'Aligned with skills.sh ecosystem. Framework-specific skill directories with automatic symlinks.',
+      desc: 'Framework-specific skill directories with automatic symlinks.',
     },
     commands: {
       title: 'Commands',
@@ -159,7 +159,7 @@ const translations = {
     hero: {
       title: '@empjs/skill',
       subtitle: '统一 AI Agent 技能管理',
-      description: '一次开发，18+ 平台通用。兼容 skills.sh 生态。通过统一 CLI 管理 Claude、Cursor、Windsurf、Antigravity 等平台技能。',
+      description: '一次开发，18+ 平台通用。通过统一 CLI 管理 Claude、Cursor、Windsurf、Antigravity 等平台技能。',
       unified: '统一 AI Agent 技能管理',
       howItWorks: '使用指南',
       viewCommands: '查看命令',
@@ -194,7 +194,7 @@ const translations = {
     },
     agents: {
       title: '支持 18+ 个 AI Agent',
-      desc: '与 skills.sh 生态对齐。特定于框架的技能目录，自动创建软链接。',
+      desc: '特定于框架的技能目录，自动创建软链接。',
     },
     commands: {
       title: '指令介绍',
