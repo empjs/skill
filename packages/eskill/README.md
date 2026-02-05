@@ -5,7 +5,7 @@ Unified CLI tool for managing AI agent skills across Claude Code, Cursor, Windsu
 ## Features
 
 - ✅ **Unified Storage**: All skills stored in `~/.emp-agent/skills/`
-- ✅ **Multi-Agent Support**: Auto-detect and link to Claude Code, Cursor, Windsurf, Cline, Gemini, Copilot
+- ✅ **Multi-Agent Support**: Auto-detect and link to 18+ agents (AMP, Claude, Cursor, Windsurf, Cline, Gemini, etc.)
 - ✅ **Symlink Distribution**: Skills symlinked to each AI agent's directory
 - ✅ **Dev Mode**: Local development with instant updates
 - ✅ **NPM Integration**: Install from public NPM registry or Git URL
@@ -70,14 +70,25 @@ eskill list
 
 ## Supported AI Agents
 
-The CLI automatically detects and links to:
+Aligned with [skills.sh](https://skills.sh/) ecosystem. The CLI automatically detects and links to:
 
+- **AMP** - `~/.config/agents/skills/`
+- **Antigravity** - `~/.gemini/antigravity/skills/`
 - **Claude Code** - `~/.claude/skills/`
-- **Cursor** - `~/.cursor/skills/`
-- **Windsurf** - `~/.windsurf/skills/`
+- **ClawdBot** - `~/.openclaw/skills/` or `~/.clawdbot/skills/`
 - **Cline** - `~/.cline/skills/`
-- **Gemini Code** - `~/.gemini/skills/`
+- **Codex** - `~/.codex/skills/`
+- **Cursor** - `~/.cursor/skills/`
+- **Droid** - `~/.factory/skills/`
+- **Gemini** - `~/.gemini/skills/`
 - **GitHub Copilot** - `~/.copilot/skills/`
+- **Goose** - `~/.config/goose/skills/`
+- **Kilo Code** - `~/.kilocode/skills/`
+- **Kiro CLI** - `~/.kiro/skills/`
+- **OpenCode** - `~/.config/opencode/skills/`
+- **Roo Code** - `~/.roo/skills/`
+- **Trae** - `~/.trae/skills/`
+- **Windsurf** - `~/.windsurf/skills/` or `~/.codeium/windsurf/skills/`
 
 ## Directory Structure
 
@@ -223,7 +234,10 @@ sudo chown -R $(whoami) /usr/local/lib/node_modules
 If you see "No AI agents detected", ensure you have at least one of the supported agents installed:
 
 ```bash
-# Check if directories exist
+# Check supported agents
+eskill agents
+
+# Example directories
 ls ~/.claude/skills   # Claude Code
 ls ~/.cursor/skills   # Cursor
 ls ~/.windsurf/skills # Windsurf

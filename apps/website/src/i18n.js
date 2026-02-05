@@ -11,9 +11,8 @@ const translations = {
       title: '@empjs/skill',
       subtitle: 'Unified AI Agent Skills Management',
       description:
-        'Write once, distribute to all agents. Manage skills for Claude Code, Cursor, Windsurf and more through a unified CLI.',
+        'Write once, distribute to 18+ agents. skills.sh compatible. Manage skills for Claude, Cursor, Windsurf, Antigravity and more through one CLI.',
       unified: 'Unified AI Agent Skills Management',
-      gitInstall: 'Install from GitHub/GitLab URL',
       howItWorks: 'How it Works',
       viewCommands: 'View Commands',
       gitInstall: '✨ Git URL Install',
@@ -35,7 +34,7 @@ const translations = {
       },
       auto: {
         title: 'Auto Distribution',
-        desc: 'Auto-detect and symlink to all installed agents',
+        desc: 'Auto-detect and symlink to installed agents. Use --agent to target specific platform.',
       },
       dev: {
         title: 'Dev Mode',
@@ -47,8 +46,8 @@ const translations = {
       },
     },
     agents: {
-      title: '14+ AI Agents Supported',
-      desc: 'Framework-specific skill directories. Get automatic symlinks tailored to your installed agents.',
+      title: '18+ AI Agents Supported',
+      desc: 'Aligned with skills.sh ecosystem. Framework-specific skill directories with automatic symlinks.',
     },
     commands: {
       title: 'Commands',
@@ -107,7 +106,7 @@ const translations = {
         gitFeature: '✨ No need to publish to NPM, install directly from repo',
         npmTitle: '🌍 Install NPM Package',
         npmAlias: 'Or: eskill add <skill-name>',
-        note: '* Auto-distributed to Claude Code, Cursor, Windsurf, Cline, Gemini, Copilot',
+        note: '* Auto-distributed to 18+ agents (Claude, Cursor, Windsurf, Antigravity, etc.)',
       },
       step2: {
         title: 'Developer Mode',
@@ -160,9 +159,8 @@ const translations = {
     hero: {
       title: '@empjs/skill',
       subtitle: '统一 AI Agent 技能管理',
-      description: '一次开发，全平台通用。通过统一的 CLI 管理 Claude Code、Cursor、Windsurf 等平台的技能。',
+      description: '一次开发，18+ 平台通用。兼容 skills.sh 生态。通过统一 CLI 管理 Claude、Cursor、Windsurf、Antigravity 等平台技能。',
       unified: '统一 AI Agent 技能管理',
-      gitInstall: '支持 GitHub/GitLab URL 直接安装',
       howItWorks: '使用指南',
       viewCommands: '查看命令',
       gitInstall: '✨ Git URL 安装',
@@ -183,7 +181,7 @@ const translations = {
       },
       auto: {
         title: '自动分发',
-        desc: '自动检测并软链到所有已安装的 Agent',
+        desc: '自动检测并软链到已安装的 Agent。支持 --agent 指定目标平台。',
       },
       dev: {
         title: '开发模式',
@@ -195,8 +193,8 @@ const translations = {
       },
     },
     agents: {
-      title: '支持 14+ 个 AI Agent',
-      desc: '特定于框架的技能目录。为已安装的 Agent 自动创建软链接。',
+      title: '支持 18+ 个 AI Agent',
+      desc: '与 skills.sh 生态对齐。特定于框架的技能目录，自动创建软链接。',
     },
     commands: {
       title: '指令介绍',
@@ -255,7 +253,7 @@ const translations = {
         gitFeature: '✨ 无需发布到 NPM，直接从仓库安装',
         npmTitle: '🌍 安装 NPM 技能包',
         npmAlias: '或：eskill add <skill-name>',
-        note: '* 自动分发到 Claude Code, Cursor, Windsurf, Cline, Gemini, Copilot',
+        note: '* 自动分发到 18+ 个平台（Claude、Cursor、Windsurf、Antigravity 等）',
       },
       step2: {
         title: '开发者模式',

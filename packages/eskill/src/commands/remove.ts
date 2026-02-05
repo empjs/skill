@@ -33,10 +33,10 @@ export async function remove(skillName: string, options: RemoveOptions = {}): Pr
   let targetAgents = installedAgents
 
   if (options.agent && options.agent !== 'all') {
-    const agent = installedAgents.find(a => a.name === options.agent)
+    const agent = AGENTS.find(a => a.name === options.agent && a.enabled)
     if (!agent) {
-      logger.error(`Agent not installed: ${options.agent}`)
-      logger.info(`\nInstalled agents: ${installedAgents.map(a => a.name).join(', ')}`)
+      logger.error(`Unknown agent: ${options.agent}`)
+      logger.info(`\nSupported agents: ${AGENTS.filter(a => a.enabled).map(a => a.name).join(', ')}`)
       process.exit(1)
     }
     targetAgents = [agent]

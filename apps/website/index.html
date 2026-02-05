@@ -5,6 +5,7 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Unified CLI for AI agent skills. 18+ agents supported, skills.sh compatible. Install from NPM or Git URL." />
     <title>@empjs/skill - Unified AI Agent Skills Management</title>
 </head>
 
@@ -18,14 +19,16 @@
     </div>
 
     <!-- Navigation -->
-    <nav class="fixed top-0 left-0 right-0 z-50 border-b border-slate-800/50 bg-slate-900/80 backdrop-blur-md overflow-hidden">
+    <nav
+        class="fixed top-0 left-0 right-0 z-50 border-b border-slate-800/50 bg-slate-900/80 backdrop-blur-md overflow-hidden">
         <div class="max-w-7xl mx-auto px-3 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
             <div class="flex items-center gap-2 sm:gap-3 min-w-0">
                 <div class="font-mono font-bold text-lg sm:text-xl text-blue-400 flex-shrink-0">
                     <span class="text-blue-500">$</span> eskill
                 </div>
-                <span class="text-[10px] sm:text-xs bg-blue-500/20 text-blue-300 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full flex-shrink-0"
-                    id="version-badge">v1.0.3</span>
+                <span
+                    class="text-[10px] sm:text-xs bg-blue-500/20 text-blue-300 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full flex-shrink-0"
+                    id="version-badge">v1.0.6</span>
             </div>
             <div class="hidden md:flex items-center gap-6">
                 <a href="#features" data-i18n="nav.features"
@@ -38,6 +41,15 @@
                     class="text-sm font-medium text-slate-400 hover:text-white transition-colors"></a>
             </div>
             <div class="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+                <a href="https://github.com/empjs/skill" target="_blank" rel="noopener noreferrer"
+                    class="text-slate-400 hover:text-white transition-colors p-1.5 rounded-lg hover:bg-slate-700/50"
+                    title="GitHub">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path fill-rule="evenodd"
+                            d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </a>
                 <div class="lang-switcher">
                     <button class="lang-btn active" data-lang="en" onclick="window.i18n.setLanguage('en')">EN</button>
                     <button class="lang-btn" data-lang="zh" onclick="window.i18n.setLanguage('zh')">中文</button>
@@ -47,49 +59,57 @@
     </nav>
 
     <!-- Supported Agents Bar -->
-    <div class="fixed top-14 sm:top-16 left-0 right-0 z-40 border-b border-slate-800/50 bg-slate-900/60 backdrop-blur-sm py-1.5 overflow-hidden">
+    <div
+        class="fixed top-14 sm:top-16 left-0 right-0 z-40 border-b border-slate-800/50 bg-slate-900/60 backdrop-blur-sm py-1.5 overflow-hidden">
         <div class="max-w-7xl mx-auto px-2 sm:px-4">
             <!-- Mobile: Compact view with count -->
             <div class="flex items-center justify-center gap-1.5 text-[10px] sm:hidden text-slate-400">
-                <span class="text-slate-500 font-medium">14+ Agents:</span>
+                <span class="text-slate-500 font-medium">18+ Agents:</span>
                 <span class="hover:text-blue-400 transition-colors cursor-default">Claude</span>
                 <span class="text-slate-500">•</span>
                 <span class="hover:text-blue-400 transition-colors cursor-default">Cursor</span>
                 <span class="text-slate-500">•</span>
                 <span class="hover:text-blue-400 transition-colors cursor-default">Windsurf</span>
                 <span class="text-slate-500">•</span>
-                <span class="hover:text-blue-400 transition-colors cursor-default">+11</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">+15</span>
             </div>
-            <!-- Desktop: Full list -->
+            <!-- Desktop: Full list (aligned with skills.sh) -->
             <div class="hidden sm:flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-xs text-slate-400">
-                <span class="text-slate-500 font-medium">Supported:</span>
-                <span class="hover:text-blue-400 transition-colors cursor-default">Claude Code</span>
-                <span class="text-slate-500">•</span>
-                <span class="hover:text-blue-400 transition-colors cursor-default">Cursor</span>
-                <span class="text-slate-500">•</span>
-                <span class="hover:text-blue-400 transition-colors cursor-default">Windsurf</span>
-                <span class="text-slate-500">•</span>
-                <span class="hover:text-blue-400 transition-colors cursor-default">Cline</span>
-                <span class="text-slate-500">•</span>
-                <span class="hover:text-blue-400 transition-colors cursor-default">Gemini Code</span>
-                <span class="text-slate-500">•</span>
-                <span class="hover:text-blue-400 transition-colors cursor-default">GitHub Copilot</span>
-                <span class="text-slate-500">•</span>
-                <span class="hover:text-blue-400 transition-colors cursor-default">OpenCode</span>
+                <a href="https://skills.sh/" target="_blank" rel="noopener noreferrer" class="text-slate-500 font-medium hover:text-blue-400 transition-colors">skills.sh compatible</a>
+                <span class="text-slate-500">·</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">AMP</span>
                 <span class="text-slate-500">•</span>
                 <span class="hover:text-blue-400 transition-colors cursor-default">Antigravity</span>
                 <span class="text-slate-500">•</span>
-                <span class="hover:text-blue-400 transition-colors cursor-default">Kiro</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">Claude Code</span>
                 <span class="text-slate-500">•</span>
-                <span class="hover:text-blue-400 transition-colors cursor-default">Codex CLI</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">ClawdBot</span>
                 <span class="text-slate-500">•</span>
-                <span class="hover:text-blue-400 transition-colors cursor-default">Qoder</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">Cline</span>
                 <span class="text-slate-500">•</span>
-                <span class="hover:text-blue-400 transition-colors cursor-default">Roo Code</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">Codex</span>
+                <span class="text-slate-500">•</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">Cursor</span>
+                <span class="text-slate-500">•</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">Droid</span>
+                <span class="text-slate-500">•</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">Gemini</span>
+                <span class="text-slate-500">•</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">GitHub Copilot</span>
+                <span class="text-slate-500">•</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">Goose</span>
+                <span class="text-slate-500">•</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">Kilo</span>
+                <span class="text-slate-500">•</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">Kiro CLI</span>
+                <span class="text-slate-500">•</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">OpenCode</span>
+                <span class="text-slate-500">•</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">Roo</span>
                 <span class="text-slate-500">•</span>
                 <span class="hover:text-blue-400 transition-colors cursor-default">Trae</span>
                 <span class="text-slate-500">•</span>
-                <span class="hover:text-blue-400 transition-colors cursor-default">Continue</span>
+                <span class="hover:text-blue-400 transition-colors cursor-default">Windsurf</span>
             </div>
         </div>
     </div>
@@ -101,8 +121,10 @@
                 class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-4 sm:mb-6 gradient-text leading-tight sm:leading-none">
                 <span data-i18n="hero.title" class="inline-block"></span>
             </h1>
-            <p class="text-xl sm:text-2xl md:text-3xl font-semibold text-slate-300 mb-3 sm:mb-4 px-2" data-i18n="hero.subtitle"></p>
-            <p class="text-base sm:text-lg text-slate-400 mb-8 sm:mb-12 max-w-3xl mx-auto leading-relaxed px-2" data-i18n="hero.description">
+            <p class="text-xl sm:text-2xl md:text-3xl font-semibold text-slate-300 mb-3 sm:mb-4 px-2"
+                data-i18n="hero.subtitle"></p>
+            <p class="text-base sm:text-lg text-slate-400 mb-8 sm:mb-12 max-w-3xl mx-auto leading-relaxed px-2"
+                data-i18n="hero.description">
             </p>
 
             <!-- Install Command Input -->
@@ -111,7 +133,8 @@
                     class="bg-slate-900/80 backdrop-blur-sm border border-slate-700/50 rounded-xl p-3 sm:p-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
                     <div class="flex items-center gap-2 flex-1 min-w-0">
                         <span class="text-green-400 font-mono text-sm sm:text-base flex-shrink-0">$</span>
-                        <span id="install-command-display" class="font-mono text-slate-200 text-sm sm:text-lg flex-1 truncate">pnpm add -g
+                        <span id="install-command-display"
+                            class="font-mono text-slate-200 text-sm sm:text-lg flex-1 truncate">pnpm add -g
                             @empjs/skill</span>
                     </div>
                     <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
@@ -131,7 +154,8 @@
                             class="px-2 sm:px-3 py-1 rounded-lg text-[10px] sm:text-xs font-medium transition-all install-tab text-slate-400 hover:text-white">
                             bun
                         </button>
-                        <button class="text-slate-400 hover:text-white transition-colors copy-btn p-1.5 sm:p-2 flex-shrink-0"
+                        <button
+                            class="text-slate-400 hover:text-white transition-colors copy-btn p-1.5 sm:p-2 flex-shrink-0"
                             onclick="copyInstallCommand()" data-i18n-title="copy.copy" title="Copy">
                             <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -144,10 +168,12 @@
             </div>
 
             <!-- Action Buttons -->
-            <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 mb-10 sm:mb-16 px-2">
+            <div
+                class="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 mb-10 sm:mb-16 px-2">
                 <a href="#git-install"
                     class="group relative px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-orange-500/20 via-red-500/20 to-orange-500/20 backdrop-blur-sm border-2 border-orange-500/50 rounded-xl text-white font-bold text-sm sm:text-base hover:border-orange-400/70 transition-all duration-300 hover:scale-105 shadow-xl shadow-orange-500/20 flex items-center justify-center gap-2">
-                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-orange-400" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
                         </path>
@@ -167,7 +193,7 @@
             <!-- Stats -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 max-w-4xl mx-auto px-2">
                 <div class="text-center">
-                    <div class="text-3xl sm:text-4xl font-bold text-blue-400 mb-1 sm:mb-2">14+</div>
+                    <div class="text-3xl sm:text-4xl font-bold text-blue-400 mb-1 sm:mb-2">18+</div>
                     <div class="text-xs sm:text-sm text-slate-400" data-i18n="hero.stats.agents"></div>
                 </div>
                 <div class="text-center">
@@ -275,194 +301,210 @@
             </h2>
             <p class="text-center text-slate-400 mb-16 max-w-2xl mx-auto" data-i18n="agents.desc"></p>
 
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-3">
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
                 <div class="modern-card p-3 cursor-pointer">
                     <div class="flex items-center gap-2 mb-2">
-                        <div class="w-6 h-6 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400 flex-shrink-0">
+                        <div class="w-6 h-6 rounded-lg bg-cyan-500/10 flex items-center justify-center text-cyan-400 flex-shrink-0">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                         </div>
-                        <h3 class="text-sm font-bold text-slate-100 truncate">Claude Code</h3>
+                        <h3 class="text-sm font-bold text-slate-100 truncate">AMP</h3>
                     </div>
-                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.claude/skills/</p>
+                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.config/agents/skills/</p>
                 </div>
-
                 <div class="modern-card p-3 cursor-pointer">
                     <div class="flex items-center gap-2 mb-2">
-                        <div
-                            class="w-6 h-6 rounded-lg bg-green-500/10 flex items-center justify-center text-green-400 flex-shrink-0">
+                        <div class="w-6 h-6 rounded-lg bg-pink-500/10 flex items-center justify-center text-pink-400 flex-shrink-0">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-sm font-bold text-slate-100 truncate">Cursor</h3>
-                    </div>
-                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.cursor/skills/</p>
-                </div>
-
-                <div class="modern-card p-3 cursor-pointer">
-                    <div class="flex items-center gap-2 mb-2">
-                        <div
-                            class="w-6 h-6 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400 flex-shrink-0">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-sm font-bold text-slate-100 truncate">Windsurf</h3>
-                    </div>
-                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.windsurf/skills/</p>
-                </div>
-
-                <div class="modern-card p-3 cursor-pointer">
-                    <div class="flex items-center gap-2 mb-2">
-                        <div
-                            class="w-6 h-6 rounded-lg bg-yellow-500/10 flex items-center justify-center text-yellow-400 flex-shrink-0">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-sm font-bold text-slate-100 truncate">Cline</h3>
-                    </div>
-                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.cline/skills/</p>
-                </div>
-
-                <div class="modern-card p-3 cursor-pointer">
-                    <div class="flex items-center gap-2 mb-2">
-                        <div class="w-6 h-6 rounded-lg bg-red-500/10 flex items-center justify-center text-red-400 flex-shrink-0">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-sm font-bold text-slate-100 truncate">Gemini Code</h3>
-                    </div>
-                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.gemini/skills/</p>
-                </div>
-
-                <div class="modern-card p-3 cursor-pointer">
-                    <div class="flex items-center gap-2 mb-2">
-                        <div
-                            class="w-6 h-6 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400 flex-shrink-0">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-sm font-bold text-slate-100 truncate">GitHub Copilot</h3>
-                    </div>
-                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.copilot/skills/</p>
-                </div>
-
-                <div class="modern-card p-3 cursor-pointer">
-                    <div class="flex items-center gap-2 mb-2">
-                        <div
-                            class="w-6 h-6 rounded-lg bg-cyan-500/10 flex items-center justify-center text-cyan-400 flex-shrink-0">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-sm font-bold text-slate-100 truncate">OpenCode</h3>
-                    </div>
-                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.opencode/skills/</p>
-                </div>
-
-                <div class="modern-card p-3 cursor-pointer">
-                    <div class="flex items-center gap-2 mb-2">
-                        <div
-                            class="w-6 h-6 rounded-lg bg-pink-500/10 flex items-center justify-center text-pink-400 flex-shrink-0">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                         </div>
                         <h3 class="text-sm font-bold text-slate-100 truncate">Antigravity</h3>
                     </div>
                     <p class="text-slate-400 text-[10px] font-mono truncate">~/.gemini/antigravity/skills/</p>
                 </div>
-
                 <div class="modern-card p-3 cursor-pointer">
                     <div class="flex items-center gap-2 mb-2">
-                        <div
-                            class="w-6 h-6 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400 flex-shrink-0">
+                        <div class="w-6 h-6 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400 flex-shrink-0">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                         </div>
-                        <h3 class="text-sm font-bold text-slate-100 truncate">Kiro</h3>
+                        <h3 class="text-sm font-bold text-slate-100 truncate">Claude Code</h3>
                     </div>
-                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.kiro/skills/</p>
+                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.claude/skills/</p>
                 </div>
-
                 <div class="modern-card p-3 cursor-pointer">
                     <div class="flex items-center gap-2 mb-2">
-                        <div
-                            class="w-6 h-6 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-400 flex-shrink-0">
+                        <div class="w-6 h-6 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-400 flex-shrink-0">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                         </div>
-                        <h3 class="text-sm font-bold text-slate-100 truncate">Codex CLI</h3>
+                        <h3 class="text-sm font-bold text-slate-100 truncate">ClawdBot</h3>
+                    </div>
+                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.openclaw/skills/</p>
+                </div>
+                <div class="modern-card p-3 cursor-pointer">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-6 h-6 rounded-lg bg-yellow-500/10 flex items-center justify-center text-yellow-400 flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 truncate">Cline</h3>
+                    </div>
+                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.cline/skills/</p>
+                </div>
+                <div class="modern-card p-3 cursor-pointer">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-6 h-6 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-400 flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 truncate">Codex</h3>
                     </div>
                     <p class="text-slate-400 text-[10px] font-mono truncate">~/.codex/skills/</p>
                 </div>
-
                 <div class="modern-card p-3 cursor-pointer">
                     <div class="flex items-center gap-2 mb-2">
-                        <div
-                            class="w-6 h-6 rounded-lg bg-teal-500/10 flex items-center justify-center text-teal-400 flex-shrink-0">
+                        <div class="w-6 h-6 rounded-lg bg-green-500/10 flex items-center justify-center text-green-400 flex-shrink-0">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                         </div>
-                        <h3 class="text-sm font-bold text-slate-100 truncate">Qoder</h3>
+                        <h3 class="text-sm font-bold text-slate-100 truncate">Cursor</h3>
                     </div>
-                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.qoder/skills/</p>
+                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.cursor/skills/</p>
                 </div>
-
                 <div class="modern-card p-3 cursor-pointer">
                     <div class="flex items-center gap-2 mb-2">
-                        <div
-                            class="w-6 h-6 rounded-lg bg-violet-500/10 flex items-center justify-center text-violet-400 flex-shrink-0">
+                        <div class="w-6 h-6 rounded-lg bg-sky-500/10 flex items-center justify-center text-sky-400 flex-shrink-0">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 truncate">Droid</h3>
+                    </div>
+                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.factory/skills/</p>
+                </div>
+                <div class="modern-card p-3 cursor-pointer">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-6 h-6 rounded-lg bg-red-500/10 flex items-center justify-center text-red-400 flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 truncate">Gemini</h3>
+                    </div>
+                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.gemini/skills/</p>
+                </div>
+                <div class="modern-card p-3 cursor-pointer">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-6 h-6 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400 flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 truncate">GitHub Copilot</h3>
+                    </div>
+                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.copilot/skills/</p>
+                </div>
+                <div class="modern-card p-3 cursor-pointer">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-6 h-6 rounded-lg bg-lime-500/10 flex items-center justify-center text-lime-400 flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 truncate">Goose</h3>
+                    </div>
+                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.config/goose/skills/</p>
+                </div>
+                <div class="modern-card p-3 cursor-pointer">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-6 h-6 rounded-lg bg-fuchsia-500/10 flex items-center justify-center text-fuchsia-400 flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 truncate">Kilo Code</h3>
+                    </div>
+                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.kilocode/skills/</p>
+                </div>
+                <div class="modern-card p-3 cursor-pointer">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-6 h-6 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400 flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 truncate">Kiro CLI</h3>
+                    </div>
+                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.kiro/skills/</p>
+                </div>
+                <div class="modern-card p-3 cursor-pointer">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-6 h-6 rounded-lg bg-cyan-500/10 flex items-center justify-center text-cyan-400 flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 truncate">OpenCode</h3>
+                    </div>
+                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.config/opencode/skills/</p>
+                </div>
+                <div class="modern-card p-3 cursor-pointer">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-6 h-6 rounded-lg bg-violet-500/10 flex items-center justify-center text-violet-400 flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                         </div>
                         <h3 class="text-sm font-bold text-slate-100 truncate">Roo Code</h3>
                     </div>
                     <p class="text-slate-400 text-[10px] font-mono truncate">~/.roo/skills/</p>
                 </div>
-
                 <div class="modern-card p-3 cursor-pointer">
                     <div class="flex items-center gap-2 mb-2">
-                        <div
-                            class="w-6 h-6 rounded-lg bg-rose-500/10 flex items-center justify-center text-rose-400 flex-shrink-0">
+                        <div class="w-6 h-6 rounded-lg bg-rose-500/10 flex items-center justify-center text-rose-400 flex-shrink-0">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                         </div>
                         <h3 class="text-sm font-bold text-slate-100 truncate">Trae</h3>
                     </div>
                     <p class="text-slate-400 text-[10px] font-mono truncate">~/.trae/skills/</p>
                 </div>
-
                 <div class="modern-card p-3 cursor-pointer">
                     <div class="flex items-center gap-2 mb-2">
-                        <div
-                            class="w-6 h-6 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-400 flex-shrink-0">
+                        <div class="w-6 h-6 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400 flex-shrink-0">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 truncate">Windsurf</h3>
+                    </div>
+                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.windsurf/skills/</p>
+                </div>
+                <div class="modern-card p-3 cursor-pointer">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-6 h-6 rounded-lg bg-teal-500/10 flex items-center justify-center text-teal-400 flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 truncate">Qoder</h3>
+                    </div>
+                    <p class="text-slate-400 text-[10px] font-mono truncate">~/.qoder/skills/</p>
+                </div>
+                <div class="modern-card p-3 cursor-pointer">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-6 h-6 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-400 flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                         </div>
                         <h3 class="text-sm font-bold text-slate-100 truncate">Continue</h3>
@@ -529,8 +571,10 @@
                                         data-i18n="commands.gitInstall.gitTitle">✨ Git URL Installation</span>
                                 </div>
                                 <div class="font-mono text-sm space-y-2 ml-5">
-                                    <div class="text-purple-300">$ eskill install https://github.com/anthropics/skills/tree/main/skills/skill-creator</div>
-                                    <div class="text-purple-300">$ eskill add https://github.com/anthropics/skills/tree/main/skills/skill-creator</div>
+                                    <div class="text-purple-300">$ eskill install
+                                        https://github.com/anthropics/skills/tree/main/skills/skill-creator</div>
+                                    <div class="text-purple-300">$ eskill add
+                                        https://github.com/anthropics/skills/tree/main/skills/skill-creator</div>
                                 </div>
                             </div>
 
@@ -546,10 +590,16 @@
                                     </div>
                                     <div class="text-slate-400 text-xs mt-3 mb-2">执行命令示例：</div>
                                     <div class="font-mono text-xs text-green-300 space-y-1">
-                                        <div>$ eskill install https://github.com/anthropics/skills/tree/main/skills/skill-creator</div>
-                                        <div>$ eskill add https://github.com/anthropics/skills/tree/main/skills/skill-creator</div>
-                                        <div>$ eskill install https://github.com/anthropics/skills/tree/main/skills/skill-creator --agent cursor</div>
-                                        <div>$ eskill add https://github.com/anthropics/skills/tree/main/skills/skill-creator --link</div>
+                                        <div>$ eskill install
+                                            https://github.com/anthropics/skills/tree/main/skills/skill-creator</div>
+                                        <div>$ eskill add
+                                            https://github.com/anthropics/skills/tree/main/skills/skill-creator</div>
+                                        <div>$ eskill install
+                                            https://github.com/anthropics/skills/tree/main/skills/skill-creator --agent
+                                            cursor</div>
+                                        <div>$ eskill add
+                                            https://github.com/anthropics/skills/tree/main/skills/skill-creator --link
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="text-slate-400 text-xs mb-2"

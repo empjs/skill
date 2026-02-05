@@ -5,6 +5,7 @@ import path from 'node:path'
 import {promisify} from 'node:util'
 import {isGitUrl, parseGitUrl} from '../utils/git.js'
 import {logger} from '../utils/logger.js'
+import {AGENTS} from '../config/agents.js'
 import {detectInstalledAgents, ensureSharedDir, extractSkillName, getSharedSkillPath} from '../utils/paths.js'
 import {getRegistry} from '../utils/registry.js'
 import {createSymlink} from '../utils/symlink.js'
@@ -68,7 +69,11 @@ export async function install(skillNameOrPath: string, options: InstallOptions =
 
   // Check Git URL first (before checking local path)
   // This prevents URLs from being mistaken as local paths
-  if (isGitUrl(skillNameOrPath)) {
+  const isGit = isGitUrl(skillNameOrPath)
+  if (process.env.DEBUG_ESKILL) {
+    logger.infoWithoutStop(`[DEBUG] isGitUrl=${isGit}, parseGitUrl=${parseGitUrl(skillNameOrPath) ? 'ok' : 'null'}`)
+  }
+  if (isGit) {
     // Git URL install mode
     const gitInfo = parseGitUrl(skillNameOrPath)
     if (!gitInfo) {
@@ -339,10 +344,11 @@ export async function install(skillNameOrPath: string, options: InstallOptions =
     logger.warn('No AI agents detected')
     logger.info('Skill installed to shared directory, but not linked to any agent')
     logger.info('')
-    logger.info('Supported agents:')
-    logger.info('  - Claude Code (~/.claude/skills)')
-    logger.info('  - Cursor (~/.cursor/skills)')
-    logger.info('  - Windsurf (~/.windsurf/skills)')
+    logger.info('Supported agents (aligned with https://skills.sh/):')
+    logger.info('  AMP, Antigravity, Claude Code, ClawdBot, Cline, Codex, Cursor, Droid,')
+    logger.info('  Gemini, GitHub Copilot, Goose, Kilo, Kiro CLI, OpenCode, Roo, Trae, Windsurf')
+    logger.info('')
+    logger.info('Run "eskill agents" to see all agent directories')
     return
   }
 
@@ -350,13 +356,16 @@ export async function install(skillNameOrPath: string, options: InstallOptions =
   let targetAgents = installedAgents
 
   if (options.agent && options.agent !== 'all') {
-    const agent = installedAgents.find(a => a.name === options.agent)
+    const agent = AGENTS.find(a => a.name === options.agent && a.enabled)
     if (!agent) {
-      logger.error(`Agent not installed: ${options.agent}`)
-      logger.info(`\nInstalled agents: ${installedAgents.map(a => a.name).join(', ')}`)
+      logger.error(`Unknown agent: ${options.agent}`)
+      logger.info(`\nSupported agents: ${AGENTS.filter(a => a.enabled).map(a => a.name).join(', ')}`)
       process.exit(1)
     }
     targetAgents = [agent]
+    if (!installedAgents.find(a => a.name === options.agent)) {
+      logger.info(`Note: ${agent.displayName} directory will be created if not exists`)
+    }
   }
 
   // Create symlinks
