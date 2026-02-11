@@ -100,20 +100,25 @@ export function list(): void {
 
       console.log(chalk.green('📦') + ` ${chalk.bold(skill)}${versionDisplay ? ' ' + versionDisplay : ''}${devTag}`)
 
-      // Check which agents are linked
+      // Check which agents are linked (symlink) or copied (e.g. Cursor)
       const cwd = process.cwd()
       const linkedAgents: string[] = []
       for (const agent of AGENTS) {
         const skillsDirs = getAgentSkillsDirs(agent, cwd)
-        const hasSymlink = skillsDirs.some(dir => {
+        const hasRef = skillsDirs.some(dir => {
           const agentSkillPath = path.join(dir, skill)
-          if (fs.existsSync(agentSkillPath) && isSymlink(agentSkillPath)) {
+          if (!fs.existsSync(agentSkillPath)) return false
+          if (isSymlink(agentSkillPath)) {
             const target = readSymlink(agentSkillPath)
             return target === skillPath
           }
+          // Cursor uses copy instead of symlink
+          if (agent.useCopyInsteadOfSymlink) {
+            return fs.statSync(agentSkillPath).isDirectory()
+          }
           return false
         })
-        if (hasSymlink) {
+        if (hasRef) {
           linkedAgents.push(agent.displayName)
         }
       }

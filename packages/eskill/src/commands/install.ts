@@ -318,22 +318,25 @@ export async function install(skillNameOrPath: string, options: InstallOptions =
 
   // Target path in shared directory
   const targetPath = getSharedSkillPath(skillName)
+  const sourceIsTarget = path.resolve(skillPath) === path.resolve(targetPath)
 
-  // Check if already exists
-  if (fs.existsSync(targetPath)) {
+  // Check if already exists (skip if source is the shared dir - e.g. reinstalling for Cursor only)
+  const alreadyExists = fs.existsSync(targetPath) && !sourceIsTarget
+  if (alreadyExists) {
     if (options.force) {
       logger.warn('Removing existing installation...')
       fs.rmSync(targetPath, {recursive: true, force: true})
     } else {
-      logger.error(`Skill already exists`)
-      logger.dim(`Location: ${shortenPath(targetPath)}`)
-      logger.dim(`Tip: Add --force to overwrite`)
-      process.exit(1)
+      logger.info(`Skill already exists, updating agent links...`)
     }
   }
 
-  // Copy or link to shared directory
-  if (options.link) {
+  // Copy or link to shared directory (skip if already exists without --force, or source is shared dir)
+  if (sourceIsTarget) {
+    logger.info(`Skill already in shared directory, updating agent links...`)
+  } else if (alreadyExists && !options.force) {
+    // Skip copy, just update agent links
+  } else if (options.link) {
     // Dev mode: create symlink
     fs.symlinkSync(skillPath, targetPath, 'dir')
     logger.success(`Linked to shared directory (dev mode)`)

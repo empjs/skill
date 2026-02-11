@@ -6,7 +6,26 @@ import {logger} from './logger.js'
 import {getAgentSkillPaths, getSharedSkillPath} from './paths.js'
 
 /**
- * Create symlink from shared directory to agent directory(ies)
+ * Recursively copy directory (excludes node_modules and hidden files)
+ */
+function copyDir(src: string, dest: string): void {
+  fs.mkdirSync(dest, {recursive: true})
+  const entries = fs.readdirSync(src, {withFileTypes: true})
+  for (const entry of entries) {
+    if (entry.name === 'node_modules' || entry.name.startsWith('.')) continue
+    const srcPath = path.join(src, entry.name)
+    const destPath = path.join(dest, entry.name)
+    if (entry.isDirectory()) {
+      copyDir(srcPath, destPath)
+    } else {
+      fs.copyFileSync(srcPath, destPath)
+    }
+  }
+}
+
+/**
+ * Create symlink (or copy for Cursor) from shared directory to agent directory(ies)
+ * Cursor does not follow symlinks to discover skills - use copy instead.
  */
 export function createSymlink(skillName: string, agent: AgentConfig, cwd?: string): boolean {
   const source = getSharedSkillPath(skillName)
@@ -17,10 +36,10 @@ export function createSymlink(skillName: string, agent: AgentConfig, cwd?: strin
   }
 
   const targets = getAgentSkillPaths(agent.name, skillName, cwd)
+  const useCopy = agent.useCopyInsteadOfSymlink === true
   let successCount = 0
 
   for (const target of targets) {
-    // Ensure target directory exists
     const targetDir = path.dirname(target)
     if (!fs.existsSync(targetDir)) {
       try {
@@ -37,8 +56,10 @@ export function createSymlink(skillName: string, agent: AgentConfig, cwd?: strin
         const stats = fs.lstatSync(target)
         if (stats.isSymbolicLink()) {
           fs.unlinkSync(target)
+        } else if (stats.isDirectory()) {
+          fs.rmSync(target, {recursive: true, force: true})
         } else {
-          logger.warn(`Target exists but is not a symlink, skipping: ${target}`)
+          logger.warn(`Target exists but is not a symlink/dir, skipping: ${target}`)
           continue
         }
       } catch (error: any) {
@@ -48,10 +69,14 @@ export function createSymlink(skillName: string, agent: AgentConfig, cwd?: strin
     }
 
     try {
-      fs.symlinkSync(source, target, 'dir')
+      if (useCopy) {
+        copyDir(source, target)
+      } else {
+        fs.symlinkSync(source, target, 'dir')
+      }
       successCount++
     } catch (error: any) {
-      logger.error(`Failed to create symlink at ${target}: ${error.message}`)
+      logger.error(`Failed to ${useCopy ? 'copy' : 'symlink'} at ${target}: ${error.message}`)
     }
   }
 
@@ -65,7 +90,8 @@ export function createSymlink(skillName: string, agent: AgentConfig, cwd?: strin
 }
 
 /**
- * Remove symlink from agent directory(ies)
+ * Remove symlink or copied directory from agent directory(ies)
+ * Handles both symlinks (most agents) and directories (Cursor uses copy)
  */
 export function removeSymlink(skillName: string, agent: AgentConfig, cwd?: string): boolean {
   const targets = getAgentSkillPaths(agent.name, skillName, cwd)
@@ -81,11 +107,14 @@ export function removeSymlink(skillName: string, agent: AgentConfig, cwd?: strin
       if (stats.isSymbolicLink()) {
         fs.unlinkSync(target)
         removedCount++
+      } else if (stats.isDirectory()) {
+        fs.rmSync(target, {recursive: true, force: true})
+        removedCount++
       } else {
-        logger.warn(`Not a symlink: ${target}`)
+        logger.warn(`Not a symlink or directory: ${target}`)
       }
     } catch (error: any) {
-      logger.error(`Failed to remove symlink at ${target}: ${error.message}`)
+      logger.error(`Failed to remove at ${target}: ${error.message}`)
     }
   }
 

@@ -3,7 +3,7 @@ import path from 'node:path'
 import {AGENTS, getAgentSkillsDirs} from '../config/agents.js'
 import {logger} from '../utils/logger.js'
 import {detectInstalledAgents, extractSkillName, getAgentSkillPaths, getSharedSkillPath} from '../utils/paths.js'
-import {isSymlink, removeSymlink} from '../utils/symlink.js'
+import {removeSymlink} from '../utils/symlink.js'
 
 export interface RemoveOptions {
   agent?: string // specific agent or 'all'
@@ -77,24 +77,22 @@ export async function remove(skillName: string, options: RemoveOptions = {}): Pr
     process.exit(1)
   }
 
-  // Check if there are any remaining symlinks in other agents
-  const remainingSymlinks: string[] = []
+  // Check if there are any remaining links/copies in other agents
+  const remainingRefs: string[] = []
   for (const agent of AGENTS) {
     const agentSkillPaths = getAgentSkillPaths(agent.name, extractedName, cwd)
-    const hasSymlink = agentSkillPaths.some(path => {
-      return fs.existsSync(path) && isSymlink(path)
-    })
-    if (hasSymlink) {
-      remainingSymlinks.push(agent.displayName)
+    const hasRef = agentSkillPaths.some(p => fs.existsSync(p))
+    if (hasRef) {
+      remainingRefs.push(agent.displayName)
     }
   }
 
-  if (remainingSymlinks.length > 0) {
-    logger.warn(`\n⚠️  Warning: Found remaining symlinks in:`)
-    for (const agentName of remainingSymlinks) {
+  if (remainingRefs.length > 0) {
+    logger.warn(`\n⚠️  Warning: Found remaining references in:`)
+    for (const agentName of remainingRefs) {
       logger.info(`  - ${agentName}`)
     }
-    logger.info('\nYou may need to manually remove these symlinks')
+    logger.info('\nYou may need to manually remove these')
   } else {
     logger.success(`✅ Skill "${extractedName}" removed successfully!`)
   }

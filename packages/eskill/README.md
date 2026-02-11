@@ -78,7 +78,7 @@ The CLI automatically detects and links to:
 - **ClawdBot** - `~/.openclaw/skills/` or `~/.clawdbot/skills/`
 - **Cline** - `~/.cline/skills/`
 - **Codex** - `~/.codex/skills/`
-- **Cursor** - `~/.cursor/skills/`
+- **Cursor** - `~/.cursor/skills/` (uses copy instead of symlink due to [Cursor bug](https://forum.cursor.com/t/cursor-doesnt-follow-symlinks-to-discover-skills/149693))
 - **Droid** - `~/.factory/skills/`
 - **Gemini** - `~/.gemini/skills/`
 - **GitHub Copilot** - `~/.copilot/skills/`
@@ -101,9 +101,9 @@ The CLI automatically detects and links to:
 ├── config.json
 └── cache/
 
-# Symlinks to AI agents
+# Symlinks (or copies for Cursor) to AI agents
 ~/.claude/skills/skill-name -> ~/.emp-agent/skills/skill-name
-~/.cursor/skills/skill-name -> ~/.emp-agent/skills/skill-name
+~/.cursor/skills/skill-name/   # Copy (Cursor doesn't follow symlinks)
 ~/.windsurf/skills/skill-name -> ~/.emp-agent/skills/skill-name
 ```
 
@@ -263,6 +263,22 @@ ls -la ~/.claude/skills/
 
 # Should show symlink arrows (->)
 ```
+
+### Cursor not recognizing skills
+
+Cursor has a [known bug](https://forum.cursor.com/t/cursor-doesnt-follow-symlinks-to-discover-skills/149693) where it does not follow symlinks to discover skills. eskill now **copies** (instead of symlinking) skills to `~/.cursor/skills/` for Cursor.
+
+If you installed skills before this fix, reinstall to get the copy:
+
+```bash
+# Reinstall for Cursor only (replaces symlink with copy)
+eskill install <skill-name> --force --agent cursor
+
+# Or reinstall for all agents
+eskill install <skill-name> --force
+```
+
+Then restart Cursor. Skills appear in **Cursor Settings → Rules → Agent Decides**.
 
 ## License
 

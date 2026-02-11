@@ -8,6 +8,8 @@ export interface AgentConfig {
   skillsDir?: string // Single directory (backward compatibility)
   skillsDirs?: string[] | ((cwd?: string) => string[]) // Multiple directories or function to get directories
   enabled: boolean
+  /** Use copy instead of symlink (e.g. Cursor doesn't follow symlinks) */
+  useCopyInsteadOfSymlink?: boolean
 }
 
 const HOME = os.homedir()
@@ -92,6 +94,8 @@ export const AGENTS: AgentConfig[] = [
     displayName: 'Cursor',
     skillsDir: path.join(HOME, '.cursor', 'skills'),
     enabled: true,
+    /** Cursor does not follow symlinks to discover skills (known bug). Use copy instead. */
+    useCopyInsteadOfSymlink: true,
   },
   {
     name: 'droid',
