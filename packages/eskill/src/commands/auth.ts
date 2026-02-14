@@ -11,8 +11,7 @@ export async function auth(domain?: string, options: { token?: string, list?: bo
       logger.info('No tokens configured.')
       return
     }
-    logger.info('
-🔐 Configured Tokens:')
+    logger.info('\n🔐 Configured Tokens:')
     for (const [dom, token] of Object.entries(config.tokens)) {
       const masked = token.substring(0, 4) + '*'.repeat(token.length - 8) + token.substring(token.length - 4)
       logger.info(`  - ${dom}: ${masked}`)

@@ -193,16 +193,25 @@ export async function install(skillNameOrPath: string, options: InstallOptions =
       if (options.all) {
         selectedSkills = availableSkills
       } else if (availableSkills.length > 1) {
-        logger.info(`\n📦 Found ${availableSkills.length} skills in this collection:`)
+        logger.info(`\n📦 Found ${availableSkills.length} skills:`)
         
         const prompt = new MultiSelect({
           name: 'value',
-          message: 'Select skills to install (Space to select, Enter to confirm)',
-          choices: availableSkills.map(s => ({
-            name: s.name,
-            value: s,
-            hint: s.description ? `- ${s.description}` : ''
-          })),
+          message: 'Select skills to install',
+          choices: availableSkills.map(s => {
+            // Absolute truncation for UI stability
+            const shortName = s.name.substring(0, 20)
+            let shortHint = (s.description || '').substring(0, 40)
+            if (shortHint) shortHint = ` - ${shortHint}`
+            return {
+              name: s.name,
+              message: `${shortName}${chalk.dim(shortHint)}`,
+              value: s
+            }
+          }),
+          indicator(state: any, choice: any) {
+            return choice.enabled ? chalk.cyan('◉') : chalk.gray('◯')
+          },
           result(names: string[]) {
             // @ts-ignore
             return names.map(name => availableSkills.find(s => s.name === name))
@@ -291,36 +300,114 @@ export async function install(skillNameOrPath: string, options: InstallOptions =
       process.exit(1)
     }
   } else if (options.link || fs.existsSync(skillNameOrPath)) {
-    // Dev mode: link from local directory
-    skillPath = path.resolve(skillNameOrPath)
+    // Dev/Local mode: supports directory or collection
+    const skillPath = path.resolve(skillNameOrPath)
 
     if (!fs.existsSync(skillPath)) {
       logger.error(`Path not found: ${skillPath}`)
       process.exit(1)
     }
 
-    // Get skill name from package.json or directory name
-    const pkgPath = path.join(skillPath, 'package.json')
-    if (fs.existsSync(pkgPath)) {
-      try {
-        const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'))
-        skillName = extractSkillName(pkg.name)
-      } catch {
-        skillName = extractSkillName(path.basename(skillPath))
-      }
-    } else {
-      skillName = extractSkillName(path.basename(skillPath))
+    const availableSkills = scanForSkills(skillPath)
+    if (availableSkills.length === 0) {
+      logger.error('No skills found in the directory (missing SKILL.md)')
+      process.exit(1)
     }
 
+    let selectedSkills: SkillItem[] = []
+    if (options.all) {
+      selectedSkills = availableSkills
+    } else if (availableSkills.length > 1) {
+      logger.info(`\n📦 Found ${availableSkills.length} skills:`)
+      const prompt = new MultiSelect({
+        name: 'value',
+        message: 'Select skills to install',
+        choices: availableSkills.map(s => {
+          const shortName = s.name.substring(0, 20)
+          let shortHint = (s.description || '').substring(0, 40)
+          if (shortHint) shortHint = ` - ${shortHint}`
+          return {
+            name: s.name,
+            message: `${shortName}${chalk.dim(shortHint)}`,
+            value: s
+          }
+        }),
+        indicator(state: any, choice: any) {
+          return choice.enabled ? chalk.cyan('◉') : chalk.gray('◯')
+        },
+        result(names: string[]) {
+          // @ts-ignore
+          return names.map(name => availableSkills.find(s => s.name === name))
+        }
+      })
+      selectedSkills = await prompt.run()
+    } else {
+      selectedSkills = [availableSkills[0]]
+    }
+
+    if (selectedSkills.length === 0) {
+      logger.warn('No skills selected. Exiting.')
+      process.exit(0)
+    }
+
+    // Determine Scope & Method
+    let isLocal = options.local || false
+    let isCopy = options.copy || false
+
+    if (!options.global && !options.local) {
+      const scopePrompt = new Select({
+        name: 'scope',
+        message: 'Where do you want to install?',
+        choices: [
+          {name: 'global', message: 'Global (~/.claude, ~/.cursor, etc.)'},
+          {name: 'local', message: 'Local Project (./.agent/skills)'}
+        ]
+      })
+      isLocal = (await scopePrompt.run()) === 'local'
+    }
+
+    if (!options.link && !options.copy) {
+      const methodPrompt = new Select({
+        name: 'method',
+        message: 'How do you want to install?',
+        choices: [
+          {name: 'link', message: 'Symlink (Changes reflect instantly)'},
+          {name: 'copy', message: 'Full Copy (Self-contained)'}
+        ]
+      })
+      isCopy = (await methodPrompt.run()) === 'copy'
+    }
+
+    options.local = isLocal
+    options.global = !isLocal
+    options.link = !isCopy
+    options.copy = isCopy
+
     const cwd = process.cwd()
-    const installedAgents = detectInstalledAgents(cwd)
-    await installFromLocalPath(skillPath, skillName, options, installedAgents, cwd)
+    let installedAgents = detectInstalledAgents(cwd)
+    
+    // Filter for local scope
+    if (options.local) {
+      installedAgents = installedAgents.map(agent => ({
+        ...agent,
+        skillsDirs: (c?: string) => {
+          const dirs = typeof agent.skillsDirs === 'function' ? agent.skillsDirs(c) : (agent.skillsDirs || [])
+          return dirs.filter(d => d.includes(c || cwd))
+        }
+      })).filter(agent => {
+        const dirs = typeof agent.skillsDirs === 'function' ? agent.skillsDirs(cwd) : []
+        return dirs.length > 0
+      })
+    }
+
+    for (const skill of selectedSkills) {
+      if (!skill) continue
+      logger.info(`\n🚀 Processing ${skill.name}...`)
+      await installFromLocalPath(skill.path, skill.name, options, installedAgents, cwd)
+    }
     
     logger.info('')
-    logger.success(`✅ Skill installed successfully!`)
-    if (options.link) {
-      logger.info('\n💡 Dev mode: changes to source files will reflect immediately')
-    }
+    logger.success(`✅ ${selectedSkills.length} skill(s) processed successfully!`)
   } else {
     // NPM install mode
     skillName = extractSkillName(skillNameOrPath)

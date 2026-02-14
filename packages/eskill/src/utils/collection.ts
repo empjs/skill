@@ -43,42 +43,39 @@ function parseSkillDir(dir: string): SkillItem {
   let description = ''
   let version = '1.0.0'
 
-  // Try to read SKILL.md for description (extract from frontmatter if exists)
-  const skillMdPath = path.join(dir, 'SKILL.md')
-  if (fs.existsSync(skillMdPath)) {
-    const content = fs.readFileSync(skillMdPath, 'utf-8')
-    const match = content.match(/description:\s*["']?([^"'\n]+)["']?/)
-    if (match) {
-      description = match[1]
-    }
-    
-    const nameMatch = content.match(/name:\s*["']?([^"'\n]+)["']?/)
-    if (nameMatch) {
-      // Use name from frontmatter if available
-      // return { name: nameMatch[1], path: dir, description, version };
-    }
-  }
-
-  // Try to read package.json for better metadata
+  // 1. Try to read package.json first (usually more accurate)
   const pkgPath = path.join(dir, 'package.json')
   if (fs.existsSync(pkgPath)) {
     try {
       const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'))
-      return {
-        name: pkg.name.replace('@empjs/', ''),
-        path: dir,
-        description: pkg.description || description,
-        version: pkg.version || version
+      if (pkg.description) description = pkg.description
+      if (pkg.version) version = pkg.version
+      if (pkg.name) {
+        return {
+          name: pkg.name.replace('@empjs/', ''),
+          path: dir,
+          description,
+          version
+        }
       }
-    } catch {
-      // Ignore parse error
+    } catch {}
+  }
+
+  // 2. Fallback to SKILL.md for description
+  const skillMdPath = path.join(dir, 'SKILL.md')
+  if (fs.existsSync(skillMdPath)) {
+    const content = fs.readFileSync(skillMdPath, 'utf-8')
+    // Extract description from frontmatter (more robust regex)
+    const descMatch = content.match(/description:\s*(?:"([^"]+)"|'([^']+)'|([^'"\n\r]+))/i)
+    if (descMatch) {
+      description = descMatch[1] || descMatch[2] || descMatch[3]
     }
   }
 
   return {
     name,
     path: dir,
-    description,
+    description: description.trim(),
     version
   }
 }
