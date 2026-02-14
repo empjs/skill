@@ -16,10 +16,23 @@ export interface SkillSource {
 
 export interface Config {
   sources: SkillSource[]
+  tokens: Record<string, string> // domain -> token
 }
 
 const DEFAULT_CONFIG: Config = {
-  sources: []
+  sources: [],
+  tokens: {}
+}
+
+export function saveToken(domain: string, token: string) {
+  const config = loadConfig()
+  config.tokens[domain] = token
+  saveConfig(config)
+}
+
+export function getToken(domain: string): string | undefined {
+  const config = loadConfig()
+  return config.tokens[domain]
 }
 
 export function ensureConfigDir() {

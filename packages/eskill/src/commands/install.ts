@@ -13,6 +13,7 @@ import {detectInstalledAgents, ensureSharedDir, extractSkillName, getSharedSkill
 import {getRegistry} from '../utils/registry.js'
 import {createSymlink} from '../utils/symlink.js'
 import {scanForSkills, type SkillItem} from '../utils/collection.js'
+import {getToken} from '../utils/config.js'
 
 const execAsync = promisify(exec)
 
@@ -110,10 +111,20 @@ export async function install(skillNameOrPath: string, options: InstallOptions =
       fs.mkdirSync(tempDir, {recursive: true})
 
       // Clone the repository
+      let gitUrl = gitInfo.gitUrl
+      const domain = new URL(gitUrl).hostname
+      const token = getToken(domain)
+      
+      if (token && gitUrl.startsWith('https://')) {
+        logger.dim(`Using saved token for ${domain}`)
+        // Format: https://oauth2:TOKEN@domain/path.git (GitLab/GitHub standard)
+        gitUrl = gitUrl.replace('https://', `https://oauth2:${token}@`)
+      }
+
       const branchFlag = gitInfo.branch ? `-b ${gitInfo.branch}` : ''
       const cloneCommand = branchFlag
-        ? `git clone ${branchFlag} ${gitInfo.gitUrl} ${cloneDir} --depth 1 --quiet`
-        : `git clone ${gitInfo.gitUrl} ${cloneDir} --depth 1 --quiet`
+        ? `git clone ${branchFlag} ${gitUrl} ${cloneDir} --depth 1 --quiet`
+        : `git clone ${gitUrl} ${cloneDir} --depth 1 --quiet`
 
       try {
         await execWithTimeout(cloneCommand, timeout)

@@ -7,6 +7,7 @@ import {agents} from './commands/agents.js'
 import {install} from './commands/install.js'
 import {list} from './commands/list.js'
 import {remove} from './commands/remove.js'
+import {auth} from './commands/auth.js'
 
 // Read version from package.json
 const __filename = fileURLToPath(import.meta.url)
@@ -34,6 +35,22 @@ program
   .action(async (skill, options) => {
     try {
       await install(skill, options)
+    } catch (error: any) {
+      console.error('Error:', error.message)
+      process.exit(1)
+    }
+  })
+
+// Auth command
+program
+  .command('auth [domain]')
+  .description('Manage access tokens for private repositories')
+  .option('-t, --token <token>', 'Access token')
+  .option('-l, --list', 'List all saved tokens')
+  .option('-r, --remove <domain>', 'Remove token for a domain')
+  .action(async (domain, options) => {
+    try {
+      await auth(domain, options)
     } catch (error: any) {
       console.error('Error:', error.message)
       process.exit(1)

@@ -83,6 +83,11 @@ const translations = {
         title: 'agents',
         desc: 'List all supported AI agents and their directories',
       },
+      auth: {
+        title: 'auth [domain]',
+        desc: 'Manage Access Tokens for private repositories (GitLab/GitHub). Tokens are securely stored locally.',
+        example: '$ eskill auth git.internal.corp --token your_token',
+      },
     },
     usage: {
       mainTitle: 'How It Works',
@@ -229,6 +234,11 @@ const translations = {
       agents: {
         title: 'agents',
         desc: '列出所有支持的 AI Agent 及其目录',
+      },
+      auth: {
+        title: 'auth [domain]',
+        desc: '管理私有仓库 (GitLab/GitHub) 的访问令牌。令牌将安全地存储在本地。',
+        example: '$ eskill auth git.internal.corp --token 你的令牌',
       },
     },
     usage: {
