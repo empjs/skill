@@ -26,7 +26,10 @@ const translations = {
     source: 'Source:',
     installed: 'INSTALLED',
     devLink: 'DEV LINK',
-    unsupported: 'Invalid git URL: {url}'
+    unsupported: 'Invalid git URL: {url}',
+    back: 'Back',
+    backHint: '(Press Esc or select Back to go back)',
+    selectAtLeastOne: 'Please select at least one skill.'
   },
   zh: {
     analyzing: '正在分析:',
@@ -53,7 +56,10 @@ const translations = {
     source: '源路径:',
     installed: '已安装',
     devLink: '开发链接',
-    unsupported: '无效的 Git URL: {url}'
+    unsupported: '无效的 Git URL: {url}',
+    back: '返回',
+    backHint: '(按 Esc 或选择“返回”以回到上一步)',
+    selectAtLeastOne: '请至少选择一个技能。'
   }
 }
 
