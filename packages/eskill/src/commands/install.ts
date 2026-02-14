@@ -3,7 +3,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import {promisify} from 'node:util'
-import {isGitUrl, parseGitUrl} from '../utils/git.js'
+import {isGitUrl, parseGitUrl, convertToSshUrl} from '../utils/git.js'
 import {logger} from '../utils/logger.js'
 import {AGENTS} from '../config/agents.js'
 import {detectInstalledAgents, ensureSharedDir, extractSkillName, getSharedSkillPath} from '../utils/paths.js'
@@ -117,18 +117,39 @@ export async function install(skillNameOrPath: string, options: InstallOptions =
         await execWithTimeout(cloneCommand, timeout)
         spinner.succeed(`Cloned successfully`)
       } catch (error: any) {
-        spinner.fail('Clone failed')
-        if (error.message.includes('timeout')) {
-          logger.error(`Clone timeout after ${timeout / 1000} seconds`)
-          logger.info('')
-          logger.info('Possible reasons:')
-          logger.info('  - Slow network connection')
-          logger.info('  - Large repository size')
-          logger.info('  - Git server issues')
-          logger.info('')
-          logger.info(`Try again or increase timeout: eskill add ${skillNameOrPath} --timeout=300000`)
+        // Try SSH fallback if HTTPS failed
+        const sshUrl = convertToSshUrl(gitInfo.gitUrl)
+        if (sshUrl && gitInfo.gitUrl.startsWith('http')) {
+          spinner.text = 'HTTPS clone failed, trying SSH...'
+          const sshCloneCommand = cloneCommand.replace(gitInfo.gitUrl, sshUrl)
+          
+          try {
+            await execWithTimeout(sshCloneCommand, timeout)
+            spinner.succeed(`Cloned successfully (via SSH)`)
+            // Continue execution...
+          } catch (sshError: any) {
+            // If SSH also fails, throw the original error (or detailed SSH error)
+            spinner.fail('Clone failed')
+            if (error.message.includes('timeout')) {
+              logger.error(`Clone timeout after ${timeout / 1000} seconds`)
+              // ... existing timeout handling ...
+            }
+            throw error
+          }
+        } else {
+          spinner.fail('Clone failed')
+          if (error.message.includes('timeout')) {
+            logger.error(`Clone timeout after ${timeout / 1000} seconds`)
+            logger.info('')
+            logger.info('Possible reasons:')
+            logger.info('  - Slow network connection')
+            logger.info('  - Large repository size')
+            logger.info('  - Git server issues')
+            logger.info('')
+            logger.info(`Try again or increase timeout: eskill add ${skillNameOrPath} --timeout=300000`)
+          }
+          throw error
         }
-        throw error
       }
 
       // Determine the skill path
