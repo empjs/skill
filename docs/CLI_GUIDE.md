@@ -22,7 +22,7 @@ bun install -g @empjs/skill
 
 ```bash
 # 克隆项目
-git clone https://github.com/emp/skill.git
+git clone https://github.com/empjs/skill.git
 cd emp-skill
 
 # 安装依赖
@@ -508,8 +508,8 @@ eskill bug-report
 
 ## 📞 支持
 
-- **文档**: https://emp-skill.com/docs/cli
-- **Issues**: https://github.com/emp/skill/issues
+- **文档**: https://skill.empjs.dev/docs/cli
+- **Issues**: https://github.com/empjs/skill/issues
 - **Discord**: https://discord.gg/emp-skill
 
 ---

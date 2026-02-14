@@ -8,7 +8,7 @@ const translations = {
       usage: 'Usage',
     },
     hero: {
-      title: 'EMP Skill Hub',
+      title: 'EMP Skills',
       subtitle: 'The Enterprise Distribution Hub for AI Agents',
       description:
         'Securely bridge your internal engineering standards with AI Agents. One CLI to manage, distribute, and trace skills across 18+ platforms with private repository support.',
@@ -174,7 +174,7 @@ const translations = {
       usage: '使用指南',
     },
     hero: {
-      title: 'EMP 技能枢纽',
+      title: 'EMP Skills',
       subtitle: '企业级 AI Agent 技能分发中心',
       description: '为企业内部工程规范与 AI 助手搭建安全桥梁。通过统一 CLI，在支持私有仓库的前提下，跨 18+ 平台管理、分发并追踪技能链路。',
       unified: '统一 AI Agent 技能管理',

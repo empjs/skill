@@ -8,7 +8,7 @@ EMP Skill Platform 提供 RESTful API，用于前端应用与后端服务的交�
 
 ### 基础 URL
 ```
-https://emp-skill.com/api
+https://skill.empjs.dev/api
 ```
 
 ### 请求格式
@@ -466,8 +466,8 @@ interface SkillStatsResponse {
 ```typescript
 // 允许的源
 const allowedOrigins = [
-  'https://emp-skill.com',
-  'https://dev.emp-skill.com',
+  'https://skill.empjs.dev',
+  'https://dev.skill.empjs.dev',
   'http://localhost:3000'  // 开发环境
 ]
 ```
@@ -532,24 +532,24 @@ interface Favorite {
 
 ```bash
 # 获取技能列表
-curl -X GET "https://emp-skill.com/api/skills?page=1&limit=10"
+curl -X GET "https://skill.empjs.dev/api/skills?page=1&limit=10"
 
 # 搜索技能
-curl -X GET "https://emp-skill.com/api/search?q=react"
+curl -X GET "https://skill.empjs.dev/api/search?q=react"
 
 # 获取技能详情
-curl -X GET "https://emp-skill.com/api/skills/vercel-react-best-practices"
+curl -X GET "https://skill.empjs.dev/api/skills/vercel-react-best-practices"
 ```
 
 ### 使用认证
 
 ```bash
 # 获取用户信息
-curl -X GET "https://emp-skill.com/api/auth/me" \
+curl -X GET "https://skill.empjs.dev/api/auth/me" \
   -H "Authorization: Bearer YOUR_TOKEN"
 
 # 点赞技能
-curl -X POST "https://emp-skill.com/api/skills/vercel-react-best-practices/like" \
+curl -X POST "https://skill.empjs.dev/api/skills/vercel-react-best-practices/like" \
   -H "Authorization: Bearer YOUR_TOKEN"
 ```
 
@@ -622,7 +622,7 @@ curl -X POST "https://emp-skill.com/api/skills/vercel-react-best-practices/like"
 API 文档会随着功能更新而更新。
 
 ### 问题反馈
-- **GitHub Issues**: https://github.com/emp/skill/issues
+- **GitHub Issues**: https://github.com/empjs/skill/issues
 - **Discord**: https://discord.gg/emp-skill
 
 ---

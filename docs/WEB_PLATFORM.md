@@ -15,7 +15,7 @@ EMP Skill Platform 是一个专注于 AI Agent 技能发现和社区互动的 We
 ### 1. 技能浏览（无需登录）
 
 #### 首页展示
-访问 https://emp-skill.com 查看：
+访问 https://skill.empjs.dev 查看：
 
 - **热门技能** - 按下载量排序的技能排行榜
 - **最新技能** - 最近更新的技能
@@ -350,12 +350,12 @@ npx wrangler pages deploy .output/public
 ## 🤝 社区和支持
 
 ### 获取帮助
-- **文档中心** - https://emp-skill.com/docs
-- **问题反馈** - https://github.com/emp/skill/issues
+- **文档中心** - https://skill.empjs.dev/docs
+- **问题反馈** - https://github.com/empjs/skill/issues
 - **社区讨论** - https://discord.gg/emp-skill
 
 ### 贡献代码
-- **Fork 项目** - https://github.com/emp/skill/fork
+- **Fork 项目** - https://github.com/empjs/skill/fork
 - **创建分支** - git checkout -b feature/new-feature
 - **提交 PR** - 遵循贡献指南
 

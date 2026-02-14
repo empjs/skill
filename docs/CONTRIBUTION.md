@@ -12,7 +12,7 @@
 
 ```bash
 # 克隆项目
-git clone https://github.com/emp/skill.git
+git clone https://github.com/empjs/skill.git
 cd emp-skill
 
 # 安装依赖
@@ -26,7 +26,7 @@ pnpm --filter web dev           # Web 平台开发
 #### 开发流程
 
 1. **选择任务**
-   - 查看 [GitHub Issues](https://github.com/emp/skill/issues)
+   - 查看 [GitHub Issues](https://github.com/empjs/skill/issues)
    - 选择适合自己的任务
    - 或者提出新功能建议
 

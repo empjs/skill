@@ -101,11 +101,11 @@ git commit -m "docs: update documentation"
 ## 🤝 反馈和建议
 
 ### 文档问题
-- **GitHub Issues**: https://github.com/emp/skill/issues
+- **GitHub Issues**: https://github.com/empjs/skill/issues
 - **标签**: `documentation`
 
 ### 改进建议
-- **GitHub Discussions**: https://github.com/emp/skill/discussions
+- **GitHub Discussions**: https://github.com/empjs/skill/discussions
 - **分类**: `Documentation`
 
 ## 📊 文档统计
@@ -117,8 +117,8 @@ git commit -m "docs: update documentation"
 
 ## 🔗 相关链接
 
-- **项目主页**: https://emp-skill.com
-- **GitHub 仓库**: https://github.com/emp/skill
+- **项目主页**: https://skill.empjs.dev
+- **GitHub 仓库**: https://github.com/empjs/skill
 - **Discord 社区**: https://discord.gg/emp-skill
 
 ---

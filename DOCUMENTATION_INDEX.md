@@ -33,7 +33,7 @@ emp-skill/
 │   │   ├── IMPLEMENTATION.md   # 实现指南
 │   │   └── PROJECT_SUMMARY.md  # 项目总结
 │   └── website/                 # 📄 静态网站
-├── skill-recomend.md            # 💡 技能推荐文档
+├── SKILL_RECOMMENDATION.md            # 💡 技能推荐文档
 ├── DOCUMENTATION_INDEX.md       # 🗂️ 文档索引
 ├── README.md                    # 🏠 项目总览
 ├── package.json
@@ -65,7 +65,7 @@ emp-skill/
 |------|------|------|
 | 实现指南 | [apps/web/IMPLEMENTATION.md](./apps/web/IMPLEMENTATION.md) | 详细实现步骤 |
 | 项目总结 | [apps/web/PROJECT_SUMMARY.md](./apps/web/PROJECT_SUMMARY.md) | 项目架构总结 |
-| 技能推荐 | [skill-recomend.md](./skill-recomend.md) | 技能推荐文档 |
+| 技能推荐 | [SKILL_RECOMMENDATION.md](./SKILL_RECOMMENDATION.md) | 技能推荐文档 |
 
 ## 🎯 按用户角色查找文档
 
@@ -151,19 +151,19 @@ Web 浏览 → Web 平台 (docs/WEB_PLATFORM.md)
 ## 🤝 反馈渠道
 
 ### 文档问题
-- **GitHub Issues**: https://github.com/emp/skill/issues
+- **GitHub Issues**: https://github.com/empjs/skill/issues
 - **标签**: `documentation`
 
 ### 改进建议
-- **GitHub Discussions**: https://github.com/emp/skill/discussions
+- **GitHub Discussions**: https://github.com/empjs/skill/discussions
 - **分类**: `Documentation`
 
 ## 📞 联系我们
 
-- **项目主页**: https://emp-skill.com
-- **GitHub 仓库**: https://github.com/emp/skill
+- **项目主页**: https://skill.empjs.dev
+- **GitHub 仓库**: https://github.com/empjs/skill
 - **Discord 社区**: https://discord.gg/emp-skill
-- **邮箱**: team@emp-skill.com
+- **邮箱**: team@skill.empjs.dev
 
 ---
 

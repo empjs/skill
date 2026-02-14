@@ -193,7 +193,7 @@ pnpm build
 npx wrangler pages deploy .output/public --project-name emp-skill-platform
 
 # 设置自定义域名（可选）
-npx wrangler pages domain add emp-skill-platform emp-skill.com
+npx wrangler pages domain add emp-skill-platform skill.empjs.dev
 ```
 
 ### 3. 部署 Workers API
@@ -313,7 +313,7 @@ jobs:
 # wrangler.toml
 [env.production]
 routes = [
-  { pattern = "https://emp-skill.com/*", zone_name = "emp-skill.com" }
+  { pattern = "https://skill.empjs.dev/*", zone_name = "skill.empjs.dev" }
 ]
 ```
 
@@ -322,7 +322,7 @@ routes = [
 ```typescript
 // API 响应头
 const corsHeaders = {
-  'Access-Control-Allow-Origin': 'https://emp-skill.com',
+  'Access-Control-Allow-Origin': 'https://skill.empjs.dev',
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 }
@@ -431,7 +431,7 @@ async function getSkills(page = 1, limit = 20) {
 
 ```typescript
 // 使用 Cloudflare Images
-const imageUrl = `https://images.emp-skill.com/cdn-cgi/image/format=webp,width=400/${originalUrl}`
+const imageUrl = `https://images.skill.empjs.dev/cdn-cgi/image/format=webp,width=400/${originalUrl}`
 ```
 
 #### 代码分割
