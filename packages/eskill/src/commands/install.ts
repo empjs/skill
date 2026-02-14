@@ -5,7 +5,7 @@ import path from 'node:path'
 import {promisify} from 'node:util'
 // @ts-ignore
 import enquirer from 'enquirer'
-const {MultiSelect} = enquirer
+const {MultiSelect, Password, Select} = enquirer
 import {isGitUrl, parseGitUrl, convertToSshUrl} from '../utils/git.js'
 import {logger} from '../utils/logger.js'
 import {AGENTS} from '../config/agents.js'
@@ -13,9 +13,7 @@ import {detectInstalledAgents, ensureSharedDir, extractSkillName, getSharedSkill
 import {getRegistry} from '../utils/registry.js'
 import {createSymlink} from '../utils/symlink.js'
 import {scanForSkills, type SkillItem} from '../utils/collection.js'
-import {getToken} from '../utils/config.js'
-
-const execAsync = promisify(exec)
+import {getToken, saveToken} from '../utils/config.js'
 
 const execAsync = promisify(exec)
 
@@ -56,10 +54,14 @@ async function execWithTimeout(
 
 export interface InstallOptions {
   agent?: string // specific agent or 'all'
-  link?: boolean // dev mode (symlink from local directory)
+  link?: boolean // use symlink
+  copy?: boolean // use full copy
+  global?: boolean // global scope
+  local?: boolean // local scope
+  all?: boolean // install all skills
   force?: boolean // force reinstall
   registry?: string // npm registry URL
-  timeout?: number // timeout in milliseconds (default: 180000 for npm, 120000 for git)
+  timeout?: number // timeout in milliseconds
 }
 
 /**
@@ -111,37 +113,61 @@ export async function install(skillNameOrPath: string, options: InstallOptions =
       fs.mkdirSync(tempDir, {recursive: true})
 
       // Clone the repository
+      const domain = new URL(gitInfo.gitUrl).hostname
       let gitUrl = gitInfo.gitUrl
-      const domain = new URL(gitUrl).hostname
-      const token = getToken(domain)
       
-      if (token && gitUrl.startsWith('https://')) {
-        logger.dim(`Using saved token for ${domain}`)
-        // Format: https://oauth2:TOKEN@domain/path.git (GitLab/GitHub standard)
-        gitUrl = gitUrl.replace('https://', `https://oauth2:${token}@`)
+      // 1. Try to get token from config or Env
+      const envTokenKey = `ESKILL_TOKEN_${domain.toUpperCase().replace(/\./g, '_')}`
+      let token = getToken(domain) || process.env[envTokenKey]
+      
+      const performClone = async (url: string) => {
+        const branchFlag = gitInfo.branch ? `-b ${gitInfo.branch}` : ''
+        const cloneCommand = branchFlag
+          ? `git clone ${branchFlag} ${url} ${cloneDir} --depth 1 --quiet`
+          : `git clone ${url} ${cloneDir} --depth 1 --quiet`
+        return execWithTimeout(cloneCommand, timeout)
       }
 
-      const branchFlag = gitInfo.branch ? `-b ${gitInfo.branch}` : ''
-      const cloneCommand = branchFlag
-        ? `git clone ${branchFlag} ${gitUrl} ${cloneDir} --depth 1 --quiet`
-        : `git clone ${gitUrl} ${cloneDir} --depth 1 --quiet`
-
       try {
-        await execWithTimeout(cloneCommand, timeout)
+        let finalGitUrl = gitUrl
+        if (token && gitUrl.startsWith('https://')) {
+          finalGitUrl = gitUrl.replace('https://', `https://oauth2:${token}@`)
+        }
+        
+        await performClone(finalGitUrl)
         spinner.succeed(`Cloned successfully`)
       } catch (error: any) {
-        // Try SSH fallback if HTTPS failed
-        const sshUrl = convertToSshUrl(gitInfo.gitUrl)
-        if (sshUrl && gitInfo.gitUrl.startsWith('http')) {
-          spinner.text = 'HTTPS clone failed, trying SSH...'
-          const sshCloneCommand = cloneCommand.replace(gitInfo.gitUrl, sshUrl)
-          
+        // 2. Try SSH fallback
+        const sshUrl = convertToSshUrl(gitUrl)
+        if (sshUrl) {
           try {
-            await execWithTimeout(sshCloneCommand, timeout)
+            spinner.text = 'HTTPS failed, trying SSH...'
+            await performClone(sshUrl)
             spinner.succeed(`Cloned successfully (via SSH)`)
           } catch (sshError: any) {
-            spinner.fail('Clone failed')
-            throw error
+            // 3. Last resort: Ask for Token in-line
+            spinner.stop()
+            logger.warn(`\n🔒 Private repository detected for ${domain}`)
+            const prompt = new Password({
+              message: `Please enter Access Token for ${domain}:`,
+              validate: (value: string) => value.length > 0
+            })
+            const newToken = await prompt.run()
+            
+            if (newToken) {
+              saveToken(domain, newToken)
+              const authedUrl = gitUrl.replace('https://', `https://oauth2:${newToken}@`)
+              const finalSpinner = logger.start(`Retrying clone with new token...`)
+              try {
+                await performClone(authedUrl)
+                finalSpinner.succeed(`Cloned successfully with new token`)
+              } catch (retryError: any) {
+                finalSpinner.fail('Clone failed even with token')
+                throw retryError
+              }
+            } else {
+              throw new Error('Authentication required')
+            }
           }
         } else {
           spinner.fail('Clone failed')
@@ -164,7 +190,9 @@ export async function install(skillNameOrPath: string, options: InstallOptions =
 
       let selectedSkills: SkillItem[] = []
 
-      if (availableSkills.length > 1) {
+      if (options.all) {
+        selectedSkills = availableSkills
+      } else if (availableSkills.length > 1) {
         logger.info(`\n📦 Found ${availableSkills.length} skills in this collection:`)
         
         const prompt = new MultiSelect({
@@ -176,31 +204,82 @@ export async function install(skillNameOrPath: string, options: InstallOptions =
             hint: s.description ? `- ${s.description}` : ''
           })),
           result(names: string[]) {
+            // @ts-ignore
             return names.map(name => availableSkills.find(s => s.name === name))
           }
         })
 
         selectedSkills = await prompt.run()
-        if (selectedSkills.length === 0) {
-          logger.warn('No skills selected. Exiting.')
-          process.exit(0)
-        }
       } else {
         selectedSkills = [availableSkills[0]]
       }
 
+      if (selectedSkills.length === 0) {
+        logger.warn('No skills selected. Exiting.')
+        process.exit(0)
+      }
+
+      // Determine Scope & Method interactively if not provided
+      let isLocal = options.local || false
+      let isCopy = options.copy || false
+
+      if (!options.global && !options.local) {
+        const scopePrompt = new Select({
+          name: 'scope',
+          message: 'Where do you want to install?',
+          choices: [
+            {name: 'global', message: 'Global (~/.claude, ~/.cursor, etc.)'},
+            {name: 'local', message: 'Local Project (./.agent/skills)'}
+          ]
+        })
+        isLocal = (await scopePrompt.run()) === 'local'
+      }
+
+      if (!options.link && !options.copy) {
+        const methodPrompt = new Select({
+          name: 'method',
+          message: 'How do you want to install?',
+          choices: [
+            {name: 'link', message: 'Symlink (Changes reflect instantly)'},
+            {name: 'copy', message: 'Full Copy (Self-contained)'}
+          ]
+        })
+        isCopy = (await methodPrompt.run()) === 'copy'
+      }
+
+      // Override options based on choices
+      options.local = isLocal
+      options.global = !isLocal
+      options.link = !isCopy
+      options.copy = isCopy
+
       // Detect agents once
       const cwd = process.cwd()
-      const installedAgents = detectInstalledAgents(cwd)
+      let installedAgents = detectInstalledAgents(cwd)
       
+      // Filter agents based on scope
+      if (options.local) {
+        installedAgents = installedAgents.map(agent => ({
+          ...agent,
+          // Only keep local directories
+          skillsDirs: (c?: string) => {
+            const dirs = typeof agent.skillsDirs === 'function' ? agent.skillsDirs(c) : (agent.skillsDirs || [])
+            return dirs.filter(d => d.includes(c || cwd))
+          }
+        })).filter(agent => {
+          const dirs = typeof agent.skillsDirs === 'function' ? agent.skillsDirs(cwd) : []
+          return dirs.length > 0
+        })
+      }
+
       if (installedAgents.length === 0) {
-        logger.warn('\nNo AI agents detected. Skills will be installed to shared directory only.')
+        logger.warn(`\nNo AI agents detected for the selected scope (${options.local ? 'local' : 'global'}).`)
       }
 
       // Install each selected skill
       for (const skill of selectedSkills) {
         if (!skill) continue
-        logger.info(`\n🚀 Installing ${chalk.cyan(skill.name)}...`)
+        logger.info(`\n🚀 Installing ${skill.name}...`)
         await installFromLocalPath(skill.path, skill.name, options, installedAgents, cwd)
       }
 
@@ -408,14 +487,14 @@ async function installFromLocalPath(
     logger.info(`Skill ${skillName} already in shared directory, updating agent links...`)
   } else if (alreadyExists && !options.force) {
     // Skip copy, just update agent links
-  } else if (options.link) {
-    // Dev mode: create symlink
-    fs.symlinkSync(skillPath, targetPath, 'dir')
-    logger.success(`Linked ${skillName} to shared directory (dev mode)`)
-  } else {
-    // Production mode: copy files
+  } else if (options.copy) {
+    // Full copy mode
     copyDir(skillPath, targetPath)
-    logger.success(`Installed ${skillName} to shared directory`)
+    logger.success(`Copied ${skillName} to shared directory (full copy)`)
+  } else {
+    // Default: Link mode
+    fs.symlinkSync(skillPath, targetPath, 'dir')
+    logger.success(`Linked ${skillName} to shared directory (symlink)`)
   }
 
   // Determine target agents
@@ -429,14 +508,16 @@ async function installFromLocalPath(
   }
 
   if (targetAgents.length > 0) {
-    logger.info(`Creating symlinks for ${skillName}...`)
+    logger.info(`Creating links for ${skillName}...`)
     let successCount = 0
     for (const agent of targetAgents) {
-      if (createSymlink(skillName, agent, cwd)) {
+      // If full copy is requested, override agent's default behavior
+      const useCopy = options.copy || agent.useCopyInsteadOfSymlink
+      if (createSymlink(skillName, agent, cwd, useCopy)) {
         successCount++
       }
     }
-    logger.dim(`Linked ${skillName} to ${successCount} agent(s)`)
+    logger.dim(`Linked/Copied ${skillName} to ${successCount} agent(s)`)
   }
 }
 

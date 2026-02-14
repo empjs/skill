@@ -27,7 +27,12 @@ function copyDir(src: string, dest: string): void {
  * Create symlink (or copy for Cursor) from shared directory to agent directory(ies)
  * Cursor does not follow symlinks to discover skills - use copy instead.
  */
-export function createSymlink(skillName: string, agent: AgentConfig, cwd?: string): boolean {
+export function createSymlink(
+  skillName: string,
+  agent: AgentConfig,
+  cwd?: string,
+  useCopyOverride?: boolean,
+): boolean {
   const source = getSharedSkillPath(skillName)
 
   if (!fs.existsSync(source)) {
@@ -36,7 +41,7 @@ export function createSymlink(skillName: string, agent: AgentConfig, cwd?: strin
   }
 
   const targets = getAgentSkillPaths(agent.name, skillName, cwd)
-  const useCopy = agent.useCopyInsteadOfSymlink === true
+  const useCopy = useCopyOverride !== undefined ? useCopyOverride : agent.useCopyInsteadOfSymlink === true
   let successCount = 0
 
   for (const target of targets) {

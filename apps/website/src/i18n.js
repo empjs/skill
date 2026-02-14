@@ -48,6 +48,14 @@ const translations = {
         title: 'Agent Traceability',
         desc: 'Clearly see which skills are linked to which AI Agents (Claude, Cursor, etc.) at a glance.',
       },
+      scope: {
+        title: 'Project-Local Support',
+        desc: 'Install skills to ./.agent/skills for specific projects, keeping your global environment clean.',
+      },
+      method: {
+        title: 'Link or Copy',
+        desc: 'Choose between Symlinks (instant updates) or Full Copy (portable & self-contained).',
+      },
     },
     agents: {
       title: '18+ AI Agents Supported',
@@ -89,17 +97,17 @@ const translations = {
       },
       auth: {
         title: 'auth [domain]',
-        desc: 'Manage Access Tokens for private repositories (GitLab/GitHub). Tokens are securely stored locally.',
+        desc: 'Advanced: Manually manage tokens. (Note: install now detects and prompts for tokens automatically!)',
         example: '$ eskill auth git.internal.corp --token your_token',
       },
     },
     usage: {
       mainTitle: 'How It Works',
-      mainDesc: 'From installation to skill management in 5 simple steps',
+      mainDesc: 'Intelligent, automated, and framework-agnostic.',
       title: 'Usage Guide',
       step0: {
         title: 'Install CLI',
-        desc: 'Install the @empjs/skill CLI tool globally',
+        desc: 'Global installation of the unified skill manager',
         pnpm: 'Using pnpm (recommended)',
         npm: 'Using npm',
         yarn: 'Using yarn',
@@ -107,8 +115,8 @@ const translations = {
         note: '* After installation, use eskill command to manage skills',
       },
       step1: {
-        title: 'Install Skill',
-        desc: 'Install skills from NPM or Git URL',
+        title: 'Zero-Config Install',
+        desc: 'Install from any URL. Private repos are handled automatically via SSH or smart in-line prompting.',
         gitTitle: '🚀 Install from GitHub/GitLab URL (New)',
         gitAlias: 'Or use alias:',
         gitNote: 'Supports GitHub, GitLab, branches and subdirectory paths',
@@ -204,6 +212,14 @@ const translations = {
         title: 'Agent 链路追踪',
         desc: '一眼看清哪些技能链接到了哪些 AI Agent (Claude, Cursor 等)。',
       },
+      scope: {
+        title: '项目本地支持',
+        desc: '支持安装到当前项目的 ./.agent/skills，保持全局环境整洁，实现项目级隔离。',
+      },
+      method: {
+        title: '软链或全量',
+        desc: '自由选择软链接（实时同步修改）或全量复制（离线可用、环境交付）。',
+      },
     },
     agents: {
       title: '支持 18+ 个 AI Agent',
@@ -245,17 +261,17 @@ const translations = {
       },
       auth: {
         title: 'auth [domain]',
-        desc: '管理私有仓库 (GitLab/GitHub) 的访问令牌。令牌将安全地存储在本地。',
+        desc: '高级选项：手动管理令牌。（注：install 命令现在会自动探测并提示输入令牌！）',
         example: '$ eskill auth git.internal.corp --token 你的令牌',
       },
     },
     usage: {
-      mainTitle: '使用流程',
-      mainDesc: '从安装到技能管理的 5 个简单步骤',
+      mainTitle: '运作原理',
+      mainDesc: '智能、自动、且适配所有主流 AI Agent 平台。',
       title: '使用指南',
       step0: {
         title: '安装 CLI',
-        desc: '全局安装 @empjs/skill CLI 工具',
+        desc: '全局安装统一技能管理器 @empjs/skill',
         pnpm: '使用 pnpm（推荐）',
         npm: '使用 npm',
         yarn: '使用 yarn',
@@ -263,8 +279,8 @@ const translations = {
         note: '* 安装完成后，使用 eskill 命令管理技能',
       },
       step1: {
-        title: '安装技能',
-        desc: '从 NPM 或 Git URL 安装技能',
+        title: '零配置安装',
+        desc: '支持任何 URL 安装。私有仓库将通过 SSH 或智能内联提示自动处理鉴权。',
         gitTitle: '🚀 从 GitHub/GitLab URL 安装（新功能）',
         gitAlias: '或使用别名：',
         gitNote: '支持 GitHub、GitLab、分支和子目录路径',
