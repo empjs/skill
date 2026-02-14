@@ -155,6 +155,22 @@ export function isUrl(str: string): boolean {
 /**
  * Check if a string is a GitHub/GitLab URL (including self-hosted GitLab)
  */
+export function convertToSshUrl(httpsUrl: string): string | null {
+  try {
+    const url = new URL(httpsUrl)
+    if (url.protocol !== 'https:' && url.protocol !== 'http:') return null
+    // git@host:path
+    // Remove leading slash from pathname
+    const path = url.pathname.startsWith('/') ? url.pathname.substring(1) : url.pathname
+    return `git@${url.hostname}:${path}`
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Check if a string is a GitHub/GitLab URL (including self-hosted GitLab)
+ */
 export function isGitUrl(str: string): boolean {
   return (
     str.includes('github.com') ||
