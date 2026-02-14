@@ -44,6 +44,10 @@ const translations = {
         title: 'B2B Ready: On-demand Install',
         desc: 'Interactive multi-select from private GitLab/GitHub monorepos. Install only what you need.',
       },
+      trace: {
+        title: 'Agent Traceability',
+        desc: 'Clearly see which skills are linked to which AI Agents (Claude, Cursor, etc.) at a glance.',
+      },
     },
     agents: {
       title: '18+ AI Agents Supported',
@@ -195,6 +199,10 @@ const translations = {
       git: {
         title: 'B端支持：按需安装',
         desc: '支持从私有 GitLab/GitHub Monorepo 交互式多选。只安装你需要的技能。',
+      },
+      trace: {
+        title: 'Agent 链路追踪',
+        desc: '一眼看清哪些技能链接到了哪些 AI Agent (Claude, Cursor 等)。',
       },
     },
     agents: {

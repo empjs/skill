@@ -1,9 +1,18 @@
 import fs from 'node:fs'
 import path from 'node:path'
+import os from 'node:os'
 import chalk from 'chalk'
 import {AGENTS, getAgentSkillsDirs, SHARED_SKILLS_DIR} from '../config/agents.js'
 import {logger} from '../utils/logger.js'
 import {isSymlink, readSymlink} from '../utils/symlink.js'
+
+/**
+ * Shorten path by replacing home dir with ~
+ */
+function shortenPath(p: string): string {
+  const home = os.homedir()
+  return p.startsWith(home) ? p.replace(home, '~') : p
+}
 
 /**
  * List installed skills
@@ -15,7 +24,7 @@ export function list(): void {
     return
   }
 
-  const skills = fs.readdirSync(SHARED_SKILLS_DIR)
+  const skills = fs.readdirSync(SHARED_SKILLS_DIR).filter(s => !s.startsWith('.'))
 
   if (skills.length === 0) {
     logger.info('No skills installed')
@@ -23,7 +32,7 @@ export function list(): void {
     return
   }
 
-  console.log(chalk.bold(`\nInstalled skills in ${SHARED_SKILLS_DIR}:\n`))
+  console.log(chalk.bold(`\n📦 Installed Skills in ${chalk.blue(shortenPath(SHARED_SKILLS_DIR))}:\n`))
 
   for (const skill of skills) {
     const skillPath = path.join(SHARED_SKILLS_DIR, skill)
@@ -37,70 +46,46 @@ export function list(): void {
 
       // Read version from package.json or SKILL.md
       let version = 'unknown'
+      let description = ''
 
       // Try package.json first
       const pkgPath = path.join(skillPath, 'package.json')
       if (fs.existsSync(pkgPath)) {
         try {
-          const pkgContent = fs.readFileSync(pkgPath, 'utf-8')
-          const pkg = JSON.parse(pkgContent)
-          if (pkg.version && typeof pkg.version === 'string') {
-            version = pkg.version
-          }
-        } catch (error) {
-          // JSON parse error, try SKILL.md
-        }
+          const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'))
+          if (pkg.version) version = pkg.version
+          if (pkg.description) description = pkg.description
+        } catch (error) {}
       }
 
-      // If no version found, try reading from SKILL.md frontmatter
-      if (version === 'unknown') {
+      // Read description from SKILL.md frontmatter
+      if (!description) {
         const skillMdPath = path.join(skillPath, 'SKILL.md')
         if (fs.existsSync(skillMdPath)) {
-          try {
-            const skillMdContent = fs.readFileSync(skillMdPath, 'utf-8')
-            // Look for version in YAML frontmatter
-            const frontmatterMatch = skillMdContent.match(/^---\s*\n([\s\S]*?)\n---/)
-            if (frontmatterMatch) {
-              const frontmatter = frontmatterMatch[1]
-              const versionMatch = frontmatter.match(/^version:\s*(.+)$/m)
-              if (versionMatch) {
-                version = versionMatch[1].trim().replace(/^["']|["']$/g, '')
-              }
-            }
-          } catch (error) {
-            // Ignore errors
+          const content = fs.readFileSync(skillMdPath, 'utf-8')
+          const descMatch = content.match(/description:\s*["']?([^"'\n]+)["']?/)
+          if (descMatch) description = descMatch[1]
+          
+          if (version === 'unknown') {
+            const verMatch = content.match(/version:\s*(.+)$/m)
+            if (verMatch) version = verMatch[1].trim().replace(/^["']|["']$/g, '')
           }
         }
       }
 
-      // If still unknown and it's a symlink, try reading from the target
-      if (version === 'unknown' && isSymlink(skillPath)) {
-        try {
-          const targetPath = readSymlink(skillPath)
-          if (targetPath) {
-            const targetPkgPath = path.join(targetPath, 'package.json')
-            if (fs.existsSync(targetPkgPath)) {
-              const pkg = JSON.parse(fs.readFileSync(targetPkgPath, 'utf-8'))
-              if (pkg.version && typeof pkg.version === 'string') {
-                version = pkg.version
-              }
-            }
-          }
-        } catch (error) {
-          // Ignore errors
-        }
-      }
-
-      // Check if dev mode (symlink in shared dir)
+      // Source & Type
       const isDev = isSymlink(skillPath)
-      const devTag = isDev ? chalk.yellow(' (dev)') : ''
+      const typeLabel = isDev 
+        ? chalk.bgYellow.black(' DEV LINK ') 
+        : chalk.bgBlue.white(' INSTALLED ')
 
       // Format version display
-      const versionDisplay = version !== 'unknown' ? chalk.gray(`(v${version})`) : ''
+      const versionDisplay = version !== 'unknown' ? chalk.gray(`v${version}`) : ''
+      const descDisplay = description ? chalk.dim(` - ${description}`) : ''
 
-      console.log(chalk.green('📦') + ` ${chalk.bold(skill)}${versionDisplay ? ' ' + versionDisplay : ''}${devTag}`)
+      console.log(`${chalk.green('●')} ${chalk.bold(skill)} ${versionDisplay} ${typeLabel}${descDisplay}`)
 
-      // Check which agents are linked (symlink) or copied (e.g. Cursor)
+      // Check linked agents
       const cwd = process.cwd()
       const linkedAgents: string[] = []
       for (const agent of AGENTS) {
@@ -112,27 +97,24 @@ export function list(): void {
             const target = readSymlink(agentSkillPath)
             return target === skillPath
           }
-          // Cursor uses copy instead of symlink
           if (agent.useCopyInsteadOfSymlink) {
             return fs.statSync(agentSkillPath).isDirectory()
           }
           return false
         })
-        if (hasRef) {
-          linkedAgents.push(agent.displayName)
-        }
+        if (hasRef) linkedAgents.push(agent.displayName)
       }
 
       if (linkedAgents.length > 0) {
-        console.log(chalk.gray(`   → Linked to: ${linkedAgents.join(', ')}`))
+        console.log(chalk.gray(`  🔗 Linked to: ${chalk.white(linkedAgents.join(', '))}`))
       } else {
-        console.log(chalk.yellow(`   → Not linked to any agent`))
+        console.log(chalk.red(`  ⚠️ Not linked to any agent`))
       }
 
       if (isDev) {
         const target = readSymlink(skillPath)
         if (target) {
-          console.log(chalk.gray(`   → Source: ${target}`))
+          console.log(chalk.gray(`  📁 Source: ${chalk.dim(shortenPath(target))}`))
         }
       }
 
