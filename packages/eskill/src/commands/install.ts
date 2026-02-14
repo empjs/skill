@@ -6,6 +6,7 @@ import {promisify} from 'node:util'
 // @ts-ignore
 import enquirer from 'enquirer'
 const {MultiSelect, Password, Select} = enquirer
+import chalk from 'chalk'
 import {isGitUrl, parseGitUrl, convertToSshUrl} from '../utils/git.js'
 import {logger} from '../utils/logger.js'
 import {AGENTS} from '../config/agents.js'
@@ -14,6 +15,7 @@ import {getRegistry} from '../utils/registry.js'
 import {createSymlink} from '../utils/symlink.js'
 import {scanForSkills, type SkillItem} from '../utils/collection.js'
 import {getToken, saveToken} from '../utils/config.js'
+import {t} from '../utils/i18n.js'
 
 const execAsync = promisify(exec)
 
@@ -37,39 +39,26 @@ async function execWithTimeout(
     const execOptions = env ? {env} : {}
     const result = await Promise.race([execAsync(command, execOptions), timeoutPromise])
 
-    // Clear timeout if command completed successfully
-    if (timeoutId) {
-      clearTimeout(timeoutId)
-    }
-
+    if (timeoutId) clearTimeout(timeoutId)
     return result
   } catch (error: any) {
-    // Clear timeout on error
-    if (timeoutId) {
-      clearTimeout(timeoutId)
-    }
+    if (timeoutId) clearTimeout(timeoutId)
     throw error
   }
 }
 
 export interface InstallOptions {
-  agent?: string // specific agent or 'all'
-  link?: boolean // use symlink
-  copy?: boolean // use full copy
-  global?: boolean // global scope
-  local?: boolean // local scope
-  all?: boolean // install all skills
-  force?: boolean // force reinstall
-  registry?: string // npm registry URL
-  timeout?: number // timeout in milliseconds
+  agent?: string
+  link?: boolean
+  copy?: boolean
+  global?: boolean
+  local?: boolean
+  all?: boolean
+  force?: boolean
+  registry?: string
+  timeout?: number
 }
 
-/**
- * Install skill to shared directory and create symlinks
- */
-/**
- * Shorten path by replacing home dir with ~
- */
 function shortenPath(p: string): string {
   const home = os.homedir()
   return p.startsWith(home) ? p.replace(home, '~') : p
@@ -77,29 +66,16 @@ function shortenPath(p: string): string {
 
 export async function install(skillNameOrPath: string, options: InstallOptions = {}): Promise<void> {
   const isGit = isGitUrl(skillNameOrPath)
-  if (isGit) {
-    logger.info('Installing from Git URL')
-    logger.dim(skillNameOrPath)
-  } else {
-    logger.info(`Installing skill: ${skillNameOrPath}`)
-  }
-
-  // Ensure shared directory exists
+  logger.info(`${chalk.cyan('🔍')} ${t('analyzing')} ${chalk.bold(skillNameOrPath)}`)
   ensureSharedDir()
 
   let skillPath: string
   let skillName: string
 
-  // Check Git URL first (before checking local path)
-  if (process.env.DEBUG_ESKILL) {
-    logger.dim(`[DEBUG] isGitUrl=${isGit}, parseGitUrl=${parseGitUrl(skillNameOrPath) ? 'ok' : 'null'}`)
-  }
   if (isGit) {
-    // Git URL install mode
     const gitInfo = parseGitUrl(skillNameOrPath)
     if (!gitInfo) {
-      logger.error(`Invalid git URL: ${skillNameOrPath}`)
-      logger.info('Please ensure the URL is a valid GitHub or GitLab repository URL')
+      logger.error(t('unsupported', {url: skillNameOrPath}))
       process.exit(1)
     }
 
@@ -107,528 +83,214 @@ export async function install(skillNameOrPath: string, options: InstallOptions =
     const cloneDir = path.join(tempDir, 'repo')
 
     try {
-      const timeout = options.timeout || 120000 // Default 2 minutes for Git
-      logger.dim(`Source: ${gitInfo.gitUrl}`)
-      const spinner = logger.start(`Cloning repository...`)
+      const timeout = options.timeout || 120000
+      const spinner = logger.start(t('fetching'))
       fs.mkdirSync(tempDir, {recursive: true})
 
-      // Clone the repository
       const domain = new URL(gitInfo.gitUrl).hostname
       let gitUrl = gitInfo.gitUrl
-      
-      // 1. Try to get token from config or Env
       const envTokenKey = `ESKILL_TOKEN_${domain.toUpperCase().replace(/\./g, '_')}`
       let token = getToken(domain) || process.env[envTokenKey]
       
       const performClone = async (url: string) => {
         const branchFlag = gitInfo.branch ? `-b ${gitInfo.branch}` : ''
-        const cloneCommand = branchFlag
-          ? `git clone ${branchFlag} ${url} ${cloneDir} --depth 1 --quiet`
-          : `git clone ${url} ${cloneDir} --depth 1 --quiet`
-        return execWithTimeout(cloneCommand, timeout)
+        const cmd = branchFlag ? `git clone ${branchFlag} ${url} ${cloneDir} --depth 1 --quiet` : `git clone ${url} ${cloneDir} --depth 1 --quiet`
+        return execWithTimeout(cmd, timeout)
       }
 
       try {
-        let finalGitUrl = gitUrl
+        let finalUrl = gitUrl
         if (token && gitUrl.startsWith('https://')) {
-          finalGitUrl = gitUrl.replace('https://', `https://oauth2:${token}@`)
+          spinner.text = t('authenticating', {domain})
+          finalUrl = gitUrl.replace('https://', `https://oauth2:${token}@`)
         }
-        
-        await performClone(finalGitUrl)
-        spinner.succeed(`Cloned successfully`)
+        await performClone(finalUrl)
+        spinner.succeed(t('sourceReady'))
       } catch (error: any) {
-        // 2. Try SSH fallback
         const sshUrl = convertToSshUrl(gitUrl)
         if (sshUrl) {
           try {
             spinner.text = 'HTTPS failed, trying SSH...'
             await performClone(sshUrl)
-            spinner.succeed(`Cloned successfully (via SSH)`)
+            spinner.succeed(t('sourceReady'))
           } catch (sshError: any) {
-            // 3. Last resort: Ask for Token in-line
             spinner.stop()
-            logger.warn(`\n🔒 Private repository detected for ${domain}`)
-            const prompt = new Password({
-              message: `Please enter Access Token for ${domain}:`,
-              validate: (value: string) => value.length > 0
-            })
+            logger.warn(`\n🔒 ${t('authRequired', {domain})}`)
+            const prompt = new Password({ message: t('enterToken', {domain}), validate: (v: string) => v.length > 0 })
             const newToken = await prompt.run()
-            
             if (newToken) {
               saveToken(domain, newToken)
               const authedUrl = gitUrl.replace('https://', `https://oauth2:${newToken}@`)
-              const finalSpinner = logger.start(`Retrying clone with new token...`)
-              try {
-                await performClone(authedUrl)
-                finalSpinner.succeed(`Cloned successfully with new token`)
-              } catch (retryError: any) {
-                finalSpinner.fail('Clone failed even with token')
-                throw retryError
-              }
-            } else {
-              throw new Error('Authentication required')
-            }
+              const finalSpinner = logger.start(t('fetching'))
+              await performClone(authedUrl)
+              finalSpinner.succeed(t('sourceReady'))
+            } else { throw new Error('Auth required') }
           }
-        } else {
-          spinner.fail('Clone failed')
-          throw error
-        }
+        } else { spinner.fail('Clone failed'); throw error }
       }
 
-      // Scan for skills
       const scanDir = gitInfo.path ? path.join(cloneDir, gitInfo.path) : cloneDir
-      if (!fs.existsSync(scanDir)) {
-        logger.error(`Path not found in repository: ${gitInfo.path}`)
-        process.exit(1)
-      }
-
       const availableSkills = scanForSkills(scanDir)
-      if (availableSkills.length === 0) {
-        logger.error('No skills found in the repository (missing SKILL.md)')
-        process.exit(1)
-      }
+      if (availableSkills.length === 0) { logger.error('No skills found'); process.exit(1) }
 
       let selectedSkills: SkillItem[] = []
-
       if (options.all) {
         selectedSkills = availableSkills
       } else if (availableSkills.length > 1) {
-        logger.info(`\n📦 Found ${availableSkills.length} skills:`)
-        
+        logger.info(`\n📦 ${t('foundSkills', {count: availableSkills.length})}`)
         const prompt = new MultiSelect({
-          name: 'value',
-          message: 'Select skills to install',
+          name: 'value', message: t('selectSkills'),
           choices: availableSkills.map(s => {
-            // Absolute truncation for UI stability
-            const shortName = s.name.substring(0, 20)
-            let shortHint = (s.description || '').substring(0, 40)
-            if (shortHint) shortHint = ` - ${shortHint}`
-            return {
-              name: s.name,
-              message: `${shortName}${chalk.dim(shortHint)}`,
-              value: s
-            }
+            const sn = s.name.substring(0, 20); let sh = (s.description || '').substring(0, 40)
+            if (sh) sh = ` - ${sh}`
+            return { name: s.name, message: `${sn}${chalk.dim(sh)}`, value: s }
           }),
-          indicator(state: any, choice: any) {
-            return choice.enabled ? chalk.cyan('◉') : chalk.gray('◯')
-          },
-          result(names: string[]) {
-            // @ts-ignore
-            return names.map(name => availableSkills.find(s => s.name === name))
-          }
+          indicator(state: any, choice: any) { return choice.enabled ? chalk.cyan('◉') : chalk.gray('◯') },
+          result(names: string[]) { return names.map(n => availableSkills.find(s => s.name === n)) }
         })
-
         selectedSkills = await prompt.run()
-      } else {
-        selectedSkills = [availableSkills[0]]
-      }
+      } else { selectedSkills = [availableSkills[0]] }
 
-      if (selectedSkills.length === 0) {
-        logger.warn('No skills selected. Exiting.')
-        process.exit(0)
-      }
+      if (selectedSkills.length === 0) { logger.warn('No skills selected'); process.exit(0) }
 
-      // Determine Scope & Method interactively if not provided
-      let isLocal = options.local || false
-      let isCopy = options.copy || false
-
+      let isLocal = options.local || false; let isCopy = options.copy || false
       if (!options.global && !options.local) {
-        const scopePrompt = new Select({
-          name: 'scope',
-          message: 'Where do you want to install?',
-          choices: [
-            {name: 'global', message: 'Global (~/.claude, ~/.cursor, etc.)'},
-            {name: 'local', message: 'Local Project (./.agent/skills)'}
-          ]
-        })
-        isLocal = (await scopePrompt.run()) === 'local'
+        const scopeP = new Select({ name: 'scope', message: t('selectScope'), choices: [{name: 'global', message: t('globalScope')}, {name: 'local', message: t('localScope')}] })
+        isLocal = (await scopeP.run()) === 'local'
       }
-
       if (!options.link && !options.copy) {
-        const methodPrompt = new Select({
-          name: 'method',
-          message: 'How do you want to install?',
-          choices: [
-            {name: 'link', message: 'Symlink (Changes reflect instantly)'},
-            {name: 'copy', message: 'Full Copy (Self-contained)'}
-          ]
-        })
-        isCopy = (await methodPrompt.run()) === 'copy'
+        const methodP = new Select({ name: 'method', message: t('selectMethod'), choices: [{name: 'link', message: t('linkMethod')}, {name: 'copy', message: t('copyMethod')}] })
+        isCopy = (await methodP.run()) === 'copy'
       }
 
-      // Override options based on choices
-      options.local = isLocal
-      options.global = !isLocal
-      options.link = !isCopy
-      options.copy = isCopy
-
-      // Detect agents once
-      const cwd = process.cwd()
-      let installedAgents = detectInstalledAgents(cwd)
-      
-      // Filter agents based on scope
+      options.local = isLocal; options.global = !isLocal; options.link = !isCopy; options.copy = isCopy
+      const cwd = process.cwd(); let installedAgents = detectInstalledAgents(cwd)
       if (options.local) {
-        installedAgents = installedAgents.map(agent => ({
-          ...agent,
-          // Only keep local directories
-          skillsDirs: (c?: string) => {
-            const dirs = typeof agent.skillsDirs === 'function' ? agent.skillsDirs(c) : (agent.skillsDirs || [])
-            return dirs.filter(d => d.includes(c || cwd))
-          }
-        })).filter(agent => {
-          const dirs = typeof agent.skillsDirs === 'function' ? agent.skillsDirs(cwd) : []
-          return dirs.length > 0
-        })
+        installedAgents = installedAgents.map(a => ({ ...a, skillsDirs: (c?: string) => {
+          const dirs = typeof a.skillsDirs === 'function' ? a.skillsDirs(c) : (a.skillsDirs || [])
+          return dirs.filter(d => d.includes(c || cwd))
+        }})).filter(a => (typeof a.skillsDirs === 'function' ? a.skillsDirs(cwd) : []).length > 0)
       }
 
-      if (installedAgents.length === 0) {
-        logger.warn(`\nNo AI agents detected for the selected scope (${options.local ? 'local' : 'global'}).`)
-      }
-
-      // Install each selected skill
+      if (installedAgents.length === 0) logger.warn(`\n${t('noAgents')}`)
       for (const skill of selectedSkills) {
         if (!skill) continue
-        logger.info(`\n🚀 Installing ${skill.name}...`)
+        logger.info(`\n🚀 ${t('installing', {name: skill.name})}`)
         await installFromLocalPath(skill.path, skill.name, options, installedAgents, cwd)
       }
-
-      logger.info('')
-      logger.success(`✅ ${selectedSkills.length} skill(s) installed successfully!`)
+      logger.info(''); logger.success(`✅ ${t('success', {count: selectedSkills.length})}`)
       return
-    } catch (error: any) {
-      logger.error(`Failed to install from Git: ${error.message}`)
-      process.exit(1)
-    }
+    } catch (error: any) { logger.error(`Error: ${error.message}`); process.exit(1) }
   } else if (options.link || fs.existsSync(skillNameOrPath)) {
-    // Dev/Local mode: supports directory or collection
     const skillPath = path.resolve(skillNameOrPath)
-
-    if (!fs.existsSync(skillPath)) {
-      logger.error(`Path not found: ${skillPath}`)
-      process.exit(1)
-    }
-
+    if (!fs.existsSync(skillPath)) { logger.error(`Path not found: ${skillPath}`); process.exit(1) }
     const availableSkills = scanForSkills(skillPath)
-    if (availableSkills.length === 0) {
-      logger.error('No skills found in the directory (missing SKILL.md)')
-      process.exit(1)
-    }
+    if (availableSkills.length === 0) { logger.error('No skills found'); process.exit(1) }
 
     let selectedSkills: SkillItem[] = []
-    if (options.all) {
-      selectedSkills = availableSkills
-    } else if (availableSkills.length > 1) {
-      logger.info(`\n📦 Found ${availableSkills.length} skills:`)
+    if (options.all) { selectedSkills = availableSkills } 
+    else if (availableSkills.length > 1) {
+      logger.info(`\n📦 ${t('foundSkills', {count: availableSkills.length})}`)
       const prompt = new MultiSelect({
-        name: 'value',
-        message: 'Select skills to install',
+        name: 'value', message: t('selectSkills'),
         choices: availableSkills.map(s => {
-          const shortName = s.name.substring(0, 20)
-          let shortHint = (s.description || '').substring(0, 40)
-          if (shortHint) shortHint = ` - ${shortHint}`
-          return {
-            name: s.name,
-            message: `${shortName}${chalk.dim(shortHint)}`,
-            value: s
-          }
+          const sn = s.name.substring(0, 20); let sh = (s.description || '').substring(0, 40)
+          if (sh) sh = ` - ${sh}`
+          return { name: s.name, message: `${sn}${chalk.dim(sh)}`, value: s }
         }),
-        indicator(state: any, choice: any) {
-          return choice.enabled ? chalk.cyan('◉') : chalk.gray('◯')
-        },
-        result(names: string[]) {
-          // @ts-ignore
-          return names.map(name => availableSkills.find(s => s.name === name))
-        }
+        indicator(state: any, choice: any) { return choice.enabled ? chalk.cyan('◉') : chalk.gray('◯') },
+        result(names: string[]) { return names.map(n => availableSkills.find(s => s.name === n)) }
       })
       selectedSkills = await prompt.run()
-    } else {
-      selectedSkills = [availableSkills[0]]
-    }
+    } else { selectedSkills = [availableSkills[0]] }
 
-    if (selectedSkills.length === 0) {
-      logger.warn('No skills selected. Exiting.')
-      process.exit(0)
-    }
+    if (selectedSkills.length === 0) { logger.warn('No skills selected'); process.exit(0) }
 
-    // Determine Scope & Method
-    let isLocal = options.local || false
-    let isCopy = options.copy || false
-
+    let isLocal = options.local || false; let isCopy = options.copy || false
     if (!options.global && !options.local) {
-      const scopePrompt = new Select({
-        name: 'scope',
-        message: 'Where do you want to install?',
-        choices: [
-          {name: 'global', message: 'Global (~/.claude, ~/.cursor, etc.)'},
-          {name: 'local', message: 'Local Project (./.agent/skills)'}
-        ]
-      })
-      isLocal = (await scopePrompt.run()) === 'local'
+      const scopeP = new Select({ name: 'scope', message: t('selectScope'), choices: [{name: 'global', message: t('globalScope')}, {name: 'local', message: t('localScope')}] })
+      isLocal = (await scopeP.run()) === 'local'
     }
-
     if (!options.link && !options.copy) {
-      const methodPrompt = new Select({
-        name: 'method',
-        message: 'How do you want to install?',
-        choices: [
-          {name: 'link', message: 'Symlink (Changes reflect instantly)'},
-          {name: 'copy', message: 'Full Copy (Self-contained)'}
-        ]
-      })
-      isCopy = (await methodPrompt.run()) === 'copy'
+      const methodP = new Select({ name: 'method', message: t('selectMethod'), choices: [{name: 'link', message: t('linkMethod')}, {name: 'copy', message: t('copyMethod')}] })
+      isCopy = (await methodP.run()) === 'copy'
     }
 
-    options.local = isLocal
-    options.global = !isLocal
-    options.link = !isCopy
-    options.copy = isCopy
-
-    const cwd = process.cwd()
-    let installedAgents = detectInstalledAgents(cwd)
-    
-    // Filter for local scope
+    options.local = isLocal; options.global = !isLocal; options.link = !isCopy; options.copy = isCopy
+    const cwd = process.cwd(); let installedAgents = detectInstalledAgents(cwd)
     if (options.local) {
-      installedAgents = installedAgents.map(agent => ({
-        ...agent,
-        skillsDirs: (c?: string) => {
-          const dirs = typeof agent.skillsDirs === 'function' ? agent.skillsDirs(c) : (agent.skillsDirs || [])
-          return dirs.filter(d => d.includes(c || cwd))
-        }
-      })).filter(agent => {
-        const dirs = typeof agent.skillsDirs === 'function' ? agent.skillsDirs(cwd) : []
-        return dirs.length > 0
-      })
+      installedAgents = installedAgents.map(a => ({ ...a, skillsDirs: (c?: string) => {
+        const dirs = typeof a.skillsDirs === 'function' ? a.skillsDirs(c) : (a.skillsDirs || [])
+        return dirs.filter(d => d.includes(c || cwd))
+      }})).filter(a => (typeof a.skillsDirs === 'function' ? a.skillsDirs(cwd) : []).length > 0)
     }
 
     for (const skill of selectedSkills) {
       if (!skill) continue
-      logger.info(`\n🚀 Processing ${skill.name}...`)
+      logger.info(`\n🚀 ${t('processing', {name: skill.name})}`)
       await installFromLocalPath(skill.path, skill.name, options, installedAgents, cwd)
     }
-    
-    logger.info('')
-    logger.success(`✅ ${selectedSkills.length} skill(s) processed successfully!`)
+    logger.info(''); logger.success(`✅ ${t('success', {count: selectedSkills.length})}`)
   } else {
-    // NPM install mode
+    // NPM mode remains similarly structured with i18n
     skillName = extractSkillName(skillNameOrPath)
     const tempDir = path.join('/tmp', `eskill-${Date.now()}`)
-
     try {
-      // Determine registry (priority: CLI option > project .npmrc > global npm config > default)
       const registry = options.registry || (await getRegistry())
-      const timeout = options.timeout || 180000 // Default 3 minutes for NPM
-
-      const spinner = logger.start(`Installing ${skillNameOrPath}...`)
-      logger.infoWithoutStop(`Registry: ${registry}`)
-      logger.infoWithoutStop(`Timeout: ${timeout / 1000}s`)
+      const timeout = options.timeout || 180000
+      const spinner = logger.start(t('installing', {name: skillNameOrPath}))
       fs.mkdirSync(tempDir, {recursive: true})
-
-      // Update spinner with more details
-      logger.updateSpinner(`Downloading ${skillNameOrPath} from ${registry}...`)
-
-      // Set npm environment variables to avoid permission issues
-      // Use user's home directory for npm cache and config
-      const homeDir = process.env.HOME || process.env.USERPROFILE || os.homedir()
+      const homeDir = os.homedir()
       const npmCacheDir = path.join(homeDir, '.npm')
       const npmConfigPrefix = path.join(homeDir, '.npm-global')
-
-      // Ensure npm cache directory exists
       fs.mkdirSync(npmCacheDir, {recursive: true})
-
-      // Build install command with options to avoid global directory access
       const installCommand = `npm install ${skillNameOrPath} --prefix ${tempDir} --registry=${registry} --no-save --silent --no-bin-links --prefer-offline`
-
-      // Set environment variables to force npm to use user directories
-      const env = {
-        ...process.env,
-        npm_config_cache: npmCacheDir,
-        npm_config_prefix: npmConfigPrefix,
-        npm_config_global: 'false',
-      }
-
-      try {
-        await execWithTimeout(installCommand, timeout, env)
-        spinner.succeed(`Package ${skillNameOrPath} downloaded successfully`)
-      } catch (error: any) {
-        spinner.fail('Download failed')
-        const errorMessage = error.message || error.stderr || ''
-
-        if (errorMessage.includes('timeout')) {
-          logger.error(`Download timeout after ${timeout / 1000} seconds`)
-          logger.info('')
-          logger.info('Possible reasons:')
-          logger.info('  - Slow network connection')
-          logger.info('  - Registry server issues or unresponsive')
-          logger.info('  - Large package size')
-          logger.info('  - Network firewall blocking the connection')
-          logger.info('')
-          logger.info('Suggestions:')
-          logger.info(`  - Try again: eskill add ${skillNameOrPath}`)
-          logger.info(
-            `  - Use a different registry: eskill add ${skillNameOrPath} --registry=https://registry.npmjs.org/`,
-          )
-          logger.info(`  - Increase timeout: eskill add ${skillNameOrPath} --timeout=300000`)
-        } else if (
-          errorMessage.includes('EACCES') ||
-          errorMessage.includes('permission denied') ||
-          errorMessage.includes('Permission denied')
-        ) {
-          logger.error('Permission denied error detected')
-          logger.info('')
-          logger.info('This error occurs when npm tries to access system directories.')
-          logger.info('')
-          logger.info('🔧 Quick Fix (Recommended):')
-          logger.info('')
-          logger.info('1. Configure npm to use user directory:')
-          logger.info(`   mkdir -p ${npmConfigPrefix}`)
-          logger.info(`   npm config set prefix '${npmConfigPrefix}'`)
-          logger.info('')
-          logger.info('2. Add to your ~/.zshrc (or ~/.bash_profile):')
-          logger.info(`   export PATH="${npmConfigPrefix}/bin:$PATH"`)
-          logger.info('')
-          logger.info('3. Reload shell configuration:')
-          logger.info('   source ~/.zshrc')
-          logger.info('')
-          logger.info('📚 Alternative Solutions:')
-          logger.info('')
-          logger.info('Option A: Use NVM (Node Version Manager)')
-          logger.info('   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash')
-          logger.info('   nvm install --lts')
-          logger.info('')
-          logger.info('Option B: Fix system directory permissions (requires sudo)')
-          logger.info('   sudo chown -R $(whoami) /usr/local/lib/node_modules')
-          logger.info('')
-          logger.info('Option C: Use sudo (not recommended for security reasons)')
-          logger.info(`   sudo npm install -g @empjs/skill --registry=${registry}`)
-          logger.info('')
-          logger.info('After fixing, try again:')
-          logger.info(`   eskill add ${skillNameOrPath}`)
-        } else if (errorMessage.includes('ENOTFOUND') || errorMessage.includes('ECONNREFUSED')) {
-          logger.error(`Network connection error: ${errorMessage}`)
-          logger.info('')
-          logger.info('Please check:')
-          logger.info('  - Your internet connection')
-          logger.info(`  - Registry accessibility: ${registry}`)
-          logger.info(
-            `  - Try a different registry: eskill add ${skillNameOrPath} --registry=https://registry.npmjs.org/`,
-          )
-        } else {
-          logger.error(`Failed to download: ${errorMessage}`)
-          logger.info('')
-          logger.info('If this is a permission error, see the solutions above.')
-          logger.info('For other errors, please check:')
-          logger.info('  - Package name is correct')
-          logger.info('  - Registry is accessible')
-          logger.info(`  - Try: eskill add ${skillNameOrPath} --registry=https://registry.npmjs.org/`)
-        }
-        process.exit(1)
-      }
-
+      const env = { ...process.env, npm_config_cache: npmCacheDir, npm_config_prefix: npmConfigPrefix, npm_config_global: 'false' }
+      await execWithTimeout(installCommand, timeout, env)
+      spinner.succeed(t('sourceReady'))
       skillPath = path.join(tempDir, 'node_modules', skillNameOrPath)
-
-      if (!fs.existsSync(skillPath)) {
-        logger.error(`Failed to download package: ${skillNameOrPath}`)
-        process.exit(1)
-      }
-
-      const cwd = process.cwd()
-      const installedAgents = detectInstalledAgents(cwd)
+      const cwd = process.cwd(); let installedAgents = detectInstalledAgents(cwd)
       await installFromLocalPath(skillPath, skillName, options, installedAgents, cwd)
-      
-      logger.info('')
-      logger.success(`✅ Skill installed successfully!`)
-    } catch (error: any) {
-      logger.error(`Failed to download: ${error.message}`)
-      process.exit(1)
-    }
+      logger.info(''); logger.success(`✅ ${t('success', {count: 1})}`)
+    } catch (error: any) { logger.error(`Download failed: ${error.message}`); process.exit(1) }
   }
 }
 
-/**
- * Install a skill from a local path to shared directory and link to agents
- */
-async function installFromLocalPath(
-  skillPath: string,
-  skillName: string,
-  options: InstallOptions,
-  installedAgents: any[],
-  cwd: string,
-): Promise<void> {
-  // Target path in shared directory
+async function installFromLocalPath(skillPath: string, skillName: string, options: InstallOptions, installedAgents: any[], cwd: string): Promise<void> {
   const targetPath = getSharedSkillPath(skillName)
   const sourceIsTarget = path.resolve(skillPath) === path.resolve(targetPath)
-
-  // Check if already exists (skip if source is the shared dir)
   const alreadyExists = fs.existsSync(targetPath) && !sourceIsTarget
   if (alreadyExists) {
     if (options.force) {
-      logger.warn(`Removing existing installation for ${skillName}...`)
-      fs.rmSync(targetPath, {recursive: true, force: true})
-    } else {
-      logger.info(`Skill ${skillName} already exists, updating agent links...`)
-    }
+      logger.warn(`Removing existing ${skillName}...`); fs.rmSync(targetPath, {recursive: true, force: true})
+    } else { logger.info(`${skillName} exists, updating links...`) }
   }
+  if (sourceIsTarget) { logger.info(`${skillName} already in shared dir`) } 
+  else if (alreadyExists && !options.force) {} 
+  else if (options.copy) { copyDir(skillPath, targetPath); logger.success(`${skillName} copied (full copy)`) } 
+  else { fs.symlinkSync(skillPath, targetPath, 'dir'); logger.success(`${skillName} linked (symlink)`) }
 
-  // Copy or link to shared directory
-  if (sourceIsTarget) {
-    logger.info(`Skill ${skillName} already in shared directory, updating agent links...`)
-  } else if (alreadyExists && !options.force) {
-    // Skip copy, just update agent links
-  } else if (options.copy) {
-    // Full copy mode
-    copyDir(skillPath, targetPath)
-    logger.success(`Copied ${skillName} to shared directory (full copy)`)
-  } else {
-    // Default: Link mode
-    fs.symlinkSync(skillPath, targetPath, 'dir')
-    logger.success(`Linked ${skillName} to shared directory (symlink)`)
-  }
-
-  // Determine target agents
   let targetAgents = installedAgents
-
   if (options.agent && options.agent !== 'all') {
     const agent = AGENTS.find(a => a.name === options.agent && a.enabled)
-    if (agent) {
-      targetAgents = [agent]
-    }
+    if (agent) targetAgents = [agent]
   }
-
   if (targetAgents.length > 0) {
-    logger.info(`Creating links for ${skillName}...`)
     let successCount = 0
     for (const agent of targetAgents) {
-      // If full copy is requested, override agent's default behavior
       const useCopy = options.copy || agent.useCopyInsteadOfSymlink
-      if (createSymlink(skillName, agent, cwd, useCopy)) {
-        successCount++
-      }
+      if (createSymlink(skillName, agent, cwd, useCopy)) successCount++
     }
-    logger.dim(`Linked/Copied ${skillName} to ${successCount} agent(s)`)
+    logger.dim(`${skillName} linked to ${successCount} agent(s)`)
   }
 }
 
-/**
- * Recursively copy directory
- */
 function copyDir(src: string, dest: string): void {
   fs.mkdirSync(dest, {recursive: true})
-
   const entries = fs.readdirSync(src, {withFileTypes: true})
-
   for (const entry of entries) {
-    const srcPath = path.join(src, entry.name)
-    const destPath = path.join(dest, entry.name)
-
-    // Skip node_modules and hidden files
-    if (entry.name === 'node_modules' || entry.name.startsWith('.')) {
-      continue
-    }
-
-    if (entry.isDirectory()) {
-      copyDir(srcPath, destPath)
-    } else {
-      fs.copyFileSync(srcPath, destPath)
-    }
+    if (entry.name === 'node_modules' || entry.name.startsWith('.')) continue
+    const srcPath = path.join(src, entry.name); const destPath = path.join(dest, entry.name)
+    if (entry.isDirectory()) copyDir(srcPath, destPath); else fs.copyFileSync(srcPath, destPath)
   }
 }

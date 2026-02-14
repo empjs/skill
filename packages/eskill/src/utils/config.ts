@@ -17,11 +17,25 @@ export interface SkillSource {
 export interface Config {
   sources: SkillSource[]
   tokens: Record<string, string> // domain -> token
+  lang?: 'en' | 'zh'
 }
+
+const DEFAULT_LANG = (Intl.DateTimeFormat().resolvedOptions().locale.startsWith('zh') ? 'zh' : 'en') as 'en' | 'zh'
 
 const DEFAULT_CONFIG: Config = {
   sources: [],
-  tokens: {}
+  tokens: {},
+  lang: DEFAULT_LANG
+}
+
+export function getLang(): 'en' | 'zh' {
+  return loadConfig().lang || DEFAULT_LANG
+}
+
+export function setLang(lang: 'en' | 'zh') {
+  const config = loadConfig()
+  config.lang = lang
+  saveConfig(config)
 }
 
 export function saveToken(domain: string, token: string) {
