@@ -2,6 +2,7 @@
 # 使用命令: pnpm deploy 或 npx wrangler pages deploy dist
 
 name = "emp-skill-website"
+pages_build_output_dir = "dist"
 compatibility_date = "2024-01-01"
 
 # Pages 部署不需要 [site] 配置
