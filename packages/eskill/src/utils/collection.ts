@@ -47,14 +47,12 @@ function parseSkillDir(dir: string): SkillItem {
   const skillMdPath = path.join(dir, 'SKILL.md')
   if (fs.existsSync(skillMdPath)) {
     const content = fs.readFileSync(skillMdPath, 'utf-8')
-    const match = content.match(/description:\s*["']?([^"'
-]+)["']?/)
+    const match = content.match(/description:\s*["']?([^"'\n]+)["']?/)
     if (match) {
       description = match[1]
     }
     
-    const nameMatch = content.match(/name:\s*["']?([^"'
-]+)["']?/)
+    const nameMatch = content.match(/name:\s*["']?([^"'\n]+)["']?/)
     if (nameMatch) {
       // Use name from frontmatter if available
       // return { name: nameMatch[1], path: dir, description, version };
