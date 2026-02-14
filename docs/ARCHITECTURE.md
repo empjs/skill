@@ -11,6 +11,8 @@
 │  │              CLI 层（packages/eskill/）                │    │
 │  │  ├─ 完全独立运行                                         │    │
 │  │  ├─ 纯本地操作                                           │    │
+│  │  ├─ 鉴权管理 (Auth Module)                               │    │
+│  │  ├─ 技能集发现 (Collection Scanner)                      │    │
 │  │  ├─ 零门槛安装                                           │    │
 │  │  └─ 可选遥测                                              │    │
 │  └─────────────────────────────────────────────────────────┘    │
@@ -43,17 +45,21 @@
 
 ## 🗂️ 数据流设计
 
-### 技能发布流程
+### 技能安装流程 (B端/私有化)
 
 ```mermaid
 graph TD
-    A[开发者创建 GitHub 仓库] --> B[提交代码到 GitHub]
-    B --> C[系统自动发现]
-    C --> D[验证 NPM 包]
-    D --> E[爬虫抓取信息]
-    E --> F[写入数据库]
-    F --> G[展示在平台]
-    G --> H[用户发现和安装]
+    A[用户执行 eskill install URL] --> B{检测域名 Token?}
+    B -->|有| C[注入 OAuth2 Token 到 URL]
+    B -->|无| D[标准 Git Clone]
+    C --> E[Git Clone 到临时目录]
+    D --> E
+    E --> F[Collection Scanner 扫描 SKILL.md]
+    F --> G{多技能发现?}
+    G -->|是| H[交互式 UI 勾选技能]
+    G -->|否| I[自动确认单技能]
+    H --> J[Agent 探测与软链注入]
+    I --> J
 ```
 
 ### 用户使用流程

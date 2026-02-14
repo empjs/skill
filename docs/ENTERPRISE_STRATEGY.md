@@ -57,22 +57,22 @@ graph TD
 
 ## 3. 功能规划 (Feature Roadmap)
 
-### Phase 1: 基础设施适配 (Foundation)
+### Phase 1: 基础设施适配 (Foundation) - ✅ 已完成
 *   **目标**：打通私有 Git 仓库的拉取链路。
 *   **核心功能**：
-    *   [ ] CLI 支持 SSH URL (`git@gitlab.company.com:group/repo.git`)。
-    *   [ ] CLI 自动识别非 GitHub/GitLab 的私有 Git 域名。
-    *   [ ] 基础的 `git clone` 鉴权 (依赖本地 SSH Agent)。
+    *   [x] CLI 支持 SSH URL (`git@gitlab.company.com:group/repo.git`)。
+    *   [x] CLI 自动识别非 GitHub/GitLab 的私有 Git 域名。
+    *   [x] 基础的 `git clone` 鉴权 (支持通过 `eskill auth` 注入 Token)。
 
-### Phase 2: 去中心化发现 (Serverless Discovery)
-*   **目标**：让 CLI 具备“扫描”能力，替代中心化服务器。
+### Phase 2: 去中心化发现与按需分发 (Discovery & On-demand) - ✅ 已完成
+*   **目标**：实现 Monorepo 技能集识别与按需安装。
 *   **核心功能**：
-    *   [ ] **API Client**：集成 `gitbeaker` (GitLab) 和 `octokit` (GitHub) 到 CLI。
-    *   [ ] **Source Config**：支持配置扫描范围（Group ID 或 Org Name）。
-    *   [ ] **Local Cache**：实现本地索引文件的生成与过期机制。
-    *   [ ] **Search**：`eskill search` 基于本地缓存进行检索。
+    *   [x] **Collection Scanner**：递归扫描子目录中的 `SKILL.md`，识别技能集。
+    *   [x] **Interactive UI**：基于 `enquirer` 的交互式多选界面。
+    *   [x] **Auth Gateway**：`eskill auth` 命令管理各域名 Access Token。
+    *   [x] **Agent Traceability**：`eskill list` 清晰展示技能在不同 Agent 中的链接状态。
 
-### Phase 3: 企业级管控 (Enterprise Control)
+### Phase 3: 企业级管控与标准化 (Enterprise Control) - 🏗️ 进行中
 *   **目标**：安全、合规与标准化。
 *   **核心功能**：
     *   [ ] **Skill Templates**：提供符合公司规范的技能脚手架。

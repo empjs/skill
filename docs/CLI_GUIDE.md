@@ -166,6 +166,40 @@ eskill search react --tag performance
 eskill search react --limit 10
 ```
 
+### 批量与按需安装 (B2B 场景)
+
+当从包含多个技能的仓库 (Monorepo) 安装时，CLI 会自动识别并开启交互式多选模式：
+
+```bash
+# 安装包含多个技能的企业级仓库
+eskill install https://git.internal.corp/fed-team/skills-collection
+```
+
+**交互操作：**
+- `Space`: 选择/取消选择技能
+- `Enter`: 确认并开始安装
+- `A`: 选择全部
+
+### 鉴权管理 (Auth)
+
+针对企业私有 GitLab/GitHub 仓库，使用 `auth` 命令管理访问令牌：
+
+```bash
+# 交互式添加 Token
+eskill auth git.internal.corp
+
+# 命令行直接设置
+eskill auth git.internal.corp --token your_private_access_token
+
+# 查看已配置的域名和 Token（脱敏显示）
+eskill auth --list
+
+# 移除特定域名的 Token
+eskill auth --remove git.internal.corp
+```
+
+> **安全提示**: Token 将安全存储在本地 `~/.emp-agent/config.json` 中，仅用于克隆时的鉴权。
+
 ### 配置管理
 
 #### 查看配置
