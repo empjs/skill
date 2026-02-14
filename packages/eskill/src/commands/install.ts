@@ -3,12 +3,18 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import {promisify} from 'node:util'
+// @ts-ignore
+import enquirer from 'enquirer'
+const {MultiSelect} = enquirer
 import {isGitUrl, parseGitUrl, convertToSshUrl} from '../utils/git.js'
 import {logger} from '../utils/logger.js'
 import {AGENTS} from '../config/agents.js'
 import {detectInstalledAgents, ensureSharedDir, extractSkillName, getSharedSkillPath} from '../utils/paths.js'
 import {getRegistry} from '../utils/registry.js'
 import {createSymlink} from '../utils/symlink.js'
+import {scanForSkills, type SkillItem} from '../utils/collection.js'
+
+const execAsync = promisify(exec)
 
 const execAsync = promisify(exec)
 
@@ -94,17 +100,13 @@ export async function install(skillNameOrPath: string, options: InstallOptions =
       process.exit(1)
     }
 
-    skillName = gitInfo.path ? extractSkillName(path.basename(gitInfo.path)) : extractSkillName(gitInfo.repo)
     const tempDir = path.join('/tmp', `eskill-${Date.now()}`)
     const cloneDir = path.join(tempDir, 'repo')
 
     try {
       const timeout = options.timeout || 120000 // Default 2 minutes for Git
-      const gitDetails: string[] = [`${gitInfo.gitUrl}`]
-      if (gitInfo.branch) gitDetails.push(`branch: ${gitInfo.branch}`)
-      if (gitInfo.path) gitDetails.push(`path: ${gitInfo.path}`)
-      logger.dim(gitDetails.join(' · '))
-      const spinner = logger.start(`Cloning...`)
+      logger.dim(`Source: ${gitInfo.gitUrl}`)
+      const spinner = logger.start(`Cloning repository...`)
       fs.mkdirSync(tempDir, {recursive: true})
 
       // Clone the repository
@@ -126,66 +128,76 @@ export async function install(skillNameOrPath: string, options: InstallOptions =
           try {
             await execWithTimeout(sshCloneCommand, timeout)
             spinner.succeed(`Cloned successfully (via SSH)`)
-            // Continue execution...
           } catch (sshError: any) {
-            // If SSH also fails, throw the original error (or detailed SSH error)
             spinner.fail('Clone failed')
-            if (error.message.includes('timeout')) {
-              logger.error(`Clone timeout after ${timeout / 1000} seconds`)
-              // ... existing timeout handling ...
-            }
             throw error
           }
         } else {
           spinner.fail('Clone failed')
-          if (error.message.includes('timeout')) {
-            logger.error(`Clone timeout after ${timeout / 1000} seconds`)
-            logger.info('')
-            logger.info('Possible reasons:')
-            logger.info('  - Slow network connection')
-            logger.info('  - Large repository size')
-            logger.info('  - Git server issues')
-            logger.info('')
-            logger.info(`Try again or increase timeout: eskill add ${skillNameOrPath} --timeout=300000`)
-          }
           throw error
         }
       }
 
-      // Determine the skill path
-      if (gitInfo.path) {
-        // If path is specified, use that subdirectory
-        skillPath = path.join(cloneDir, gitInfo.path)
-        if (!fs.existsSync(skillPath)) {
-          logger.error(`Path not found in repository: ${gitInfo.path}`)
-          logger.info(`Repository cloned to: ${cloneDir}`)
-          process.exit(1)
-        }
-      } else {
-        // Use the root of the repository
-        skillPath = cloneDir
+      // Scan for skills
+      const scanDir = gitInfo.path ? path.join(cloneDir, gitInfo.path) : cloneDir
+      if (!fs.existsSync(scanDir)) {
+        logger.error(`Path not found in repository: ${gitInfo.path}`)
+        process.exit(1)
       }
 
-      // Verify SKILL.md exists (optional check)
-      const skillMdPath = path.join(skillPath, 'SKILL.md')
-      if (!fs.existsSync(skillMdPath)) {
-        logger.warn(`Warning: SKILL.md not found in ${skillPath}`)
-        logger.info('The directory may not be a valid skill package')
+      const availableSkills = scanForSkills(scanDir)
+      if (availableSkills.length === 0) {
+        logger.error('No skills found in the repository (missing SKILL.md)')
+        process.exit(1)
       }
+
+      let selectedSkills: SkillItem[] = []
+
+      if (availableSkills.length > 1) {
+        logger.info(`\n📦 Found ${availableSkills.length} skills in this collection:`)
+        
+        const prompt = new MultiSelect({
+          name: 'value',
+          message: 'Select skills to install (Space to select, Enter to confirm)',
+          choices: availableSkills.map(s => ({
+            name: s.name,
+            value: s,
+            hint: s.description ? `- ${s.description}` : ''
+          })),
+          result(names: string[]) {
+            return names.map(name => availableSkills.find(s => s.name === name))
+          }
+        })
+
+        selectedSkills = await prompt.run()
+        if (selectedSkills.length === 0) {
+          logger.warn('No skills selected. Exiting.')
+          process.exit(0)
+        }
+      } else {
+        selectedSkills = [availableSkills[0]]
+      }
+
+      // Detect agents once
+      const cwd = process.cwd()
+      const installedAgents = detectInstalledAgents(cwd)
+      
+      if (installedAgents.length === 0) {
+        logger.warn('\nNo AI agents detected. Skills will be installed to shared directory only.')
+      }
+
+      // Install each selected skill
+      for (const skill of selectedSkills) {
+        if (!skill) continue
+        logger.info(`\n🚀 Installing ${chalk.cyan(skill.name)}...`)
+        await installFromLocalPath(skill.path, skill.name, options, installedAgents, cwd)
+      }
+
+      logger.info('')
+      logger.success(`✅ ${selectedSkills.length} skill(s) installed successfully!`)
+      return
     } catch (error: any) {
-      logger.error(`Failed to clone repository: ${error.message}`)
-      if (error.message.includes('timeout')) {
-        logger.error(`Clone timeout after 2 minutes`)
-        logger.info('This might be due to:')
-        logger.info('  - Slow network connection')
-        logger.info('  - Large repository size')
-        logger.info('  - Git server issues')
-        logger.info(`\nTry again or check your network connection`)
-      }
-      logger.info(`\nTried to clone: ${gitInfo.gitUrl}`)
-      if (gitInfo.branch) {
-        logger.info(`Branch: ${gitInfo.branch}`)
-      }
+      logger.error(`Failed to install from Git: ${error.message}`)
       process.exit(1)
     }
   } else if (options.link || fs.existsSync(skillNameOrPath)) {
@@ -208,6 +220,16 @@ export async function install(skillNameOrPath: string, options: InstallOptions =
       }
     } else {
       skillName = extractSkillName(path.basename(skillPath))
+    }
+
+    const cwd = process.cwd()
+    const installedAgents = detectInstalledAgents(cwd)
+    await installFromLocalPath(skillPath, skillName, options, installedAgents, cwd)
+    
+    logger.info('')
+    logger.success(`✅ Skill installed successfully!`)
+    if (options.link) {
+      logger.info('\n💡 Dev mode: changes to source files will reflect immediately')
     }
   } else {
     // NPM install mode
@@ -331,58 +353,58 @@ export async function install(skillNameOrPath: string, options: InstallOptions =
         logger.error(`Failed to download package: ${skillNameOrPath}`)
         process.exit(1)
       }
+
+      const cwd = process.cwd()
+      const installedAgents = detectInstalledAgents(cwd)
+      await installFromLocalPath(skillPath, skillName, options, installedAgents, cwd)
+      
+      logger.info('')
+      logger.success(`✅ Skill installed successfully!`)
     } catch (error: any) {
       logger.error(`Failed to download: ${error.message}`)
       process.exit(1)
     }
   }
+}
 
+/**
+ * Install a skill from a local path to shared directory and link to agents
+ */
+async function installFromLocalPath(
+  skillPath: string,
+  skillName: string,
+  options: InstallOptions,
+  installedAgents: any[],
+  cwd: string,
+): Promise<void> {
   // Target path in shared directory
   const targetPath = getSharedSkillPath(skillName)
   const sourceIsTarget = path.resolve(skillPath) === path.resolve(targetPath)
 
-  // Check if already exists (skip if source is the shared dir - e.g. reinstalling for Cursor only)
+  // Check if already exists (skip if source is the shared dir)
   const alreadyExists = fs.existsSync(targetPath) && !sourceIsTarget
   if (alreadyExists) {
     if (options.force) {
-      logger.warn('Removing existing installation...')
+      logger.warn(`Removing existing installation for ${skillName}...`)
       fs.rmSync(targetPath, {recursive: true, force: true})
     } else {
-      logger.info(`Skill already exists, updating agent links...`)
+      logger.info(`Skill ${skillName} already exists, updating agent links...`)
     }
   }
 
-  // Copy or link to shared directory (skip if already exists without --force, or source is shared dir)
+  // Copy or link to shared directory
   if (sourceIsTarget) {
-    logger.info(`Skill already in shared directory, updating agent links...`)
+    logger.info(`Skill ${skillName} already in shared directory, updating agent links...`)
   } else if (alreadyExists && !options.force) {
     // Skip copy, just update agent links
   } else if (options.link) {
     // Dev mode: create symlink
     fs.symlinkSync(skillPath, targetPath, 'dir')
-    logger.success(`Linked to shared directory (dev mode)`)
+    logger.success(`Linked ${skillName} to shared directory (dev mode)`)
   } else {
     // Production mode: copy files
     copyDir(skillPath, targetPath)
-    logger.success(`Installed to shared directory`)
-  }
-
-  logger.info(`📍 Location: ${targetPath}`)
-
-  // Detect installed AI agents
-  const cwd = process.cwd()
-  const installedAgents = detectInstalledAgents(cwd)
-
-  if (installedAgents.length === 0) {
-    logger.warn('No AI agents detected')
-    logger.info('Skill installed to shared directory, but not linked to any agent')
-    logger.info('')
-    logger.info('Supported agents:')
-    logger.info('  AMP, Antigravity, Claude Code, ClawdBot, Cline, Codex, Cursor, Droid,')
-    logger.info('  Gemini, GitHub Copilot, Goose, Kilo, Kiro CLI, OpenCode, Roo, Trae, Windsurf')
-    logger.info('')
-    logger.info('Run "eskill agents" to see all agent directories')
-    return
+    logger.success(`Installed ${skillName} to shared directory`)
   }
 
   // Determine target agents
@@ -390,32 +412,20 @@ export async function install(skillNameOrPath: string, options: InstallOptions =
 
   if (options.agent && options.agent !== 'all') {
     const agent = AGENTS.find(a => a.name === options.agent && a.enabled)
-    if (!agent) {
-      logger.error(`Unknown agent: ${options.agent}`)
-      logger.info(`\nSupported agents: ${AGENTS.filter(a => a.enabled).map(a => a.name).join(', ')}`)
-      process.exit(1)
-    }
-    targetAgents = [agent]
-    if (!installedAgents.find(a => a.name === options.agent)) {
-      logger.info(`Note: ${agent.displayName} directory will be created if not exists`)
+    if (agent) {
+      targetAgents = [agent]
     }
   }
 
-  // Create symlinks
-  logger.info('\nCreating symlinks...')
-  let successCount = 0
-  for (const agent of targetAgents) {
-    if (createSymlink(skillName, agent, cwd)) {
-      successCount++
+  if (targetAgents.length > 0) {
+    logger.info(`Creating symlinks for ${skillName}...`)
+    let successCount = 0
+    for (const agent of targetAgents) {
+      if (createSymlink(skillName, agent, cwd)) {
+        successCount++
+      }
     }
-  }
-
-  logger.info('')
-  logger.success(`✅ Skill installed successfully!`)
-  logger.info(`\nLinked to ${successCount}/${targetAgents.length} agents`)
-
-  if (options.link) {
-    logger.info('\n💡 Dev mode: changes to source files will reflect immediately')
+    logger.dim(`Linked ${skillName} to ${successCount} agent(s)`)
   }
 }
 
